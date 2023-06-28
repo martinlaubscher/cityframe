@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, MetaData, Table, delete
 from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
-from data_apis.creds import pg_url, openweather_key
+from creds import pg_url, openweather_key
 
 
 class ApiUpdate:
