@@ -40,6 +40,10 @@ class ApiUpdate:
         """
 
         response = requests.get(self.url, params=self.params)
+
+        if response.status_code != 200:
+            raise Exception('API request failed with status code: {}'.format(response.status_code))
+
         return response
 
     def insert_into_table(self, text, overwrite=False):
