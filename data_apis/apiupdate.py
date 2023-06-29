@@ -16,18 +16,19 @@ class ApiUpdate:
     as required for the specific API.
     """
 
-    def __init__(self, table_name, url, params):
+    def __init__(self, schema_name, table_name, url, params):
         """
         Initialises the ApiUpdate instance.
 
         Args:
+            schema_name (str): Name of the schema where the table to insert data to is located
             table_name (str): Name of the table to insert the data into
             url (str): URL of the API endpoint
             params (dict): Parameters to pass to the API request
         """
 
         self.engine = create_engine(pg_url, echo=True)
-        self.table = Table(table_name, MetaData(), autoload_with=self.engine, schema="cityframe")
+        self.table = Table(table_name, MetaData(), autoload_with=self.engine, schema=schema_name)
         self.url = url
         self.params = params
 
@@ -122,12 +123,13 @@ class WeatherHourlyUpdate(ApiUpdate):
         """
         Initialises the WeatherHourlyUpdate instance.
 
-        The table name is set to "weather_fc", the URL to the OpenWeather forecast API endpoint, and the parameters
-        to the required latitude, longitude, and API key.
+        The schema name is set to "cityframe", the table name to "weather_fc",
+        the URL to the OpenWeather forecast API endpoint, and the parameters to the required latitude, longitude,
+        and API key.
         """
 
         params = {"lat": "40.78306", "lon": "-73.971249", "appid": openweather_key}
-        super().__init__("weather_fc", "https://pro.openweathermap.org/data/2.5/forecast/hourly", params)
+        super().__init__("cityframe", "weather_fc", "https://pro.openweathermap.org/data/2.5/forecast/hourly", params)
 
     @staticmethod
     def extract_data(data):
