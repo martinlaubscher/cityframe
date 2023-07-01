@@ -6,9 +6,27 @@ __pycache__/
 # C extensions
 *.so
 
+# dependencies (react)
+/web_app/frontend/node_modules
+/web_app/frontend/.pnp
+/web_app/frontend/.pnp.js
+
+# testing (react)
+/web_app/frontend/coverage
+
+# misc (react)
+/web_app/frontend/.DS_Store
+/web_app/frontend/.env.local
+/web_app/frontend/.env.development.local
+/web_app/frontend/.env.test.local
+/web_app/frontend/.env.production.local
+
+/web_app/frontend/npm-debug.log*
+/web_app/frontend/yarn-debug.log*
+/web_app/frontend/yarn-error.log*
+
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -158,4 +176,4 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
-/data_apis/creds.py
+/web_app/data_apis/creds.py
