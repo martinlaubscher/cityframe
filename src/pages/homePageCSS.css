@@ -1,0 +1,26 @@
+.app-container{
+    height: 100%;
+}
+
+.header-container{
+    height: 10%;
+}
+
+.main-application-container{
+    height: 90%;
+    position: relative;
+}
+
+.main-body-container{
+    height: 100%;
+}
+
+.side-naviagtion-container{
+    height: 15%;
+    width: 40%;
+}
+
+.main-footer-container{
+    position: absolute;
+    top: 80%;
+}
