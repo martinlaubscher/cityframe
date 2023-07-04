@@ -114,6 +114,7 @@ class FutureSuntimesAPIView(APIView):
         sunrise_local = sunrise_timestamp + timezone_offset
         sunset_local = sunset_timestamp + timezone_offset
 
+        # format data correctly for the expected response
         processed_data = {
             'sunrise': sunrise_local,
             'sunset': sunset_local
@@ -148,8 +149,11 @@ class CurrentManhattanTimeAPIView(APIView):
         url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&lat=40.7831&lng=-73.9712'
         response = requests.get(url)
         data = response.json()
+
+        # the data provided by this API already has the offset applied
         unix_time = data['timestamp']
 
+        # format data correctly for the expected response
         processed_data = {
             'timestamp': unix_time
         }
