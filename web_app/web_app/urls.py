@@ -17,8 +17,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from core.views import front_page
+from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
+    FutureSuntimesAPIView, CurrentManhattanTimeAPIView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # main page routing
     path("", front_page, name="frontpage"),
+    path('admin/', admin.site.urls),
+
+    # weather API endpoints
+    path('api/future-weather/<str:timestamp>/', FutureWeatherAPIView.as_view(), name='future_weather_data'),
+    path('api/current-weather/', CurrentWeatherAPIView.as_view(), name='current_weather_data'),
+
+    # sunrise/sunset endpoints
+    path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='today_suntimes_data'),
+    path('api/future-suntimes/<int:days_in_future>/', FutureSuntimesAPIView.as_view(), name='today_suntimes_data'),
+
+    # time endpoint
+    path('api/current-time/', CurrentManhattanTimeAPIView.as_view(), name='current_manhattan_time'),
+
+    # golden hour
 ]
+
+
