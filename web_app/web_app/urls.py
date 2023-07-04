@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from core.views import front_page
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
-    FutureSuntimesAPIView
+    FutureSuntimesAPIView, CurrentManhattanTimeAPIView
 
 urlpatterns = [
     # main page routing
@@ -32,10 +32,11 @@ urlpatterns = [
     # sunrise/sunset endpoints
     path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='today_suntimes_data'),
     path('api/future-suntimes/<int:days_in_future>/', FutureSuntimesAPIView.as_view(), name='today_suntimes_data'),
-    # path('api/future-suntimes/', FutureSuntimesAPIView.as_view(), name='today_suntimes_data'),
+
+    # time endpoint
+    path('api/current-time/', CurrentManhattanTimeAPIView.as_view(), name='current_manhattan_time'),
 
     # golden hour
-
 ]
 
 
