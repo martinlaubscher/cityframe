@@ -1,7 +1,21 @@
 import logo from './logo.svg';
 import './App.css';
+import Location from './components/Location';
+import data from "./locationjunk"
+
+console.log(data)
+
+
 
 function App() {
+  const locations=data.map(loc =>{
+    return(
+      <Location
+      key={loc.id}
+      name={loc.name}
+      coordinates={loc.coordinates} 
+      />)
+  })
   return (
     <div className="App">
       <header className="App-header">
@@ -18,6 +32,7 @@ function App() {
           Learn React
         </a>
       </header>
+      {locations}
     </div>
   );
 }
