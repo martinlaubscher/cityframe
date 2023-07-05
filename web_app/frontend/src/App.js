@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import Location from './components/Location';
+import Map from './components/Map';
 import data from "./locationjunk"
 
 console.log(data)
@@ -33,6 +34,7 @@ function App() {
         </a>
       </header>
       {locations}
+      <Map />
     </div>
   );
 }
