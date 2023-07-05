@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-import requests
 from data_apis.creds import openweather_key, timezone_db_key
+import requests
+
 
 
 # class FutureWeatherAPIView(APIView):
