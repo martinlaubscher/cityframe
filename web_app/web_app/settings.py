@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # cityFrame apps
     'core',
     'rest_framework',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
