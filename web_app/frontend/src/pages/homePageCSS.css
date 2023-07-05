@@ -3,11 +3,12 @@
 }
 
 .header-container{
-    height: 10%;
+    height: 8%;
+    background-color: black;
 }
 
 .main-application-container{
-    height: 90%;
+    height: 92%;
     position: relative;
 }
 
@@ -15,12 +16,9 @@
     height: 100%;
 }
 
-.side-naviagtion-container{
-    height: 15%;
-    width: 40%;
-}
-
 .main-footer-container{
-    position: absolute;
-    top: 80%;
+    position: fixed; /* fix the position to the bottom of the screen */
+    bottom: 0; /* set it to the bottom */
+    width: 100%; /* have it span the full width of the viewport */
+    height: 40%; /* set the height to 40% of the viewport height */
 }

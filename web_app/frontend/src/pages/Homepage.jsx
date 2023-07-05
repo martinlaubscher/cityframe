@@ -9,12 +9,13 @@ export default function Homepage() {
       <MapBackground/>
       <div className='header-container'>
         <Logo/>
+        <div className="side-naviagtion-container">
+            <Navigation/>
+        </div>
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
-          <div className="side-naviagtion-container">
-            <Navigation/>
-          </div>
+
         </div>
         <div className="main-footer-container">
           <UserSearchBar/>
