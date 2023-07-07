@@ -3,6 +3,7 @@ import { Logo } from "../components/logo/Logo";
 import MapBackground from '../components/mapBackground/MapBackground.jsx';
 import UserSearchBar from '../components/usersearchbar/UserSearchBar.jsx';
 import "./homePageCSS.css"
+import WeatherComponent from '../components/weatherInfo/WeatherComponent.jsx';
 export default function Homepage() {
   return (
     <div className='app-container'>
@@ -15,7 +16,7 @@ export default function Homepage() {
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
-
+          <WeatherComponent/>
         </div>
         <div className="main-footer-container">
           <UserSearchBar/>
