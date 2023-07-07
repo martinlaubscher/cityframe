@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from data_apis.creds import db_name, db_user, db_password, db_host, db_port
+from data_apis.creds import db_name, db_user, db_password, db_host, db_port, django_key
 from pathlib import Path
 import os
 
@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=yg)40^6^ca*5&bmr4tclyr@$r%g!hdp613rv#l_bynpt!_(y7'
+SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
