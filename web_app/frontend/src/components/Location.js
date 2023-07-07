@@ -5,3 +5,5 @@ export default function Location(props){
         </div>)
 
 }
+
+//Currently not connected to anything but may be useful in the future
