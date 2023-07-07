@@ -1,32 +1,41 @@
-1.	CurrentWeatherAPIView:
-    o	Description: Retrieve the current weather in Manhattan.
-    o	Endpoint: /api/current-weather/
-    o	Method: GET
-    o	Response: Returns the current weather data in JSON format.
+1. CurrentWeatherAPIView:
+   - Description: Retrieve the current weather in Manhattan.
+   - Endpoint: /api/current-weather/
+   - Method: GET
+   - Response: Returns the current weather data in JSON format.
 
-2.	FutureWeatherAPIView:
-    o	Description: Retrieve the predicted weather data for a specific timestamp in the future.
-    o	Endpoint: /api/future-weather/<int:timestamp>/
-    o	Method: GET
-    o	Parameters: timestamp (Unix timestamp in UTC)
-    o	Response: Returns the JSON data for the closest match to the provided timestamp.
+2. FutureWeatherAPIView:
+   - Description: Retrieve the predicted weather data for a specific timestamp in the future.
+   - Endpoint: /api/future-weather/<int:timestamp>/
+   - Method: GET
+   - Parameters: timestamp (Unix timestamp in UTC)
+   - Response: Returns the JSON data for the closest match to the provided timestamp.
 
-3.	CurrentSuntimesAPIView:
-    o	Description: Retrieve the sunrise and sunset times for the current day.
-    o	Endpoint: /api/current-suntimes/
-    o	Method: GET
-    o	Response: Returns the sunrise and sunset times in Unix timestamp format (with offset applied).
+3. CurrentSuntimesAPIView:
+   - Description: Retrieve the sunrise and sunset times for the current day.
+   - Endpoints: 
+	/api/current-suntimes/	(without optional parameter)
+	/api/current-suntimes/<str:formatting>/      (with optional parameter)
+   - Method: GET
+   - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the sunrise and sunset times will be returned as datetime strings.
+   - Response: Returns the sunrise and sunset times in Unix timestamp format (with offset applied). If formatting='datetime', the response will contain datetime strings.
 
-4.	FutureSuntimesAPIView:
-    o	Description: Retrieve the sunrise and sunset times for a future day.
-    o	Endpoint: /api/future-suntimes/<int:days_in_future>/
-    o	Method: GET
-    o	Parameters: days_in_future (an int between 1-5 representing the number of days into the future)
-    o	Response: Returns the sunrise and sunset times for the specified future day in Unix timestamp format
-        (with offset applied).
+4. FutureSuntimesAPIView:
+   - Description: Retrieve the sunrise and sunset times for a future day.
+   - Endpoints: 
+	/api/future-suntimes/<int:days_in_future>/ (without optional parameter)
+	/api/future-suntimes/<int:days_in_future>/<str:formatting>/      (with optional parameter)
+   - Method: GET
+   - Parameters: days_in_future (an int between 1-5 representing the number of days into the future), formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the sunrise and sunset times will be returned as datetime strings.
+   - Response: Returns the sunrise and sunset times for the specified future day in Unix timestamp format (with offset applied). If formatting='datetime', the response will contain datetime string.
 
-5.	CurrentManhattanTimeAPIView:
-    o	Description: Retrieve the current time in Manhattan.
-    o	Endpoint: /api/current-manhattan-time/
-    o	Method: GET
-    o	Response: Returns the current Unix timestamp (with offset applied) for Manhattan.
+5. CurrentManhattanTimeAPIView:
+   - Description: Retrieve the current time in Manhattan.
+   - Endpoints: 
+	/api/current-manhattan-time/      (without optional parameter)
+	/api/current-manhattan-time/<str:formatting>/      (with optional parameter)
+   - Method: GET
+   - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the current time will be returned as a datetime string.
+   - Response: Returns the current Unix timestamp (with offset applied) for Manhattan. If formatting='datetime', the response will contain a datetime string.
+
+
