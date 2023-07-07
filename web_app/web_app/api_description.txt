@@ -13,23 +13,27 @@
 
 3. CurrentSuntimesAPIView:
    - Description: Retrieve the sunrise and sunset times for the current day.
-   - Endpoint: /api/current-suntimes/
+   - Endpoints: 
+	/api/current-suntimes/	(without optional parameter)
+	/api/current-suntimes/<str:formatting>/      (with optional parameter)
    - Method: GET
    - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the sunrise and sunset times will be returned as datetime strings.
    - Response: Returns the sunrise and sunset times in Unix timestamp format (with offset applied). If formatting='datetime', the response will contain datetime strings.
 
 4. FutureSuntimesAPIView:
    - Description: Retrieve the sunrise and sunset times for a future day.
-   - Endpoint: /api/future-suntimes/<int:days_in_future>/
+   - Endpoints: 
+	/api/future-suntimes/<int:days_in_future>/ (without optional parameter)
+	/api/future-suntimes/<int:days_in_future>/<str:formatting>/      (with optional parameter)
    - Method: GET
    - Parameters: days_in_future (an int between 1-5 representing the number of days into the future), formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the sunrise and sunset times will be returned as datetime strings.
    - Response: Returns the sunrise and sunset times for the specified future day in Unix timestamp format (with offset applied). If formatting='datetime', the response will contain datetime string.
 
 5. CurrentManhattanTimeAPIView:
    - Description: Retrieve the current time in Manhattan.
-   - Endpoint: 
-	- /api/current-manhattan-time/      (without optional parameter)
-	- /api/current-manhattan-time/<str:formatting>/      (with optional parameter)
+   - Endpoints: 
+	/api/current-manhattan-time/      (without optional parameter)
+	/api/current-manhattan-time/<str:formatting>/      (with optional parameter)
    - Method: GET
    - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the current time will be returned as a datetime string.
    - Response: Returns the current Unix timestamp (with offset applied) for Manhattan. If formatting='datetime', the response will contain a datetime string.
