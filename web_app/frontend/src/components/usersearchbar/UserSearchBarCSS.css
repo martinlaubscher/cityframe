@@ -30,7 +30,7 @@ height: 24px;
 
 .weather-icon-container {
     display: flex;
-    align-items: center; /* 垂直居中对齐 */
+    align-items: center; 
     justify-content: flex-end;
   }
 
