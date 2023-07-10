@@ -16,7 +16,7 @@ export default function Homepage() {
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
-          <WeatherComponent/>
+          {/* <WeatherComponent/> */}
         </div>
         <div className="main-footer-container">
           <UserSearchBar/>

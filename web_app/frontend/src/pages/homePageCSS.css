@@ -10,6 +10,7 @@
 .main-application-container{
     height: 92%;
     position: relative;
+    background-color: rgb(235, 44, 168);
 }
 
 .main-body-container{

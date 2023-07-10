@@ -1,14 +1,14 @@
 .nav-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    padding: 10px;
-    position: fixed;
-    z-index: 2;
-    right: 3%;
-  
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px;
+  position: fixed;
+  z-index: 2;
+  right: 3%;
 }
+
 
 
 .navigation-column {
@@ -37,6 +37,7 @@
   text-decoration: none; /* removes underline */
   font-weight: bold; /* makes font bold */
   font-size: 1.2em; /* makes font bigger, adjust as necessary */
+  font-family: Arial, sans-seif !important;
 }
 
 .nav-item a:hover {
