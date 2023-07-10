@@ -21,9 +21,9 @@ const TreeButton = () => {
       )}
       {showOptions && (
           <div className="tree-level">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"/>
-              <label class="form-check-label" for="flexSwitchCheckDefault">Tree</label>
+            <div className="form-check form-switch">
+              <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"/>
+              <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Tree</label>
             </div>
         </div>
       )}

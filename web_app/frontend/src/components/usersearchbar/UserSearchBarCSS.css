@@ -68,17 +68,19 @@ height: 24px;
 
 
 .range-cust::-webkit-slider-thumb {
-    background:black !important;
-  }
+  appearance: none!important;
+  background: black !important;
+}
 
 .range-cust::-moz-range-thumb {
-    background: black !important;
-
+  appearance: none!important;
+  background: black !important;
 }
-   
+
 .range-cust::-ms-thumb { 
-    background: black !important; 
-  }
+  appearance: none!important;
+  background: black !important; 
+}
 
 .busyness-level {
     width: 100%;
