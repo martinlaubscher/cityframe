@@ -10,8 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-# from data_apis.creds import db_name, db_user, db_password, db_host, db_port
-from data_apis.creds import DATABASE_URL
+from data_apis.creds import db_name, db_user, db_password, db_host, db_port
 from pathlib import Path
 import os
 
@@ -90,28 +89,28 @@ WSGI_APPLICATION = 'web_app.wsgi.application'
 #     }
 # }
 
-#
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         'NAME': db_name,
-#         'USER': db_user,
-#         'PASSWORD': db_password,
-#         'HOST': db_host,
-#         'PORT': db_port,
-#     }
-# }
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': DATABASE_URL.database,
-        'USER': DATABASE_URL.username,
-        'PASSWORD': DATABASE_URL.password,
-        'HOST': DATABASE_URL.host,
-        'PORT': DATABASE_URL.port,
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        'NAME': db_name,
+        'USER': db_user,
+        'PASSWORD': db_password,
+        'HOST': db_host,
+        'PORT': db_port,
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': DATABASE_URL.database,
+#         'USER': DATABASE_URL.username,
+#         'PASSWORD': DATABASE_URL.password,
+#         'HOST': DATABASE_URL.host,
+#         'PORT': DATABASE_URL.port,
+#     }
+# }
 
 
 
