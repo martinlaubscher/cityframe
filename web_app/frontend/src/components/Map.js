@@ -1,21 +1,16 @@
 import { MapContainer, TileLayer, Marker, Popup, Polygon} from 'react-leaflet'
-import data from '../locationjunk'
 
-export default function Map(){
-    
 
-    function handleClick(e){
-        console.log(data, e)
-    }
+export default function Map(props){
+
     const purpleOptions = { color: 'purple' }
-
-    const polygons=data.map(location=>{
+    const polygons=props.data.map(location=>{
         return(
             <Polygon
             key={location.id}
             pathOptions={purpleOptions}
             positions={location.coordinates}
-            eventHandlers={{click: ()=> handleClick(location.name)}}
+            eventHandlers={{click: ()=> props.buildlist(location)}}
             />
         )}
         )
@@ -26,7 +21,6 @@ export default function Map(){
 
     return(
     <div className="Map--div" >
-        <p>Map goes here</p>
         <MapContainer center={[40.7831, -73.9712]} zoom={13} scrollWheelZoom={true} >
             <TileLayer
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -38,6 +32,5 @@ export default function Map(){
             </Marker>
             {polygons}
         </MapContainer>
-        <p>Ta da</p>
     </div>)
 }

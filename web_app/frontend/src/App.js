@@ -1,14 +1,26 @@
 import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
 import Location from './components/Location';
 import Map from './components/Map';
+import Droplist from './components/Droplist';
 import data from "./locationjunk"
+import dynamic from './dynamicjunk'
+import { Dropdown } from 'bootstrap';
 
-console.log(data)
+
 
 
 
 function App() {
+  //const [searchResults, setSearchResults]=useState(dynamic)
+  const [listResults, setListResults]=useState(dynamic)
+  function buildlist(results){
+    const items=dynamic.filter(item => item.id===results.id)
+    setListResults(items)
+    }
+
+
   const locations=data.map(loc =>{
     return(
       <Location
@@ -17,6 +29,8 @@ function App() {
       coordinates={loc.coordinates} 
       />)
   })
+
+
   return (
     <div className="App">
       <header className="App-header">
@@ -33,8 +47,14 @@ function App() {
           Learn React
         </a>
       </header>
+      <Droplist 
+      results={listResults}
+      />
       {locations}
-      <Map />
+      <Map 
+      data={data}
+      buildlist={buildlist}
+      />
     </div>
   );
 }
