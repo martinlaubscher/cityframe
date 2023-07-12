@@ -1,0 +1,25 @@
+.app-container{
+    height: 100%;
+}
+
+.header-container{
+    height: 8%;
+    background-color: black;
+}
+
+.main-application-container{
+    height: 92%;
+    position: relative;
+    background-color: rgb(235, 44, 168);
+}
+
+.main-body-container{
+    height: 100%;
+}
+
+.main-footer-container{
+    position: fixed; /* fix the position to the bottom of the screen */
+    bottom: 0; /* set it to the bottom */
+    width: 100%; /* have it span the full width of the viewport */
+    height: 40%; /* set the height to 40% of the viewport height */
+}
