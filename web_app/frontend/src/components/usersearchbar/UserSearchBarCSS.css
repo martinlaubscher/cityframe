@@ -1,0 +1,90 @@
+.usersearch-container{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 20%;
+    background-color: white;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+.offcanvas-button {
+    display: flex!important;
+    align-items: center!important;
+    justify-content: center!important;
+    background-color: transparent !important;
+    border: none !important;
+    cursor: pointer!important;
+    padding: 0;
+  }  
+  
+.offcanvas-button svg {
+width: 24px;
+height: 24px;
+}
+  
+
+.weather-icon-container {
+    display: flex;
+    align-items: center; 
+    justify-content: flex-end;
+  }
+
+.current-time {
+  color:black;
+  font-size: 16px;
+  text-align: right;
+  font-family: "Noto Sans", sans-serif;
+  margin-right: 10px;
+}
+
+.weather-icon {
+    margin-right: 5px;
+}
+
+.label-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.form-label {
+  text-align: left !important;
+  color:black;
+  font-size: 20px;
+  font-family: Arial, sans-seif;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+  
+.offcanvas-content {
+ height: 100%; 
+}
+
+
+.range-cust::-webkit-slider-thumb {
+  appearance: none!important;
+  background: black !important;
+}
+
+.range-cust::-moz-range-thumb {
+  appearance: none!important;
+  background: black !important;
+}
+
+.range-cust::-ms-thumb { 
+  appearance: none!important;
+  background: black !important; 
+}
+
+.busyness-level {
+    width: 100%;
+    padding: 0 20px;
+}
+
+

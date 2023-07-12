@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from data_apis.creds import db_name, db_user, db_password, db_host, db_port
+from data_apis.creds import db_name, db_user, db_password, db_host, db_port, django_key
 from pathlib import Path
 import os
 
@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=yg)40^6^ca*5&bmr4tclyr@$r%g!hdp613rv#l_bynpt!_(y7'
+SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     'drf_yasg',
+    'corsheaders', # add by frontend
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # add by frontend
 ]
 
 ROOT_URLCONF = 'web_app.urls'
@@ -60,7 +62,7 @@ ROOT_URLCONF = 'web_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'build')],
+        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,7 +89,7 @@ WSGI_APPLICATION = 'web_app.wsgi.application'
 #     }
 # }
 
-#
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -98,6 +100,19 @@ DATABASES = {
         'PORT': db_port,
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': DATABASE_URL.database,
+#         'USER': DATABASE_URL.username,
+#         'PASSWORD': DATABASE_URL.password,
+#         'HOST': DATABASE_URL.host,
+#         'PORT': DATABASE_URL.port,
+#     }
+# }
+
+
 
 
 # Password validation
@@ -119,6 +134,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# add by frontend
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+] 
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -134,9 +155,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'assets/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'build', 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

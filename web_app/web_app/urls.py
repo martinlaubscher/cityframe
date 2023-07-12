@@ -51,15 +51,19 @@ urlpatterns = [
     path('api/current-weather/', CurrentWeatherAPIView.as_view(), name='current_weather_data'),
 
     # sunrise/sunset endpoints
-    path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='today_suntimes_data'),
-    path('api/future-suntimes/<int:days_in_future>/', FutureSuntimesAPIView.as_view(), name='today_suntimes_data'),
+    path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='current_suntimes'),
+    path('api/current-suntimes/<str:formatting>/', CurrentSuntimesAPIView.as_view(), name='current_suntimes_str'),
+    path('api/future-suntimes/<int:days_in_future>/', FutureSuntimesAPIView.as_view(), name='future_suntimes'),
+    path('api/future-suntimes/<int:days_in_future>/<str:formatting>', FutureSuntimesAPIView.as_view(),
+         name='future_suntimes_str'),
 
     # time endpoint
     path('api/current-time/', CurrentManhattanTimeAPIView.as_view(), name='current_manhattan_time'),
+    path('api/current-time/<str:formatting>', CurrentManhattanTimeAPIView.as_view(), name='current_manhattan_time_str'),
 
     # golden hour
 
-    # yasg
+    # Generated API documentation (OpenAPI/swagger format)
     path('api/', include(router.urls)),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 

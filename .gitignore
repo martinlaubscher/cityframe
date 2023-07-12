@@ -25,6 +25,8 @@ __pycache__/
 /web_app/frontend/yarn-debug.log*
 /web_app/frontend/yarn-error.log*
 
+.DS_Store
+
 # Distribution / packaging
 .Python
 develop-eggs/
