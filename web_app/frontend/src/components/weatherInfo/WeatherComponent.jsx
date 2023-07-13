@@ -20,7 +20,7 @@ function WeatherComponent() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/current-weather/")
+      .get("/api/current-weather/")
       .then((response) => {
         setWeather(response.data);
       })
