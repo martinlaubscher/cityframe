@@ -10,9 +10,46 @@ class EndpointTests(TestCase):
         """
         self.client = APIClient()
 
+    def test_current_suntimes(self):
+        """This is a unit test case for the api/current-suntimes/ endpoint. It retrieves the URL using the reverse()
+        function based on the url pattern name (see urls.py). It tests that endpoint returns the expected JSON response
+        with the required keys, and that returned data matches a regex format
+        """
+        url = reverse('current_suntimes')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the 'sunrise' and 'sunset' keys are present in the response
+        self.assertIn('sunrise', response.data)
+        self.assertIn('sunset', response.data)
+
+        # Check if the 'sunrise' and 'sunset' are in the correct format using regex
+        timestamp_pattern = re.compile(r'^\d{10}$')  # Matches a string of 10 digits
+        self.assertTrue(timestamp_pattern.match(str(response.data['sunrise'])))
+        self.assertTrue(timestamp_pattern.match(str(response.data['sunset'])))
+
+    def test_current_suntimes_str(self):
+        """This is a unit test case for the 'api/current-suntimes/<str:formatting>' endpoint. It retrieves the URL
+        using the reverse() function based on the url pattern name (see urls.py), and uses the optional 'datetime'
+        formatting. Tests that endpoint returns the expected JSON data with the required key, and that returned data
+        matches a regex format
+        """
+        url = reverse('current_suntimes_str', kwargs={'formatting': 'datetime'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the 'sunrise' and 'sunset' keys are present in the response
+        self.assertIn('sunrise', response.data)
+        self.assertIn('sunset', response.data)
+
+        # Check if the 'sunrise' and 'sunset' are in the correct format using regex
+        datetime_pattern = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')  # Matches 'YYYY-MM-DD HH:MM:SS'
+        self.assertTrue(datetime_pattern.match(response.data['sunrise']))
+        self.assertTrue(datetime_pattern.match(response.data['sunset']))
+
     def test_current_weather(self):
         """This is a unit test case for the api/current-weather/ endpoint. It retrieves the URL using the reverse()
-        function based on the url pattern name (see urls.py). It tests that ndpoint returns the expected JSON response
+        function based on the url pattern name (see urls.py). It tests that endpoint returns the expected JSON response
         with the required keys and nested dictionary structures.
         """
         url = reverse('current_weather_data')
