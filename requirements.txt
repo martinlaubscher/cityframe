@@ -8,7 +8,7 @@ coreschema==0.0.4
 cryptography==39.0.1
 Django==4.2.2
 djangorestframework==3.14.0
-drf-yasg==1.21.6
+drf-yasg==1.21.5
 greenlet==2.0.2
 idna==3.4
 inflection==0.5.1
@@ -35,3 +35,4 @@ uritemplate==4.1.1
 urllib3==1.26.16
 wheel==0.38.4
 win-inet-pton==1.1.0
+whitenoise==6.5.0
