@@ -1,9 +1,10 @@
+import re
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 
-class WeatherAPITests(TestCase):
+class EndpointTests(TestCase):
     def setUp(self):
         """This method sets up a client used to make HTTP requests to API endpoints
         """
@@ -121,6 +122,39 @@ class WeatherAPITests(TestCase):
 
         # Check the relevant keys are present in 'sys' dict
         self.assertIn('pod', response.data['sys'])
+
+    def test_current_time(self):
+        """This is a unit test case for the 'api/current-time/' endpoint. It retrieves the URL using the
+        reverse() function based on the url pattern name (see urls.py). Tests that endpoint returns the expected JSON
+        data with the required keys, and that returned data is in expected format.
+        """
+        url = reverse('current_manhattan_time')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check 'timestamp' key in response
+        self.assertIn('timestamp', response.data)
+
+        # use regex to test if timestamp matches expected pattern (10 digits)
+        timestamp_pattern = re.compile(r'^\d{10}$')
+        self.assertTrue(timestamp_pattern.match(str(response.data['timestamp'])))
+
+    def test_current_time_str(self):
+        """This is a unit test case for the 'api/current-time/<str:formatting>' endpoint. It retrieves the URL using the
+        reverse() function based on the url pattern name (see urls.py), and uses the optional 'datetime' formatting.
+        Tests that endpoint returns the expected JSON data with the required key, and that returned data is in expected
+        format.
+        """
+        url = reverse('current_manhattan_time_str', kwargs={'formatting': 'datetime'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check 'datetime' key in response
+        self.assertIn('datetime', response.data)
+
+        # use regex to test if timestamp string matches expected pattern ('YYYY-MM-DD HH:MM:SS')
+        datetime_pattern = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+        self.assertTrue(datetime_pattern.match(response.data['datetime']))
 
     def tearDown(self):
         # Nothing to teardown, may be required for future tests
