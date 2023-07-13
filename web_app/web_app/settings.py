@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from data_apis.creds import db_name, db_user, db_password, db_host, db_port, django_key
 from pathlib import Path
+from whitenoise import WhiteNoise
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +28,7 @@ SECRET_KEY = django_key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
 
 
 # Application definition
@@ -38,23 +39,23 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     # cityFrame apps
     'core',
     'rest_framework',
     'drf_yasg',
-    'corsheaders', # add by frontend
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware', # add by frontend
 ]
 
 ROOT_URLCONF = 'web_app.urls'
@@ -113,8 +114,6 @@ DATABASES = {
 # }
 
 
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -134,12 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# add by frontend
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-] 
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -154,6 +147,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
