@@ -193,6 +193,47 @@ class EndpointTests(TestCase):
         datetime_pattern = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
         self.assertTrue(datetime_pattern.match(response.data['datetime']))
 
+    def test_future_suntimes(self):
+        """This is a unit test case for the api/future-suntimes/{days_in_future}/ endpoint. It retrieves the URL using
+        the reverse() function based on the url pattern name (see urls.py). It tests that endpoint returns the expected
+        JSON response with the required keys, and that returned data matches a regex format.
+        """
+        # ints from 1-5 (inclusive) are valid for {days_in_future}, 2 chosen arbitrarily
+        days_in_future = 2
+        url = reverse('future_suntimes', kwargs={'days_in_future': days_in_future})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check 'sunrise' and 'sunset' keys in response
+        self.assertIn('sunrise', response.data)
+        self.assertIn('sunset', response.data)
+
+        # Check 'sunrise' and 'sunset' match expected regex pattern (10 digits)
+        timestamp_pattern = re.compile(r'^\d{10}$')
+        self.assertTrue(timestamp_pattern.match(str(response.data['sunrise'])))
+        self.assertTrue(timestamp_pattern.match(str(response.data['sunset'])))
+
+    def test_future_suntimes_str(self):
+        """This is a unit test case for the api/future-suntimes/{days_in_future}/{formatting}/ endpoint. It retrieves
+        the URL using the reverse() function based on the url pattern name (see urls.py), and uses the optional
+        'datetime' formatting. Tests that endpoint returns the expected JSON data with the required keys, and that
+        returned data is in expected format.
+        """
+        # ints from 1-5 (inclusive) are valid for {days_in_future}, 2 chosen arbitrarily
+        days_in_future = 2
+        url = reverse('future_suntimes_str', kwargs={'days_in_future': days_in_future, 'formatting': 'datetime'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check 'sunrise' and 'sunset' keys in response
+        self.assertIn('sunrise', response.data)
+        self.assertIn('sunset', response.data)
+
+        # Check 'sunrise' and 'sunset' match expected regex pattern ('YYYY-MM-DD HH:MM:SS')
+        datetime_pattern = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
+        self.assertTrue(datetime_pattern.match(response.data['sunrise']))
+        self.assertTrue(datetime_pattern.match(response.data['sunset']))
+
     def tearDown(self):
         # Nothing to teardown, may be required for future tests
         pass
