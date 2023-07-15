@@ -1,7 +1,8 @@
-import ListItem from "./ListItem"
+import ListItem from "./ListItem.jsx"
 
 export default function Droplist (props){
 
+    const oneplace=true //temp variable for if the list is of one place or all of them. Should be passed in as a prop later
     
     const items=props.results.map(item=> {
         return (item.data.map(hour=> {
@@ -19,7 +20,7 @@ export default function Droplist (props){
     
     return(
         <div className="droplist">
-            <h2>Wow check out this list</h2>
+            <h2>{oneplace? "Zone Name" : "All Zones"}</h2>
             {items}
         </div>
     )

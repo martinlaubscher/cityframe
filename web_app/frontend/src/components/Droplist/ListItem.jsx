@@ -1,4 +1,5 @@
 export default function ListItem (props){
+    console.log(props.data.busy)
 
     function handleClick(){
         console.log("clicked")
