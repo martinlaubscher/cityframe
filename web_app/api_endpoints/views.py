@@ -126,20 +126,7 @@ class FutureSuntimesAPIView(APIView):
 
 
 # The below provider had an incorrect offset, meaning local time was one hour off. Potential backup if issue fixed.
-# class CurrentManhattanTimeAPIView(APIView):
-#     def get(self, request):
-#         """Get request for the current time in Manhattan
-#         No argument
-#         Returns a JSON of the current Unix timestamp (with offset applied)
-#         """
-#         url = 'http://worldtimeapi.org/api/timezone/America/New_York'
-#         response = requests.get(url)
-#         data = response.json()
-#         unix_time = data['unixtime']
-#         raw_offset = data['raw_offset']
-#         current_time = unix_time + raw_offset
-#
-#         return Response(current_time)
+# url = 'http://worldtimeapi.org/api/timezone/America/New_York'
 
 class CurrentManhattanTimeAPIView(APIView):
     def get(self, request, formatting=None):
@@ -167,6 +154,5 @@ class CurrentManhattanTimeAPIView(APIView):
             }
 
         return Response(processed_data)
-
 
 # now create an endpoint for golden hour
