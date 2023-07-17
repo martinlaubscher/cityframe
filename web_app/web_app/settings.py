@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     # cityFrame apps
+    'api_endpoints',
     'core',
     'rest_framework',
     'drf_yasg',

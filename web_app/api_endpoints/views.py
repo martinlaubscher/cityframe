@@ -1,8 +1,10 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from data_apis.creds import openweather_key, timezone_db_key
+from .models import WeatherFc
 import requests
 import datetime
+import json
 
 
 def convert_to_datetime_string(timestamp):
@@ -18,6 +20,19 @@ def convert_to_datetime_string(timestamp):
     return dt_string
 
 
+# class CurrentWeatherAPIView(APIView):
+#     def get(self, request):
+#         """Get request for current weather
+#
+#         No arguments
+#
+#         Returns JSON data of current Manhattan weather
+#         """
+#         url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+#         response = requests.get(url)
+#         data = response.json()
+#         return Response(data)
+
 class CurrentWeatherAPIView(APIView):
     def get(self, request):
         """Get request for current weather
@@ -26,10 +41,28 @@ class CurrentWeatherAPIView(APIView):
 
         Returns JSON data of current Manhattan weather
         """
-        url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-        response = requests.get(url)
-        data = response.json()
-        return Response(data)
+        # Try to get the data from the database
+        weather_data = WeatherFc.get_latest()
+        weather_data_serializable = list(weather_data.values())
+
+        weather_data_json = json.dumps(weather_data_serializable)
+
+        if weather_data is not None:
+            # If we have data in the database, return that
+            print(f"Weather data: {weather_data}")
+            return Response(weather_data_json)
+
+        else:
+            # # If we don't have data in the database, fetch from the OpenWeather API
+            # url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+            # response = requests.get(url)
+            # data = response.json()
+            #
+            # # Save this data to the database for future use
+            # # WeatherFc.save_data(data)
+            #
+            # return Response(data)
+            return Response({"error": "No weather data found in the database"}, status=500)
 
 
 class FutureWeatherAPIView(APIView):
