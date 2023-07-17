@@ -3,14 +3,18 @@
 }
 
 .header-container{
+    position: fixed;
+    top: 0;
+    width: 100%;
     height: 8%;
     background-color: black;
+    z-index: 2;
 }
 
 .main-application-container{
-    height: 92%;
+    height: 100%;
     position: relative;
-    background-color: rgb(235, 44, 168);
+
 }
 
 .main-body-container{
@@ -21,5 +25,15 @@
     position: fixed; /* fix the position to the bottom of the screen */
     bottom: 0; /* set it to the bottom */
     width: 100%; /* have it span the full width of the viewport */
-    height: 40%; /* set the height to 40% of the viewport height */
+    height: 20%; /* set the height to 40% of the viewport height */
+    z-index: 1;
+}
+
+.droplist{
+    background-color: blueviolet;
+    position: fixed;
+    bottom: 0;
+    width: 20%;
+    height: 50%;
+    z-index: 2;
 }
