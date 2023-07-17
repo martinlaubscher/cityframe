@@ -13,11 +13,17 @@ import Droplist from '../components/Droplist/Droplist.jsx';
 
 export default function Homepage() {
   
-  const [listResults, setListResults]=useState([dynamic, false])
+  const [listResults, setListResults]=useState(dynamic)
+  const [listShow, setListShow]=useState(false)
   function buildlist(results){
     const items=dynamic.filter(item => item.id===results.id)
-    setListResults([items, true])
+    setListResults(items)
+    setListShow(true)
     }
+  
+  function hideList(){
+    setListShow(false)    
+  }
 
 
   return (
@@ -39,7 +45,7 @@ export default function Homepage() {
         <div className="main-footer-container">
           <UserSearchBar/>
         </div>
-        {listResults[1] && <Droplist results={listResults[0]}/>}
+        {listShow && <Droplist results={listResults} hideList={hideList}/>}
         
       </div>
     </div>

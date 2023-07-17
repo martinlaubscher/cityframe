@@ -21,6 +21,7 @@ export default function Droplist (props){
     return(
         <div className="droplist">
             <h2>{oneplace? "Zone Name" : "All Zones"}</h2>
+            <button onClick={props.hideList}>X</button>
             {items}
         </div>
     )

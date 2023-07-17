@@ -25,7 +25,7 @@
     position: fixed; /* fix the position to the bottom of the screen */
     bottom: 0; /* set it to the bottom */
     width: 100%; /* have it span the full width of the viewport */
-    height: 40%; /* set the height to 40% of the viewport height */
+    height: 20%; /* set the height to 40% of the viewport height */
     z-index: 1;
 }
 
