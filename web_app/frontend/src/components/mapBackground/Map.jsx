@@ -3,16 +3,9 @@ import "./MapBackground.css"
 import React from 'react'
 
 export default function Map(props){
-    //const [stateData, setStateData]=React.useState(dynamic)
-
     const [marker, setMarker]=React.useState([40.7831, -73.9712])
     const purpleOptions = { color: 'purple' }
 
-
-    function handleClick(location){
-        console.log(location.name)
-        setMarker(location.coordinates[0])
-    }
 
     const polygons=props.data.map(location=>{
         return(
@@ -20,8 +13,6 @@ export default function Map(props){
             key={location.id}
             pathOptions={purpleOptions}
             positions={location.coordinates}
-            //onClick={()=> props.buildlist(location)}
-            //eventHandlers={{click: ()=> handleClick(location)}}
             eventHandlers={{click: ()=> props.buildlist(location)}}
             />
         )})
