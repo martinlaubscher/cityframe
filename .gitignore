@@ -8,6 +8,7 @@ __pycache__/
 
 # dependencies (react)
 /web_app/frontend/node_modules
+/web_app/frontend/build
 /web_app/frontend/.pnp
 /web_app/frontend/.pnp.js
 
@@ -179,3 +180,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 /web_app/data_apis/creds.py
+/web_app/staticfiles/
