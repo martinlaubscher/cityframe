@@ -1,7 +1,10 @@
-from sqlalchemy import create_engine, MetaData, Table, delete
+import sqlalchemy
+from sqlalchemy import create_engine, MetaData, Table, delete, select, func
 from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
+import pytz
+from datetime import datetime, timezone
 from creds import pg_url, openweather_key
 
 
@@ -180,6 +183,123 @@ class WeatherHourlyUpdate(ApiUpdate):
         except KeyError:
             data['snow_1h'] = 0
         data['clouds_all'] = data['clouds']['all']
+        data['weather_id'] = data['weather'][0]['id']
+        data['weather_main'] = data['weather'][0]['main']
+        data['weather_description'] = data['weather'][0]['description']
+        data['weather_icon'] = data['weather'][0]['icon']
+        return data
+
+
+class WeatherDailyUpdate(ApiUpdate):
+    def __init__(self):
+        """
+        Initialises the WeatherDailyUpdate instance.
+
+        The schema name is set to "cityframe", the table name to "weather_fc",
+        the URL to the OpenWeather forecast API endpoint, and the parameters to the required latitude, longitude,
+        number of days, and API key.
+        """
+
+        params = {"lat": "40.78306", "lon": "-73.971249", "cnt": "16", "appid": openweather_key}
+        super().__init__("cityframe", "weather_fc", "https://pro.openweathermap.org/data/2.5/forecast/daily", params)
+
+    def extract_data(self, data):
+        """
+        Extracts and transforms the list of weather forecasts from the OpenWeather API response.
+
+        This function expands the daily forecasts into hourly forecasts based on defined time slots.
+        It only includes hourly forecasts for times later than the latest time in the existing database.
+        The function also adds the minimum and maximum temperatures for each day to each hourly forecast.
+
+        Args:
+            data(dict): The OpenWeather API response, which includes a list of daily weather forecasts.
+
+        Returns:
+            list: A sorted list of dictionaries. Each dictionary contains the weather forecast for a specific hour,
+            expanded from the daily forecast in the input data. The list is sorted in ascending order of forecast time.
+        """
+
+        with self.engine.connect() as connection:
+            query = select(func.max(self.table.c.dt))
+            result = connection.execute(query)
+            last_dt = result.scalar()
+
+        # define hourly slots
+        time_slots = {
+            "morn": range(6, 13),
+            "day": range(13, 19),
+            "eve": range(19, 24),
+            "night": range(0, 6),
+        }
+
+        # initialise the list to store exploded data
+        exploded_data = []
+
+        # loop over each date
+        for weather_info in data["list"]:
+            dt = datetime.utcfromtimestamp(weather_info["dt"])
+
+            # loop over each hourly slot
+            for time_period, hours in time_slots.items():
+                for hour in hours:
+                    hour_dt = datetime(dt.year, dt.month, dt.day, hour)
+                    hour_dt = hour_dt.replace(tzinfo=pytz.utc)
+
+                    # skip data point if it is not after the last timestamp in the database
+                    if int(hour_dt.timestamp()) <= last_dt:
+                        continue
+
+                    # create new data point
+                    data_point = weather_info.copy()
+                    data_point["dt"] = int(hour_dt.timestamp())
+
+                    # Handle temperature and feels like data
+                    for metric in ["temp", "feels_like"]:
+                        period_data = data_point[metric].get(time_period)
+                        if period_data:
+                            data_point[metric] = period_data
+
+                    # Handle min and max temp for the entire day
+                    data_point["temp_min"] = weather_info["temp"]["min"]
+                    data_point["temp_max"] = weather_info["temp"]["max"]
+
+                    exploded_data.append(data_point)
+
+        exploded_data = sorted(exploded_data, key=lambda d: d["dt"])
+
+        return exploded_data
+
+    @staticmethod
+    def prep_data(data):
+        """
+        Prepares the weather forecast data for database insertion.
+
+        The OpenWeather API response data is restructured to match the database schema, extracting the necessary fields
+        and handling any missing data.
+
+        Args:
+            data(dict): dictionary containing the raw data for a specific hour of the forecast
+
+        Returns:
+            data(dict): dictionary containing the prepared data for a specific hour of the forecast
+        """
+        data['dt_iso'] = datetime.utcfromtimestamp(data['dt'])
+        data['dt_txt'] = data['dt']
+        data['feels_like'] = data['feels_like']
+        data['visibility'] = 10000
+        data['temp'] = data['temp']
+        data['wind_speed'] = data['speed']
+        data['wind_deg'] = data['deg']
+        data['wind_gust'] = data['gust']
+        try:
+            data['rain_1h'] = data['rain']
+        except KeyError:
+            data['rain_1h'] = 0
+        try:
+            data['snow_1h'] = data['snow']
+        except KeyError:
+            data['snow_1h'] = 0
+        data['clouds_all'] = data['clouds']
         data['weather_id'] = data['weather'][0]['id']
         data['weather_main'] = data['weather'][0]['main']
         data['weather_description'] = data['weather'][0]['description']
