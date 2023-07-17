@@ -1,10 +1,9 @@
-import sqlalchemy
 from sqlalchemy import create_engine, MetaData, Table, delete, select, func
 from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
 import pytz
-from datetime import datetime, timezone
+from datetime import datetime
 from creds import pg_url, openweather_key
 
 
