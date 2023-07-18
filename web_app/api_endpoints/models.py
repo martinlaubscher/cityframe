@@ -29,17 +29,6 @@ class WeatherFc(models.Model):
         managed = False
         db_table = 'cityframe\".\"weather_fc'
 
-    # @classmethod
-    # def get_latest(cls):
-    #     """Get all weather data from the database."""
-    #     current_utc_timestamp = datetime.datetime.now(pytz.UTC)
-    #     try:
-    #         # retrieves record with closest match to current timestamp
-    #         return cls.objects.filter(dt_iso__lte=current_utc_timestamp).latest('dt_iso')
-    #         # return cls.objects.latest('dt_iso')
-    #     except cls.DoesNotExist:
-    #         return None
-
     @classmethod
     def get_latest(cls):
         """Get all weather data from the database."""
