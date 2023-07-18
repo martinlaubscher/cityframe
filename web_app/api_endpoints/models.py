@@ -93,6 +93,7 @@ class WeatherFc(models.Model):
 
     @classmethod
     def save_data(cls, data):
-        """Save weather data to the database."""
+        """Saves weather data to the database.
+        """
         weather_data = cls(**data)
         weather_data.save()
