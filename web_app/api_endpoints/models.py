@@ -72,8 +72,8 @@ class WeatherFc(models.Model):
                     "country": "US",
                 },
                 "id": 5125771,
-                "name": "Manhattan",  # replace with actual name if available
-                "cod": 200,  # replace with actual cod if available
+                "name": "Manhattan",
+                "cod": 200,
             }
             return weather_data_json
             # return cls.objects.latest('dt_iso')

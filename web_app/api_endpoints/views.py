@@ -4,7 +4,6 @@ from data_apis.creds import openweather_key, timezone_db_key
 from .models import WeatherFc
 import requests
 import datetime
-import json
 
 
 def convert_to_datetime_string(timestamp):
@@ -81,7 +80,6 @@ class CurrentSuntimesAPIView(APIView):
         Returns json listing sunrise and sunset in unix timestamp format (with offset applied)
         If formatting == 'datetime', returns a datetime string
         """
-
         url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
         response = requests.get(url)
         raw_data = response.json()
