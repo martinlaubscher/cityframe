@@ -26,6 +26,7 @@ class WeatherFc(models.Model):
     weather_icon = models.CharField(max_length=255)
 
     class Meta:
+        managed = False
         db_table = 'cityframe\".\"weather_fc'
 
     # @classmethod
