@@ -43,26 +43,69 @@ class CurrentWeatherAPIView(APIView):
         """
         # Try to get the data from the database
         weather_data = WeatherFc.get_latest()
-        weather_data_serializable = list(weather_data.values())
-
-        weather_data_json = json.dumps(weather_data_serializable)
 
         if weather_data is not None:
             # If we have data in the database, return that
-            print(f"Weather data: {weather_data}")
-            return Response(weather_data_json)
+            # for field_name, field_value in weather_data.__dict__.items():
+            #     print(field_name, ":", field_value)
+
+            # for debugging
+            print("\nWeather data fetched from Database")
+
+            # format the DB data as json, any hardcoded values are consistent across all records and not stored in DB
+            # weather_data_json = {
+            #     "coord": {"lon": -73.9663, "lat": 40.7834},
+            #     "weather": [
+            #         {
+            #             "id": weather_data.weather_id,
+            #             "main": weather_data.weather_main,
+            #             "description": weather_data.weather_description,
+            #             "icon": weather_data.weather_icon,
+            #         }
+            #     ],
+            #     "base": "stations",
+            #     "main": {
+            #         "temp": weather_data.temp,
+            #         "feels_like": weather_data.feels_like,
+            #         "temp_min": weather_data.temp_min,
+            #         "temp_max": weather_data.temp_max,
+            #         "pressure": weather_data.pressure,
+            #         "humidity": weather_data.humidity,
+            #     },
+            #     "visibility": weather_data.visibility,
+            #     "wind": {
+            #         "speed": weather_data.wind_speed,
+            #         "deg": weather_data.wind_deg,
+            #     },
+            #     "clouds": {
+            #         "all": weather_data.clouds_all,
+            #     },
+            #     "dt": weather_data.dt,
+            #     "sys": {
+            #         "type": 1,
+            #         "id": 5141,
+            #         "country": "US",
+            #     },
+            #     "id": 5125771,
+            #     "name": "Manhattan",  # replace with actual name if available
+            #     "cod": 200,  # replace with actual cod if available
+            # }
+            return Response(weather_data)
 
         else:
-            # # If we don't have data in the database, fetch from the OpenWeather API
-            # url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-            # response = requests.get(url)
-            # data = response.json()
-            #
-            # # Save this data to the database for future use
-            # # WeatherFc.save_data(data)
-            #
-            # return Response(data)
-            return Response({"error": "No weather data found in the database"}, status=500)
+            # If we don't have data in the database, fetch from the OpenWeather API
+            url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+            response = requests.get(url)
+            data = response.json()
+
+            # Save this data to the database for future use
+            # WeatherFc.save_data(data)
+
+            # for debugging
+            print("\nWeather data fetched from openweather API call")
+
+            return Response(data)
+            # return Response({"error": "No weather data found in the database"}, status=500)
 
 
 class FutureWeatherAPIView(APIView):
