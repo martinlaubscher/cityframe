@@ -9,9 +9,11 @@ import Map from '../components/mapBackground/Map.jsx';
 import dynamic from '../components/dummydata/dynamicjunk.js';
 import data from '../components/dummydata/locationjunk.js';
 import { useState } from 'react';
-import Droplist from '../components/Droplist/Droplist.jsx';
+import Droplist from '../components/droplist/Droplist.jsx';
+//import mandata from '../components/data/manhattan_taxi_zones.geojson';
 
 export default function Homepage() {
+  //console.log(mandata)
   
   const [listResults, setListResults]=useState(dynamic)
   const [listShow, setListShow]=useState(false)
