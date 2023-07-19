@@ -1,6 +1,7 @@
 from django.db import models
 import datetime
 import pytz
+from django.utils import timezone
 
 
 class WeatherFc(models.Model):
@@ -86,3 +87,84 @@ class WeatherFc(models.Model):
         """
         weather_data = cls(**data)
         weather_data.save()
+
+
+class WeatherCurrent(models.Model):
+    dt = models.BigIntegerField(primary_key=True)
+    dt_iso = models.DateTimeField(default=timezone.now)
+    temp = models.FloatField(default=0)
+    feels_like = models.FloatField(default=0)
+    temp_min = models.FloatField(default=0)
+    temp_max = models.FloatField(default=0)
+    pressure = models.IntegerField(default=0)
+    humidity = models.IntegerField(default=0)
+    visibility = models.IntegerField(default=0)
+    wind_speed = models.FloatField(default=0)
+    wind_deg = models.IntegerField(default=0)
+    clouds_all = models.IntegerField(default=0)
+    weather_id = models.IntegerField(default=0)
+    weather_main = models.CharField(max_length=200)
+    weather_description = models.CharField(max_length=200)
+    weather_icon = models.CharField(max_length=200)
+
+    class Meta:
+        managed = True
+        db_table = 'cityframe\".\"weather_current'
+
+    # this will likely be done outside of django, on a cronjob with a python script
+    # def save(self, *args, **kwargs):
+    #     # Delete all other objects in the table
+    #     WeatherCurrent.objects.all().delete()
+    #
+    #     # Call the "real" save() method
+    #     super(WeatherCurrent, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_current(cls):
+        """Get current weather data from the database.
+        """
+        try:
+            # retrieves record of current weather
+            weather_data = cls.objects.get()
+
+            # formats the DB record as json, any hardcoded values are consistent across all records and not stored in DB
+            weather_data_json = {
+                "coord": {"lon": -73.9663, "lat": 40.7834},
+                "weather": [
+                    {
+                        "id": weather_data.weather_id,
+                        "main": weather_data.weather_main,
+                        "description": weather_data.weather_description,
+                        "icon": weather_data.weather_icon,
+                    }
+                ],
+                "base": "stations",
+                "main": {
+                    "temp": weather_data.temp,
+                    "feels_like": weather_data.feels_like,
+                    "temp_min": weather_data.temp_min,
+                    "temp_max": weather_data.temp_max,
+                    "pressure": weather_data.pressure,
+                    "humidity": weather_data.humidity,
+                },
+                "visibility": weather_data.visibility,
+                "wind": {
+                    "speed": weather_data.wind_speed,
+                    "deg": weather_data.wind_deg,
+                },
+                "clouds": {
+                    "all": weather_data.clouds_all,
+                },
+                "dt": weather_data.dt,
+                "sys": {
+                    "type": 1,
+                    "id": 5141,
+                    "country": "US",
+                },
+                "id": 5125771,
+                "name": "Manhattan",
+                "cod": 200,
+            }
+            return weather_data_json
+        except cls.DoesNotExist:
+            return None

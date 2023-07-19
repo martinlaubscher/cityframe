@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from data_apis.creds import openweather_key, timezone_db_key
-from .models import WeatherFc
+from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
 
@@ -29,7 +29,7 @@ class CurrentWeatherAPIView(APIView):
             Response(weather_data): JSON data of current Manhattan weather
         """
         # Try to get the data from the database
-        weather_data = WeatherFc.get_latest()
+        weather_data = WeatherCurrent.get_current()
 
         if weather_data is not None:
             # If there is data in the database, return it
