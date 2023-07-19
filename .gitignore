@@ -181,3 +181,4 @@ cython_debug/
 .idea/
 /web_app/data_apis/creds.py
 /web_app/staticfiles/
+/credentials.py
