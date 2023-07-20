@@ -2,9 +2,9 @@ from sqlalchemy import create_engine, MetaData, Table, delete, select, func
 from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
-import pytz
 from datetime import datetime
 from creds import pg_url, openweather_key
+from dateutil import tz
 
 
 class ApiUpdate:
@@ -162,7 +162,9 @@ class WeatherHourlyUpdate(ApiUpdate):
             data(dict): dictionary containing the prepared data for a specific hour of the forecast
         """
 
-        data['dt_iso'] = data['dt_txt']
+        nyc = tz.gettz('America/New_York')
+
+        data['dt_iso'] = datetime.fromtimestamp(data['dt'], tz=tz.UTC).astimezone(nyc).replace(tzinfo=None)
         data['temp'] = data['main']['temp']
         data['feels_like'] = data['main']['feels_like']
         data['temp_min'] = data['main']['temp_min']
@@ -223,6 +225,8 @@ class WeatherDailyUpdate(ApiUpdate):
             result = connection.execute(query)
             last_dt = result.scalar()
 
+        nyc = tz.gettz('America/New_York')
+
         # define hourly slots
         time_slots = {
             "morn": range(6, 13),
@@ -242,7 +246,7 @@ class WeatherDailyUpdate(ApiUpdate):
             for time_period, hours in time_slots.items():
                 for hour in hours:
                     hour_dt = datetime(dt.year, dt.month, dt.day, hour)
-                    hour_dt = hour_dt.replace(tzinfo=pytz.utc)
+                    hour_dt = hour_dt.replace(tzinfo=nyc)
 
                     # skip data point if it is not after the last timestamp in the database
                     if int(hour_dt.timestamp()) <= last_dt:
@@ -282,7 +286,10 @@ class WeatherDailyUpdate(ApiUpdate):
         Returns:
             data(dict): dictionary containing the prepared data for a specific hour of the forecast
         """
-        data['dt_iso'] = datetime.utcfromtimestamp(data['dt'])
+
+        nyc = tz.gettz('America/New_York')
+
+        data['dt_iso'] = datetime.fromtimestamp(data['dt'], tz=tz.UTC).astimezone(nyc).replace(tzinfo=None)
         data['dt_txt'] = data['dt']
         data['feels_like'] = data['feels_like']
         data['visibility'] = 10000
