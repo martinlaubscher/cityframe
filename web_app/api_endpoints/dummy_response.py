@@ -30,7 +30,7 @@ def create_response():
 
     dummy_response = {}
 
-    engine = create_engine(pg_url, echo=True)
+    engine = create_engine(pg_url)
     table = Table("weather_fc", MetaData(), autoload_with=engine, schema="cityframe")
 
     with engine.begin() as connection:
