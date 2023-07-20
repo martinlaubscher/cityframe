@@ -10,14 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from data_apis.creds import db_name, db_user, db_password, db_host, db_port, django_key
+from credentials import pg_conn, django_key
 from pathlib import Path
 from whitenoise import WhiteNoise
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -29,7 +28,6 @@ SECRET_KEY = django_key
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
-
 
 # Application definition
 
@@ -79,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -95,11 +92,11 @@ WSGI_APPLICATION = 'web_app.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        'NAME': db_name,
-        'USER': db_user,
-        'PASSWORD': db_password,
-        'HOST': db_host,
-        'PORT': db_port,
+        'NAME': pg_conn['database'],
+        'USER': pg_conn['username'],
+        'PASSWORD': pg_conn['password'],
+        'HOST': pg_conn['host'],
+        'PORT': pg_conn['port'],
     }
 }
 
@@ -133,7 +130,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -145,7 +141,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -154,7 +149,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = 'assets/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
-
 
 STORAGES = {
     'staticfiles': {
@@ -166,4 +160,3 @@ STORAGES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

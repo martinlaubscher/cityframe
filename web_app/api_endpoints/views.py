@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from data_apis.creds import openweather_key, timezone_db_key
+from credentials import openweather_key, timezone_db_key
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
