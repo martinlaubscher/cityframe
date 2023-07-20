@@ -28,10 +28,11 @@ def update_weather():
         'weather_main': data['weather'][0]['main'],
         'weather_description': data['weather'][0]['description'],
         'weather_icon': data['weather'][0]['icon'],
+        'timezone': data['timezone']
     }
 
     # Connect to db
-    conn = psycopg2.connect(pg_url)
+    conn = psycopg2.connect(pg_url.render_as_string(hide_password=False))
     cur = conn.cursor()
 
     # Delete all existing records in the table
@@ -40,8 +41,9 @@ def update_weather():
     # Construct SQL query
     query = """
         INSERT INTO cityframe.weather_current (dt, dt_iso, temp, feels_like, temp_min, temp_max, pressure, humidity, 
-        visibility, wind_speed, wind_deg, clouds_all, weather_id, weather_main, weather_description, weather_icon)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        visibility, wind_speed, wind_deg, clouds_all, weather_id, weather_main, weather_description, weather_icon, 
+        timezone)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
 
     # Execute the SQL query
@@ -50,7 +52,7 @@ def update_weather():
         weather_data['temp_min'], weather_data['temp_max'], weather_data['pressure'], weather_data['humidity'],
         weather_data['visibility'], weather_data['wind_speed'], weather_data['wind_deg'], weather_data['clouds_all'],
         weather_data['weather_id'], weather_data['weather_main'], weather_data['weather_description'],
-        weather_data['weather_icon']
+        weather_data['weather_icon'], weather_data['timezone']
     ))
 
     # Commit the transaction

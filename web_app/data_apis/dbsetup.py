@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # Initialise schemas to be added (currently, only cityframe)
     Schema('cityframe')
 
-    # initialise database tables to be added (currently, only weather_fc)
+    # initialise database tables to be added
     DatabaseTable(
         'weather_fc', MetaData(),
         Column('dt', BigInteger, primary_key=True),
@@ -120,6 +120,31 @@ if __name__ == '__main__':
         Column('weather_main', String),
         Column('weather_description', String),
         Column('weather_icon', String),
+        schema='cityframe'
+    )
+
+    DatabaseTable(
+        'weather_current', MetaData(),
+        Column('dt', BigInteger, primary_key=True),
+        Column('dt_iso', DateTime),
+        Column('temp', Float),
+        Column('visibility', Integer),
+        Column('feels_like', Float),
+        Column('temp_min', Float),
+        Column('temp_max', Float),
+        Column('pressure', Integer),
+        Column('humidity', Integer),
+        Column('wind_speed', Float),
+        Column('wind_deg', Integer),
+        Column('wind_gust', Float, default=0),
+        Column('rain_1h', Float, default=0),
+        Column('snow_1h', Float, default=0),
+        Column('clouds_all', Integer, default=0),
+        Column('weather_id', Integer),
+        Column('weather_main', String),
+        Column('weather_description', String),
+        Column('weather_icon', String),
+        Column('timezone', Integer),
         schema='cityframe'
     )
 
