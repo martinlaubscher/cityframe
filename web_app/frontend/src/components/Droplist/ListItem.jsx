@@ -6,7 +6,9 @@ export default function ListItem (props){
     
     return(
         <div className="listItem" onClick={handleClick}>
-            place id={props.id}, time={props.data.time}, busy={props.data.busy}
+            <h4>time: {props.data.time}</h4>
+            <h3>Suitability score={props.score}</h3>
+            <p>place id={props.id},  busy={props.data.busyness}</p>
         </div>
     )
 
