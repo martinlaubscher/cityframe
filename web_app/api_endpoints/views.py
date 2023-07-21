@@ -1,10 +1,6 @@
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from data_apis.creds import openweather_key, timezone_db_key
-from api_endpoints.dummy_response import create_response
+from credentials import openweather_key, timezone_db_key
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
@@ -157,8 +153,7 @@ class CurrentManhattanTimeAPIView(APIView):
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
-        url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&' \
-              f'lat=40.7831&lng=-73.9712'
+        url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&lat=40.7831&lng=-73.9712'
         response = requests.get(url)
         data = response.json()
 
@@ -178,39 +173,4 @@ class CurrentManhattanTimeAPIView(APIView):
 
         return Response(processed_data)
 
-
 # now create an endpoint for golden hour
-
-
-class ResponseSerializer(serializers.Serializer):
-    # Add fields for all properties in your response
-    time = serializers.DateTimeField()
-    busyness = serializers.IntegerField()
-    trees = serializers.IntegerField()
-    style = serializers.CharField()
-
-
-class MainFormSubmissionView(APIView):
-
-    @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
-                'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
-                'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
-                'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
-            }
-        ),
-        responses={200: ResponseSerializer(many=True)}
-    )
-    def post(self, request):
-        time = request.data.get('time')
-        busyness = request.data.get('busyness')
-        trees = request.data.get('trees')
-        style = request.data.get('style')
-        print(f"time: {time}")
-        print(f"busyness: {busyness}")
-        print(f"trees: {trees}")
-        print(f"style: {style}")
-        return Response(create_response())

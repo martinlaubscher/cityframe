@@ -1,7 +1,8 @@
 import requests
-import psycopg2
-from data_apis.creds import pg_url, openweather_key
+import psycopg
+from credentials import pg_conn, openweather_key
 from datetime import datetime
+from sqlalchemy import URL
 
 
 def update_weather():
@@ -31,8 +32,13 @@ def update_weather():
         'timezone': data['timezone']
     }
 
+    pg_url = URL.create(
+        "postgresql",
+        **pg_conn
+    )
+
     # Connect to db
-    conn = psycopg2.connect(pg_url.render_as_string(hide_password=False))
+    conn = psycopg.connect(pg_url.render_as_string(hide_password=False))
     cur = conn.cursor()
 
     # Delete all existing records in the table

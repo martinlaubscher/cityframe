@@ -1,9 +1,9 @@
-from sqlalchemy import create_engine, MetaData, Table, delete, select, func
+from sqlalchemy import create_engine, URL, MetaData, Table, delete, select, func
 from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
 from datetime import datetime
-from creds import pg_url, openweather_key
+from credentials import pg_conn, openweather_key
 from dateutil import tz
 
 
@@ -28,6 +28,11 @@ class ApiUpdate:
             url (str): URL of the API endpoint
             params (dict): Parameters to pass to the API request
         """
+
+        pg_url = URL.create(
+            "postgresql+psycopg",
+            **pg_conn
+        )
 
         self.engine = create_engine(pg_url, echo=True)
         self.table = Table(table_name, MetaData(), autoload_with=self.engine, schema=schema_name)
