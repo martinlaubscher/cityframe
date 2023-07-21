@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from data_apis.creds import db_name, db_user, db_password, db_host, db_port, django_key
+from credentials import pg_conn, django_key
 from pathlib import Path
 from whitenoise import WhiteNoise
 import os
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     # cityFrame apps
+    'api_endpoints',
     'core',
     'rest_framework',
     'drf_yasg',
@@ -94,11 +95,11 @@ WSGI_APPLICATION = 'web_app.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        'NAME': db_name,
-        'USER': db_user,
-        'PASSWORD': db_password,
-        'HOST': db_host,
-        'PORT': db_port,
+        'NAME': pg_conn['database'],
+        'USER': pg_conn['username'],
+        'PASSWORD': pg_conn['password'],
+        'HOST': pg_conn['host'],
+        'PORT': pg_conn['port'],
     }
 }
 
@@ -165,3 +166,4 @@ STORAGES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
