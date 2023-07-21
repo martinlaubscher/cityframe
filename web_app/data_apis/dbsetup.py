@@ -1,7 +1,6 @@
-from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Integer, BigInteger, String, Float, \
-    DateTime
+from sqlalchemy import inspect, create_engine, Table, MetaData, Column, Integer, BigInteger, String, Float, DateTime
 from sqlalchemy.schema import CreateSchema
-from credentials import pg_conn
+from creds import pg_url
 
 
 class Schema:
@@ -89,12 +88,6 @@ class DatabaseTable(Table):
 
 
 if __name__ == '__main__':
-    # Create the sqlalchemy url
-    pg_url = URL.create(
-        "postgresql+psycopg",
-        **pg_conn
-    )
-
     # Create an engine that connects to the database
     engine = create_engine(pg_url, echo=True)
 
