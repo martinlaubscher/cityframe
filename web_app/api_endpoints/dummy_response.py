@@ -1,6 +1,6 @@
 from random import randint, randrange
-from sqlalchemy import create_engine, MetaData, Table, select, func
-from data_apis.creds import pg_url
+from sqlalchemy import create_engine, URL, MetaData, Table, select, func
+from credentials import pg_conn
 
 
 def create_response():
@@ -29,6 +29,11 @@ def create_response():
                 202, 209, 211, 224, 229, 230, 231, 232, 233, 234, 236, 237, 238, 239, 243, 244, 246, 249, 261, 262, 263]
 
     dummy_response = {}
+
+    pg_url = URL.create(
+        "postgresql+psycopg",
+        **pg_conn
+    )
 
     engine = create_engine(pg_url)
     table = Table("weather_fc", MetaData(), autoload_with=engine, schema="cityframe")
