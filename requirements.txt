@@ -36,10 +36,11 @@ wheel==0.38.4
 win-inet-pton==1.1.0
 whitenoise==6.5.0
 pandas==1.4.4
-python-dateutil==2.8.2
 psycopg==3.1.9
 psycopg-binary==3.1.9
 psycopg-pool==3.1.7
+python-dateutil==2.8.2
+geopandas==0.13.2
 pylibmc==1.6.3
 django-pylibmc==0.6.1
 python-binary-memcached==0.31.2
