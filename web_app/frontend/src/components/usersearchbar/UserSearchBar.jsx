@@ -5,7 +5,6 @@ import UserSearchMenu from "./UserSearchMenu";
 
 export default function UserSearchBar() {
   const [busynessLevel, setBusynessLevel] = useState("");
-
   return (
     <div className="usersearch-container">
       <div className="button-wrapper">
@@ -48,7 +47,7 @@ export default function UserSearchBar() {
           />
         </div>
       </div>
-      <UserSearchMenu />
+      <UserSearchMenu  />
       {/* <div
         className="offcanvas offcanvas-bottom"
         tabIndex="-1"

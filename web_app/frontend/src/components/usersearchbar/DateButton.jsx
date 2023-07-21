@@ -1,8 +1,10 @@
+// disabled this component for now, because user can select date in time component
+
 import "./UserSearchMenuCSS.css";
 import React, { useState } from "react";
 
 const DateButton = () => {
-  const [showOptions, setShowOptions] = useState(false);
+  const [showOptions, setShowOptions] = useState(true);
 
   const handleButtonClick = () => {
     setShowOptions(true);
@@ -21,6 +23,7 @@ const DateButton = () => {
       )}
       {showOptions && (
         <div className="option-list">
+          Date
           <input type="date" className="date-input" />
         </div>
       )}
