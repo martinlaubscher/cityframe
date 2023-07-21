@@ -1,0 +1,36 @@
+[
+    {
+      "zoneName": "Central Park",
+      "score": 8.5,
+      "zoneLocation": "New York, USA",
+      "zoneDetails": {
+        "busynessLevel": 3,
+        "treePresence": "High",
+        "architecturalStyle": "Modern"
+      },
+      "sunriseSunset": "Sunrise: 05:30, Sunset: 20:15"
+    },
+    {
+      "zoneName": "Hyde Park",
+      "score": 7.2,
+      "zoneLocation": "London, UK",
+      "zoneDetails": {
+        "busynessLevel": 2,
+        "treePresence": "Medium",
+        "architecturalStyle": "Victorian"
+      },
+      "sunriseSunset": "Sunrise: 04:45, Sunset: 21:10"
+    },
+    {
+      "zoneName": "The Bund",
+      "score": 9.1,
+      "zoneLocation": "Shanghai, China",
+      "zoneDetails": {
+        "busynessLevel": 4,
+        "treePresence": "Low",
+        "architecturalStyle": "Modern"
+      },
+      "sunriseSunset": "Sunrise: 05:00, Sunset: 19:00"
+    }
+  ]
+  
