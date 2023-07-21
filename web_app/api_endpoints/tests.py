@@ -1,13 +1,25 @@
 import re
 from django.test import TestCase
+from django.db import connections
 from django.urls import reverse
 from rest_framework.test import APIClient
 
 
 class EndpointTests(TestCase):
     def setUp(self):
-        """This method sets up a client used to make HTTP requests to API endpoints
+        """This method sets up the cityframe schema and weather_fc table on the test database in the same manner as the
+        cityframe database. This method also sets up a client used to make HTTP requests to API endpoints
         """
+        super().setUp()
+
+        # Get a cursor for your test database
+        cursor = connections['default'].cursor()
+
+        # Execute your SQL script to create the necessary tables
+        # Replace 'your_sql_script.sql' with the path to your actual SQL script
+        with open('api_endpoints/your_sql_script.sql') as f:
+            cursor.execute(f.read())
+
         self.client = APIClient()
 
     def test_current_suntimes(self):
@@ -67,7 +79,6 @@ class EndpointTests(TestCase):
         self.assertIn('clouds', response.data)
         self.assertIn('dt', response.data)
         self.assertIn('sys', response.data)
-        self.assertIn('timezone', response.data)
         self.assertIn('id', response.data)
         self.assertIn('name', response.data)
         self.assertIn('cod', response.data)
@@ -102,8 +113,6 @@ class EndpointTests(TestCase):
         self.assertIn('type', response.data['sys'])
         self.assertIn('id', response.data['sys'])
         self.assertIn('country', response.data['sys'])
-        self.assertIn('sunrise', response.data['sys'])
-        self.assertIn('sunset', response.data['sys'])
 
     def test_future_weather(self):
         """This is a unit test case for the api/future-weather/<str:timestamp>/ endpoint. It retrieves the URL using the

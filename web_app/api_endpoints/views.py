@@ -1,6 +1,11 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from data_apis.creds import openweather_key, timezone_db_key
+from credentials import openweather_key, timezone_db_key
+from api_endpoints.dummy_response import create_response
+from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
 
@@ -9,9 +14,11 @@ def convert_to_datetime_string(timestamp):
     """This function converts a timestamp to a datetime string
     It is intended for use with timestamps with timezone offset already applied
 
-    Take one argument (int: unix timestamp), and converts to datetime string
+    Args:
+        timestamp (int): a unix timestamp
 
-    Returns datetime string
+    Returns:
+        dt_string: the timestamp converted to datetime string
     """
     dt = datetime.datetime.utcfromtimestamp(timestamp)
     dt_string = dt.strftime('%Y-%m-%d %H:%M:%S')
@@ -22,14 +29,30 @@ class CurrentWeatherAPIView(APIView):
     def get(self, request):
         """Get request for current weather
 
-        No arguments
-
-        Returns JSON data of current Manhattan weather
+        Returns:
+            Response(weather_data): JSON data of current Manhattan weather
         """
-        url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-        response = requests.get(url)
-        data = response.json()
-        return Response(data)
+        # Try to get the data from the database
+        weather_data = WeatherCurrent.get_current()
+
+        if weather_data is not None:
+            # If there is data in the database, return it
+            # for debugging
+            print("\nWeather data fetched from Database")
+
+            return Response(weather_data)
+
+        else:
+            # If no data in the database, fetch from the OpenWeather API
+            url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+            response = requests.get(url)
+            weather_data = response.json()
+
+            # for debugging
+            print("\nWeather data fetched from openweather API call")
+
+            return Response(weather_data)
+            # return Response({"error": "No weather data found in the database"}, status=500)
 
 
 class FutureWeatherAPIView(APIView):
@@ -61,7 +84,6 @@ class CurrentSuntimesAPIView(APIView):
         Returns json listing sunrise and sunset in unix timestamp format (with offset applied)
         If formatting == 'datetime', returns a datetime string
         """
-
         url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
         response = requests.get(url)
         raw_data = response.json()
@@ -135,7 +157,8 @@ class CurrentManhattanTimeAPIView(APIView):
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
-        url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&lat=40.7831&lng=-73.9712'
+        url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&' \
+              f'lat=40.7831&lng=-73.9712'
         response = requests.get(url)
         data = response.json()
 
@@ -155,4 +178,39 @@ class CurrentManhattanTimeAPIView(APIView):
 
         return Response(processed_data)
 
+
 # now create an endpoint for golden hour
+
+
+class ResponseSerializer(serializers.Serializer):
+    # Add fields for all properties in your response
+    time = serializers.DateTimeField()
+    busyness = serializers.IntegerField()
+    trees = serializers.IntegerField()
+    style = serializers.CharField()
+
+
+class MainFormSubmissionView(APIView):
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
+                'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
+                'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
+                'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
+            }
+        ),
+        responses={200: ResponseSerializer(many=True)}
+    )
+    def post(self, request):
+        time = request.data.get('time')
+        busyness = request.data.get('busyness')
+        trees = request.data.get('trees')
+        style = request.data.get('style')
+        print(f"time: {time}")
+        print(f"busyness: {busyness}")
+        print(f"trees: {trees}")
+        print(f"style: {style}")
+        return Response(create_response())
