@@ -6,24 +6,62 @@ import "./homePageCSS.css"
 import WeatherComponent from '../components/weatherInfo/WeatherComponent.jsx';
 
 import Map from '../components/mapBackground/Map.jsx';
-import dynamic from '../components/dummydata/dynamicjunk.js';
+import dynamic from '../components/dummydata/geojunk.js';
 import data from '../components/dummydata/locationjunk.js';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Droplist from '../components/Droplist/Droplist.jsx';
 
 export default function Homepage() {
   
-  const [listResults, setListResults]=useState(dynamic)
+  const [listResults, setListResults]=useState({results: dynamic, name: "All Zones"})
   const [listShow, setListShow]=useState(false)
+  const [scores, setScores]=useState([5])
+  
+  function searchFilter(){
+    //Take in dictionary of all places and times in search (I think??) and all parameters
+    const allIds = dynamic.map(place=>{return place.id})
+    console.log("All ids", allIds)
+    const search={places: allIds, times: [1, 2], params: {busyness: 50}}
+    
+    const places=dynamic.filter(item => search.places.includes(item.id))
+    console.log("places", places)
+
+    const items=places.map(item=> {
+      return {id:item.id, data:item.data.filter(datum => search.times.includes(datum.time))}
+    })
+    console.log("items", items)
+
+    calculateScores(items, search.params)
+  }
+
+  function calculateScores(items, params){
+    console.log("About to set score using", items)
+    setScores(items.map(item=>{
+      console.log("Set score now", item)
+      return {id: item.id, data: item.data.map(time=>{
+        const score=100-Math.abs(time.busyness-params.busyness)
+        return {time: time.time, score: score}
+      }
+      )}
+    }))
+    console.log("Score:", scores)
+  }
+
   function buildlist(results){
-    const items=dynamic.filter(item => item.id===results.id)
-    setListResults(items)
+    const items=dynamic.filter(item => item.id===results.properties.location_id)
+    console.log(scores)
+    const placeScores=scores.filter(item => item.id===results.properties.location_id)
+    console.log(placeScores)
+    setListResults({items: items, name: results.properties.zone, score: placeScores})
     setListShow(true)
     }
   
   function hideList(){
     setListShow(false)    
   }
+  useEffect(function() {
+        searchFilter()
+  }, [])//put the search thing in the dependancies array
 
 
   return (
