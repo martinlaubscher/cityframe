@@ -168,8 +168,8 @@ if __name__ == '__main__':
     )
 
     # getting architecture styles
-    building_points = gpd.read_file("../../data/GeoJSON/Building_points.geojson")
-    zone_polygons = gpd.read_file("../../data/GeoJSON/manhattan_taxi_zones.geojson")
+    building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
+    zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
     building_feature_filter = 'Style_Prim'
     building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
 
