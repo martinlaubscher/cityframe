@@ -3,7 +3,7 @@ from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Int
 from sqlalchemy.schema import CreateSchema
 import geopandas as gpd
 from credentials import pg_conn
-from data.Mapping_Buildings_and_Zones.buildings_in_zones import map_points_to_zones
+from data.Mapping_Buildings_and_Zones.points_in_zones import map_points_to_zones
 
 
 class Schema:
@@ -163,6 +163,7 @@ if __name__ == '__main__':
         # Column('id', Integer, autoincrement=True, primary_key=True),
         Column('location_id', Integer, primary_key=True),
         Column('zone', String),
+        Column('trees', Integer),
         # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
         schema='cityframe'
     )

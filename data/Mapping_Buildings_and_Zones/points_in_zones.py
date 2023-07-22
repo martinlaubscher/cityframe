@@ -115,8 +115,8 @@ def map_points_to_zones(points_gdf, polygons_gdf, feature_name):
 # building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
 # print(building_counts_in_zones)
 # print(building_counts_in_zones.keys())
-
-tree_points = gpd.read_file("../GeoJSON/tree_points.geojson")
-zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
-tree_counts_in_zones = rank_zones_by_point_presence(zone_polygons, tree_points)
+#
+# tree_points = gpd.read_file("../GeoJSON/tree_points.geojson")
+# zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
+# tree_counts_in_zones = rank_zones_by_point_presence(zone_polygons, tree_points)
 # print(tree_counts_in_zones)
