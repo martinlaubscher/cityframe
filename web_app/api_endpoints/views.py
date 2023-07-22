@@ -8,6 +8,7 @@ from api_endpoints.dummy_response import create_response
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
+from django.core.cache import cache
 
 
 def convert_to_datetime_string(timestamp):
@@ -24,7 +25,6 @@ def convert_to_datetime_string(timestamp):
     dt_string = dt.strftime('%Y-%m-%d %H:%M:%S')
     return dt_string
 
-
 class CurrentWeatherAPIView(APIView):
     def get(self, request):
         """Get request for current weather
@@ -32,27 +32,10 @@ class CurrentWeatherAPIView(APIView):
         Returns:
             Response(weather_data): JSON data of current Manhattan weather
         """
-        # Try to get the data from the database
-        weather_data = WeatherCurrent.get_current()
-
-        if weather_data is not None:
-            # If there is data in the database, return it
-            # for debugging
-            print("\nWeather data fetched from Database")
-
-            return Response(weather_data)
-
-        else:
-            # If no data in the database, fetch from the OpenWeather API
-            url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-            response = requests.get(url)
-            weather_data = response.json()
-
-            # for debugging
-            print("\nWeather data fetched from openweather API call")
-
-            return Response(weather_data)
-            # return Response({"error": "No weather data found in the database"}, status=500)
+        url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+        response = requests.get(url)
+        data = response.json()
+        return Response(data)
 
 
 class FutureWeatherAPIView(APIView):

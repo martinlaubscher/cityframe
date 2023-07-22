@@ -18,7 +18,6 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,10 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# this is now set in the environment specific settings files
+# DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
-
 
 # Application definition
 
@@ -79,7 +78,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -103,18 +101,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_URL.database,
-#         'USER': DATABASE_URL.username,
-#         'PASSWORD': DATABASE_URL.password,
-#         'HOST': DATABASE_URL.host,
-#         'PORT': DATABASE_URL.port,
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -133,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -145,7 +130,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -154,7 +138,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_URL = 'assets/'
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
-
 
 STORAGES = {
     'staticfiles': {
