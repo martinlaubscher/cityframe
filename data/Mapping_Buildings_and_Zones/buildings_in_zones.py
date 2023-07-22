@@ -41,7 +41,7 @@ def rank_zones_by_point_presence(polygons_gdf, points_gdf):
     """
    
     zones_list = []
-   # Filter the polygons based on point inclusion
+    # Filter the polygons based on point inclusion
     filtered_polygons_gdf = polygons_gdf[polygons_gdf.geometry.apply(lambda poly: any(poly.contains(point) for point in points_gdf.geometry))]
 
     # Create a dictionary to map zone to point count
@@ -107,10 +107,16 @@ def map_points_to_zones(points_gdf, polygons_gdf, feature_name):
     return points_in_zones
 
 
-building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
-zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
-building_feature_filter = 'Style_Prim'
-
-building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
+# *** tests ***
+# building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
+# zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
+# building_feature_filter = 'Style_Prim'
+#
+# building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
 # print(building_counts_in_zones)
 # print(building_counts_in_zones.keys())
+
+tree_points = gpd.read_file("../GeoJSON/tree_points.geojson")
+zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
+tree_counts_in_zones = rank_zones_by_point_presence(zone_polygons, tree_points)
+# print(tree_counts_in_zones)
