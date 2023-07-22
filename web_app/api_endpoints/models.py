@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class WeatherFc(models.Model):
     dt = models.BigIntegerField(primary_key=True)
-    dt_iso = models.DateTimeField()
+    dt_iso = models.DateTimeField(unique=True)
     temp = models.FloatField()
     feels_like = models.FloatField()
     temp_min = models.FloatField()
@@ -168,3 +168,38 @@ class WeatherCurrent(models.Model):
             return weather_data_json
         except cls.DoesNotExist:
             return None
+
+
+class TaxiZones(models.Model):
+    id = models.IntegerField(primary_key=True, db_column='location_id')
+    zone = models.CharField(max_length=100)
+    trees = models.IntegerField()
+    neo_georgian = models.IntegerField(db_column='neo-Georgian')
+    greek_revival = models.IntegerField(db_column='Greek Revival')
+    romanesque_revival = models.IntegerField(db_column='Romanesque Revival')
+    neo_grec = models.IntegerField(db_column='neo-Grec')
+    renaissance_revival = models.IntegerField(db_column='Renaissance Revival')
+    beaux_arts = models.IntegerField(db_column='Beaux-Arts')
+    queen_anne = models.IntegerField(db_column='Queen Anne')
+    italianate = models.IntegerField(db_column='Italianate')
+    federal = models.IntegerField(db_column='Federal')
+    neo_renaissance = models.IntegerField(db_column='neo-Renaissance')
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"taxi_zones'
+
+
+class Busyness(models.Model):
+    id = models.IntegerField(primary_key=True)
+    taxi_zone = models.ForeignKey(TaxiZones, on_delete=models.CASCADE, db_column='taxi_zone')
+    prediction = models.FloatField()
+    bucket = models.IntegerField()
+    dt_iso = models.ForeignKey(WeatherFc, to_field='dt_iso', on_delete=models.CASCADE, db_column='dt_iso')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['taxi_zone', 'dt_iso'], name='unique_zone_dt')
+        ]
+        managed = False
+        db_table = 'cityframe\".\"Results'

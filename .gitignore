@@ -182,3 +182,4 @@ cython_debug/
 /web_app/data_apis/creds.py
 /web_app/staticfiles/
 /web_app/credentials.py
+/data/model.pkl
