@@ -1,7 +1,9 @@
 from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Integer, BigInteger, String, Float, \
     DateTime
 from sqlalchemy.schema import CreateSchema
+import geopandas as gpd
 from credentials import pg_conn
+from data.Mapping_Buildings_and_Zones.buildings_in_zones import map_points_to_zones
 
 
 class Schema:
@@ -154,6 +156,26 @@ if __name__ == '__main__':
         Column('timezone', Integer),
         schema='cityframe'
     )
+
+    # initialising taxi_zones table
+    taxi_zones = DatabaseTable(
+        'taxi_zones', MetaData(),
+        # Column('id', Integer, autoincrement=True, primary_key=True),
+        Column('location_id', Integer, primary_key=True),
+        Column('zone', String),
+        # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
+        schema='cityframe'
+    )
+
+    # getting architecture styles
+    building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
+    zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
+    building_feature_filter = 'Style_Prim'
+    building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
+
+    # looping through styles to add corresponding columns to taxi_zones table
+    for i in building_counts_in_zones.keys():
+        taxi_zones.append_column(Column(i, Integer))
 
     # creating all schemas initialised previously - if they don't exist yet
     Schema.create_all()

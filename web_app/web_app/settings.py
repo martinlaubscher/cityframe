@@ -25,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# this is now set in the environment specific settings files
+# DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
 
@@ -99,18 +100,6 @@ DATABASES = {
         'PORT': pg_conn['port'],
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_URL.database,
-#         'USER': DATABASE_URL.username,
-#         'PASSWORD': DATABASE_URL.password,
-#         'HOST': DATABASE_URL.host,
-#         'PORT': DATABASE_URL.port,
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

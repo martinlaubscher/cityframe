@@ -1,9 +1,14 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from credentials import openweather_key, timezone_db_key
+from api_endpoints.dummy_response import create_response
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
+from django.core.cache import cache
 
 
 def convert_to_datetime_string(timestamp):
@@ -20,7 +25,6 @@ def convert_to_datetime_string(timestamp):
     dt_string = dt.strftime('%Y-%m-%d %H:%M:%S')
     return dt_string
 
-
 class CurrentWeatherAPIView(APIView):
     def get(self, request):
         """Get request for current weather
@@ -28,27 +32,41 @@ class CurrentWeatherAPIView(APIView):
         Returns:
             Response(weather_data): JSON data of current Manhattan weather
         """
-        # Try to get the data from the database
-        weather_data = WeatherCurrent.get_current()
+        # Try to get the data from the cache
+        weather_data = cache.get('current_weather')
 
         if weather_data is not None:
-            # If there is data in the database, return it
+            # If there is data in the cache, return it
             # for debugging
-            print("\nWeather data fetched from Database")
+            print("\nWeather data fetched from Cache")
 
             return Response(weather_data)
-
         else:
-            # If no data in the database, fetch from the OpenWeather API
-            url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-            response = requests.get(url)
-            weather_data = response.json()
+            # Try to get the data from the database
+            weather_data = WeatherCurrent.get_current()
 
-            # for debugging
-            print("\nWeather data fetched from openweather API call")
+            if weather_data is not None:
+                # If there is data in the database, return it
+                # for debugging
+                print("\nWeather data fetched from Database")
 
-            return Response(weather_data)
-            # return Response({"error": "No weather data found in the database"}, status=500)
+                # Add the data to the cache, with a timeout of 5 minutes
+                cache.set('current_weather', weather_data, 300)
+
+                return Response(weather_data)
+            else:
+                # If no data in the database, fetch from the OpenWeather API
+                url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+                response = requests.get(url)
+                weather_data = response.json()
+
+                # for debugging
+                print("\nWeather data fetched from openweather API call")
+
+                # Store the new data in the cache for next time
+                cache.set('current_weather', weather_data, 300)
+
+                return Response(weather_data)
 
 
 class FutureWeatherAPIView(APIView):
@@ -153,7 +171,8 @@ class CurrentManhattanTimeAPIView(APIView):
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
-        url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&lat=40.7831&lng=-73.9712'
+        url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&' \
+              f'lat=40.7831&lng=-73.9712'
         response = requests.get(url)
         data = response.json()
 
@@ -173,4 +192,39 @@ class CurrentManhattanTimeAPIView(APIView):
 
         return Response(processed_data)
 
+
 # now create an endpoint for golden hour
+
+
+class ResponseSerializer(serializers.Serializer):
+    # Add fields for all properties in your response
+    time = serializers.DateTimeField()
+    busyness = serializers.IntegerField()
+    trees = serializers.IntegerField()
+    style = serializers.CharField()
+
+
+class MainFormSubmissionView(APIView):
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
+                'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
+                'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
+                'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
+            }
+        ),
+        responses={200: ResponseSerializer(many=True)}
+    )
+    def post(self, request):
+        time = request.data.get('time')
+        busyness = request.data.get('busyness')
+        trees = request.data.get('trees')
+        style = request.data.get('style')
+        print(f"time: {time}")
+        print(f"busyness: {busyness}")
+        print(f"trees: {trees}")
+        print(f"style: {style}")
+        return Response(create_response())
