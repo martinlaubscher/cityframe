@@ -1,11 +1,15 @@
 import "./UserSearchMenuCSS.css";
 import React, { useState } from "react";
 
-const TreeButton = () => {
+const TreeButton = ({ onChange }) => {
   const [showOptions, setShowOptions] = useState(true);
 
   const handleButtonClick = () => {
-    setShowOptions(true);
+    setShowOptions(!showOptions);
+  };
+
+  const handleOptionChange = (event) => {
+    onChange('tree', event.target.checked);
   };
 
   return (
@@ -31,6 +35,7 @@ const TreeButton = () => {
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckDefault"
+                onChange={handleOptionChange}
               />
               <label
                 className="form-check-label"
@@ -43,5 +48,6 @@ const TreeButton = () => {
     </div>
   );
 };
+
 
 export default TreeButton;

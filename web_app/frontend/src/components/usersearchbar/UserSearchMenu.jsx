@@ -4,6 +4,7 @@ import TreeButton from "./TreeButton";
 import BusynessButton from "./BusynessButton";
 import StyleButton from "./StyleButton";
 import SearchResult from "../searchresult/SearchResult";
+import { handleSearch } from "../searchresult/SearchResult"; 
 
 export default function UserSearchMenu() {
   const [searchOptions, setSearchOptions] = useState({
@@ -18,33 +19,10 @@ export default function UserSearchMenu() {
     setSearchOptions({ ...searchOptions, [optionName]: optionValue });
   };
 
-  //--------------------------------------------test data------------------------⬇️
-  const mockData = [
-    { name: "Location1", datetime: "19", busyness: 2, style: 1, tree: false },
-    { name: "Location2", datetime: new Date(), busyness: 1, style: 2, tree: true },
-    { name: "Location3", datetime: new Date(), busyness: 3, style: 1, tree: false },
-    { name: "Location4", datetime: new Date(), busyness: 4, style: 3, tree: true },
-    // more data
-  ];
-  
-  const handleSearch = () => {
-    const results = mockData.filter(item => 
-      item.busyness === searchOptions.busyness &&
-      item.style === searchOptions.style &&
-      item.tree === searchOptions.tree &&
-      
-      item.datetime.toDateString() === searchOptions.datetime.toDateString()
-    );
+  const onSearch = async () => {
+    const results = await handleSearch(searchOptions);
     setSearchResults(results);
   };
-  //--------------------------------------------test code------------------------⬆️
-
-  // -------------------------change below code to call api-------------------------
-  // const handleSearch = () => {
-  //   // search logic
-  //   const results = /* your search logic here */;
-  //   setSearchResults(results);
-  // };
 
   return (
     <div
@@ -68,9 +46,7 @@ export default function UserSearchMenu() {
           <TreeButton onChange={handleOptionsChange} />
           <BusynessButton onChange={handleOptionsChange} />
           <StyleButton onChange={handleOptionsChange} />
-
-          <button type="button" className="btn btn-dark" onClick={handleSearch}>Search</button>
-          
+          <button type="button" className="btn btn-dark" onClick={handleSearch}>Search</button>        
           <SearchResult results={searchResults} />
         </div>
       </div>

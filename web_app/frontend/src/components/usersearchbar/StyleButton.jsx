@@ -1,11 +1,15 @@
 import "./UserSearchMenuCSS.css";
 import React, { useState } from "react";
 
-const StyleButton = () => {
+const StyleButton = ({ onChange }) => {
   const [showOptions, setShowOptions] = useState(true);
 
   const handleButtonClick = () => {
     setShowOptions(true);
+  };
+
+  const handleOptionChange = (event) => {
+    onChange('style', Number(event.target.value.slice(-1)));
   };
 
   return (
@@ -23,7 +27,7 @@ const StyleButton = () => {
         <div className="option-container">
           <div className="option-label">Style</div>
           <div className="option-list">
-            <select className="style-select">
+            <select className="style-select" onChange={handleOptionChange}>
               <option value="style1">Beaux-Arts</option>
               <option value="style2">Art Deco</option>
               <option value="style3">Gothic Revival</option>

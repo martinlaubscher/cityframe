@@ -1,4 +1,4 @@
-// disabled this component for now, because user can select date in time component
+// disabled this component for now, because user can select date in time
 
 import "./UserSearchMenuCSS.css";
 import React, { useState } from "react";
@@ -8,6 +8,11 @@ const DateButton = () => {
 
   const handleButtonClick = () => {
     setShowOptions(true);
+  };
+
+  const handleDateTimeChange = (newDateTime) => {
+    setDatetime(newDateTime);
+    onChange('datetime', newDateTime);
   };
 
   return (

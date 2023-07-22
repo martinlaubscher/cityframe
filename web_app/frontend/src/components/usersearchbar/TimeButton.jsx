@@ -4,7 +4,7 @@ import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import moment from "moment-timezone";
 
-const TimeButton = () => {
+const TimeButton = ({ onChange }) => {
   const [showOptions, setShowOptions] = useState(true);
   const [datetime, setDatetime] = useState(moment().tz("America/New_York"));
 
@@ -15,6 +15,7 @@ const TimeButton = () => {
   const handleDateTimeChange = (newDateTime) => {
     setDatetime(newDateTime);
   };
+
 
   const isValidDate = (current) => {
     const yesterday = moment().tz("America/New_York").subtract(1, "day");
@@ -35,7 +36,7 @@ const TimeButton = () => {
       )}
       {showOptions && (
         <div className="option-container">
-          <div className="option-label">  
+          <div className="option-lab">  
           Time
           </div>
           <div className="option-list">
