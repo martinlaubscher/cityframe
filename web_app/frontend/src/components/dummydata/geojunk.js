@@ -65,7 +65,8 @@ const dynamic=[
 {id:"244", data: [{time: 1, busyness:60}, {time: 2, busyness:30}]},
 {id:"246", data: [{time: 1, busyness:70}, {time: 2, busyness:50}]},
 {id:"249", data: [{time: 1, busyness:80}, {time: 2, busyness:70}]},
-{id:"261", data: [{time: 1, busyness:90}, {time: 2, busyness:90}]}
+{id:"261", data: [{time: 1, busyness:90}, {time: 2, busyness:90}]},
+{id:"262", data: [{time: 1, busyness:100}, {time: 2, busyness:100}]}
 ]
 
 export default dynamic

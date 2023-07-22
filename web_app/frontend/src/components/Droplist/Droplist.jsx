@@ -3,7 +3,7 @@ import ListItem from "./ListItem.jsx"
 export default function Droplist (props){
 
     //const oneplace=true //temp variable for if the list is of one place or all of them. Should be passed in as a prop later
-    console.log("Droplist:", props.results)
+    //console.log("Droplist:", props.results)
     const items=props.results.items.map(item=> {
         const scoreId=props.results.score.find(id=>id.id===item.id)
         return (item.data.map(hour=> {
