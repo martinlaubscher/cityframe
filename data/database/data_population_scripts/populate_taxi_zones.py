@@ -31,8 +31,12 @@ building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, b
 tree_counts_in_zones = rank_zones_by_point_presence(zone_polygons, tree_points)
 tree_counts_scaled = map_to_scale(tree_counts_in_zones)
 
-# connect to ddb
+# connect to db
 with engine.begin() as connection:
+
+    # clear table
+    connection.execute(table.delete())
+
     # load taxi zone geojson
     with open('../../GeoJSON/manhattan_taxi_zones.geojson', 'r') as f:
         data = json.load(f)
@@ -46,7 +50,7 @@ with engine.begin() as connection:
         # add tree count to dictionary
         row['trees'] = tree_counts_in_zones.get(properties['zone'], 0)
         # add tree counts mapped to scale 1-5 to dictionary
-        row['trees_scaled'] = tree_counts_scaled.get(properties['zone'], 0)
+        row['trees_scaled'] = tree_counts_scaled.get(properties['zone'], 1)
         # append the dictionary representing the record to the list of all records
         vals.append(row)
     # sort the contents of vals by the location id
