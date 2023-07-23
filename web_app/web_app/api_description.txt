@@ -38,4 +38,11 @@
    - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the current time will be returned as a datetime string.
    - Response: Returns the current Unix timestamp (with offset applied) for Manhattan. If formatting='datetime', the response will contain a datetime string.
 
+6. GoldenHourAPIView:
+   - Description: Retrieve predicted golden hour and sunset times for a specific date
+   - Endpoint:
+	/api/golden-hour/str:chosen_date/
+   - Method: GET
+   - Parameters: chosen_date (str): A string for the date of which golden hour and sunset data is requested. In format "yyyy-mm-dd."
+   - Response: A JSON object containing the golden hour and sunset times for the specified date.
 
