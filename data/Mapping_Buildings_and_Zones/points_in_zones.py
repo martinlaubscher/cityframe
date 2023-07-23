@@ -106,17 +106,51 @@ def map_points_to_zones(points_gdf, polygons_gdf, feature_name):
     
     return points_in_zones
 
+def map_to_scale(original_dict):
+    """
+
+    Function to map dictionary values to a scale from 1 - 5
+
+    Args:
+        original_dict(dictionary): the dictionary to be mapped. Must have integers as values.
+
+    Returns:
+        Dictionary with original keys where original values have been mapped to new scale
+
+    """
+    # Find the maximum and minimum values in the original dictionary
+    max_value = max(original_dict.values())
+    min_value = min(original_dict.values())
+
+    # Calculate the scaling factor to map values from 1 to 5 based on percentiles
+    scaling_factor = 4 / (max_value - min_value)
+
+    # Calculate the 20th and 80th percentiles for scaling
+    percentile_20 = min_value + (max_value - min_value) * 0.2
+    percentile_80 = min_value + (max_value - min_value) * 0.8
+
+    # Create a new dictionary to store the mapped values
+    scaled_dict = {}
+
+    # Iterate through the original dictionary and map values to the scale
+    for key, value in original_dict.items():
+        if value <= percentile_20:
+            scaled_value = 1
+        elif value >= percentile_80:
+            scaled_value = 5
+        else:
+            scaled_value = int(2 + (value - percentile_20) * scaling_factor)
+        scaled_dict[key] = scaled_value
+
+    return scaled_dict
 
 # *** tests ***
-# building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
 # zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
+
+# building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
 # building_feature_filter = 'Style_Prim'
-#
 # building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
-# print(building_counts_in_zones)
-# print(building_counts_in_zones.keys())
 #
 # tree_points = gpd.read_file("../GeoJSON/tree_points.geojson")
-# zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
 # tree_counts_in_zones = rank_zones_by_point_presence(zone_polygons, tree_points)
-# print(tree_counts_in_zones)
+# tree_counts_scaled = map_to_scale(tree_counts_in_zones)

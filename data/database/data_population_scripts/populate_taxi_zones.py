@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import insert
 import json
 from credentials import pg_conn
 import geopandas as gpd
-from data.Mapping_Buildings_and_Zones.points_in_zones import map_points_to_zones, rank_zones_by_point_presence
+from data.Mapping_Buildings_and_Zones.points_in_zones import map_points_to_zones, rank_zones_by_point_presence, map_to_scale
 
 # SCRIPT TO POPULATE THE TAXI_ZONES TABLE WITH STATIC DATA FROM TAXI ZONES, BUILDINGS, AND TREES GEOJSON FILES
 
@@ -29,6 +29,7 @@ building_feature_filter = 'Style_Prim'
 # create dictionaries for buildings/trees per taxi zone
 building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
 tree_counts_in_zones = rank_zones_by_point_presence(zone_polygons, tree_points)
+tree_counts_scaled = map_to_scale(tree_counts_in_zones)
 
 # connect to ddb
 with engine.begin() as connection:
@@ -44,6 +45,8 @@ with engine.begin() as connection:
             row[style] = building_counts_in_zones[style].get(properties['zone'], 0)
         # add tree count to dictionary
         row['trees'] = tree_counts_in_zones.get(properties['zone'], 0)
+        # add tree counts mapped to scale 1-5 to dictionary
+        row['trees_scaled'] = tree_counts_scaled.get(properties['zone'], 0)
         # append the dictionary representing the record to the list of all records
         vals.append(row)
     # sort the contents of vals by the location id
