@@ -130,6 +130,32 @@ class FutureSuntimesAPIView(APIView):
         return Response(processed_data)
 
 
+class GoldenHourAPIView(APIView):
+    def get(self, request, chosen_date):
+        """Get request for predicted weather data
+
+        Args:
+            chosen_date (String): format "yyyy-mm-dd"
+
+        Returns:
+            filtered_data (JSON): JSON data containing golden hour and sunset in format "H:MM:SS PM"
+        """
+        url = f'https://api.sunrisesunset.io/json?lat=40.7831&lng=-73.9712&timezone=%22America/New_York%22' \
+              f'&date={chosen_date}'
+        response = requests.get(url)
+        data = response.json()
+
+        # Extract relevant keys/values from the response
+        golden_hour = data['results']['golden_hour']
+        sunset = data['results']['sunset']
+
+        filtered_data = {
+            'golden_hour': golden_hour,
+            'sunset': sunset
+        }
+
+        return Response(filtered_data)
+
 # The below provider had an incorrect offset, meaning local time was one hour off. Potential backup if issue fixed.
 # url = 'http://worldtimeapi.org/api/timezone/America/New_York'
 
@@ -160,9 +186,6 @@ class CurrentManhattanTimeAPIView(APIView):
             }
 
         return Response(processed_data)
-
-
-# now create an endpoint for golden hour
 
 
 class ResponseSerializer(serializers.Serializer):
