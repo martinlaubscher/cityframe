@@ -44,5 +44,5 @@
 	/api/golden-hour/str:chosen_date/
    - Method: GET
    - Parameters: chosen_date (str): A string for the date of which golden hour and sunset data is requested. In format "yyyy-mm-dd."
-   - Response: A JSON object containing the golden hour and sunset times for the specified date.
+   - Response: A JSON object containing the golden hour and sunset times (in format "H:MM:SS PM") for the specified date.
 
