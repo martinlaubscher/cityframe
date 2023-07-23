@@ -1,5 +1,5 @@
 // SearchResult.jsx
-import axios from 'axios';
+import axios from "axios";
 
 export default function SearchResult({ results }) {
   return (
@@ -18,17 +18,28 @@ export default function SearchResult({ results }) {
 
 export async function handleSearch(searchOptions) {
   try {
-    const response = await axios.get('/api/submit-main', {
-      params: {
-        time: searchOptions.datetime,
-        busyness: searchOptions.busyness,
-        trees: searchOptions.tree ? 1 : 0,
-        style: searchOptions.style
-      }
+    // Log the response data to the console
+    console.log(
+      "time:",
+      searchOptions.datetime,
+      "busyness:",
+      searchOptions.busyness,
+      "trees:",
+      searchOptions.tree ? 1 : 0,
+      "style:",
+      searchOptions.style
+    );
+
+    const response = await axios.post("/api/submit-main", {
+      time: searchOptions.datetime,
+      busyness: searchOptions.busyness,
+      trees: searchOptions.tree ? 1 : 0,
+      style: searchOptions.style,
     });
+
     return response.data;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return []; // Return an empty array in case of error or no data
   }
 }

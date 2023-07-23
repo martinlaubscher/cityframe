@@ -10,12 +10,13 @@ export default function UserSearchMenu() {
   const [searchOptions, setSearchOptions] = useState({
     datetime: new Date(),
     busyness: 1,
-    style: 1,
+    style: "Beaux-Arts",
     tree: false,
   });
   const [searchResults, setSearchResults] = useState([]);
 
   const handleOptionsChange = (optionName, optionValue) => {
+    console.log("UserSearchMenu optionName:", optionName, "optionValue:", optionValue);  // Log optionName and optionValue
     setSearchOptions({ ...searchOptions, [optionName]: optionValue });
   };
 
@@ -46,7 +47,7 @@ export default function UserSearchMenu() {
           <TreeButton onChange={handleOptionsChange} />
           <BusynessButton onChange={handleOptionsChange} />
           <StyleButton onChange={handleOptionsChange} />
-          <button type="button" className="btn btn-dark" onClick={handleSearch}>Search</button>        
+          <button type="button" className="btn btn-dark" onClick={onSearch}>Search</button>        
           <SearchResult results={searchResults} />
         </div>
       </div>
