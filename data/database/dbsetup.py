@@ -164,6 +164,7 @@ if __name__ == '__main__':
         Column('location_id', Integer, primary_key=True),
         Column('zone', String),
         Column('trees', Integer),
+        Column('trees_scaled', Integer),
         # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
         schema='cityframe'
     )
