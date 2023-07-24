@@ -1,0 +1,4 @@
+.result-container {
+    overflow: visible; /* Add this if the content might overflow */
+    background-color: pink;
+  }

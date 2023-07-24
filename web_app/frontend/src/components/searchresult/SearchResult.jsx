@@ -4,12 +4,12 @@ import axios from "axios";
 export default function SearchResult({ results }) {
   return (
     <div>
-      {results.map((result, index) => (
-        <div key={index}>
-          {/* render search result */}
-          <p>{result.name}</p>
-          <p>{result.datetime}</p>
-          {/* ... other result data */}
+      {results.map((result) => (
+        <div key={result.id}>
+          <h2>Place ID: {result.id}</h2>
+          <p>Busyness: {result.busyness}</p>
+          <p>Trees: {result.trees}</p>
+          <p>Style: {result.style}</p>
         </div>
       ))}
     </div>
@@ -30,16 +30,31 @@ export async function handleSearch(searchOptions) {
       searchOptions.style
     );
 
-    const response = await axios.post("/api/submit-main", {
+    // Notice：de-comment in final version
+    // const response = await axios.post("/api/submit-main", { 
+    //Notice：comment in final version
+    const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
+      
       time: searchOptions.datetime,
       busyness: searchOptions.busyness,
       trees: searchOptions.tree ? 1 : 0,
       style: searchOptions.style,
     });
 
-    return response.data;
+    if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+      const results = Object.entries(response.data).map(([key, value]) => {
+        return {
+          id: key,
+          ...value,
+        };
+      });
+      return results;
+    }
+
+    return [];
+
   } catch (error) {
     console.error("Error:", error);
-    return []; // Return an empty array in case of error or no data
+    return [];
   }
 }
