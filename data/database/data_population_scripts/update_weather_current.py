@@ -32,6 +32,16 @@ def update_weather():
         'timezone': data['timezone']
     }
 
+    # These values exist only sometimes, assigned 0 if not in data
+    gust = data['wind'].get('gust', 0) if 'wind' in data else 0
+    rain_1h = data['rain'].get('1h', 0) if 'rain' in data else 0
+    snow_1h = data['snow'].get('1h', 0) if 'snow' in data else 0
+    weather_data.update({
+        'wind_gust': gust,
+        'rain_1h': rain_1h,
+        'snow_1h': snow_1h,
+    })
+
     pg_url = URL.create(
         "postgresql",
         **pg_conn
@@ -48,8 +58,8 @@ def update_weather():
     query = """
         INSERT INTO cityframe.weather_current (dt, dt_iso, temp, feels_like, temp_min, temp_max, pressure, humidity, 
         visibility, wind_speed, wind_deg, clouds_all, weather_id, weather_main, weather_description, weather_icon, 
-        timezone)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        timezone, wind_gust, rain_1h, snow_1h)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
 
     # Execute the SQL query
@@ -58,7 +68,8 @@ def update_weather():
         weather_data['temp_min'], weather_data['temp_max'], weather_data['pressure'], weather_data['humidity'],
         weather_data['visibility'], weather_data['wind_speed'], weather_data['wind_deg'], weather_data['clouds_all'],
         weather_data['weather_id'], weather_data['weather_main'], weather_data['weather_description'],
-        weather_data['weather_icon'], weather_data['timezone']
+        weather_data['weather_icon'], weather_data['timezone'], weather_data['wind_gust'], weather_data['rain_1h'],
+        weather_data['snow_1h']
     ))
 
     # Commit the transaction
