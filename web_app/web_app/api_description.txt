@@ -46,3 +46,9 @@
    - Parameters: chosen_date (str): A string for the date of which golden hour and sunset data is requested. In format "yyyy-mm-dd."
    - Response: A JSON object containing the golden hour and sunset times (in format "H:MM:SS PM") for the specified date.
 
+7. MainFormSubmissionView:
+   - Description: Submit form data with time, busyness, trees and (architectural) style parameters.
+   - Endpoint: /api/submit-main/
+   - Method: POST
+   - Parameters: JSON data containing 'time' (a datetime string), 'busyness' (an int from 1-5 inclusive), 'trees' (an int from 1-5 inclusive), and 'style' (a string mathing pre-defined styles).
+   - Response: Returns a JSON object containing predictions for the specified parameters.

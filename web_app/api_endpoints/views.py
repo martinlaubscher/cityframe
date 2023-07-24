@@ -203,7 +203,9 @@ class GoldenHourAPIView(APIView):
 class CurrentManhattanTimeAPIView(APIView):
     def get(self, request, formatting=None):
         """Get request for the current time in Manhattan
+
         One optional argument ('formatting')
+
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
