@@ -75,7 +75,7 @@ def get_results(style, busyness_range, user_time):
                 'zone': record.taxi_zone.zone,
                 'dt_iso': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')).strftime('%Y-%m-%d %H:%M %z'),
                 'busyness': record.bucket,
-                'trees': taxi_zone.trees,
+                'trees': taxi_zone.trees_scaled,
                 style_dict_reverse.get(style): getattr(taxi_zone, style),
                 'weather': {
                     'temp': record.dt_iso.temp,

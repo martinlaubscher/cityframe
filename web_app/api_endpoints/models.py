@@ -174,6 +174,7 @@ class TaxiZones(models.Model):
     id = models.IntegerField(primary_key=True, db_column='location_id')
     zone = models.CharField(max_length=100)
     trees = models.IntegerField()
+    trees_scaled = models.IntegerField()
     neo_georgian = models.IntegerField(db_column='neo-Georgian')
     greek_revival = models.IntegerField(db_column='Greek Revival')
     romanesque_revival = models.IntegerField(db_column='Romanesque Revival')
