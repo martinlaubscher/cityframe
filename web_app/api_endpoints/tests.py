@@ -243,6 +243,26 @@ class EndpointTests(TestCase):
         self.assertTrue(datetime_pattern.match(response.data['sunrise']))
         self.assertTrue(datetime_pattern.match(response.data['sunset']))
 
+    def test_golden_hour(self):
+        """This is a unit test case for the api/golden-hour/<str:chosen_date>/ endpoint. It retrieves the URL using the
+        reverse() function based on the url pattern name (see urls.py), and supplies a valid chosen_date. Tests that
+        endpoint returns the expected JSON data with the required keys in the expected format.
+        """
+        # Note: The external API endpoint has historical and future data. chosen_date in test should not require update
+        chosen_date = "2023-08-28"
+        url = reverse('golden_hour', kwargs={'chosen_date': chosen_date})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check 'sunrise' and 'sunset' keys in response
+        self.assertIn('sunset', response.data)
+        self.assertIn('golden_hour', response.data)
+
+        # Check 'sunrise' and 'sunset' match expected regex pattern ('H/HH-MM-SS AM/PM')
+        datetime_pattern = re.compile(r'^\d{1,2}:\d{2}:\d{2} (?:AM|PM)$')
+        self.assertTrue(datetime_pattern.match(response.data['golden_hour']))
+        self.assertTrue(datetime_pattern.match(response.data['sunset']))
+
     def tearDown(self):
         # Nothing to teardown, may be required for future tests
         pass
