@@ -25,7 +25,7 @@ from io import StringIO
 #machine learning app object
 class MachineLearning:
 
-    def __init__(self, dataFilePath = 'C:/Users/mattx/Downloads/data/data/cleaned data/ml_ready_df.csv', pickleFilePath = 'C:/Users/mattx/Downloads/data/data/model.pkl'):
+    def __init__(self, dataFilePath = '', pickleFilePath = ''):
         """
         initializes filepaths for source data and pickle file
 
@@ -104,7 +104,7 @@ class MachineLearning:
         df = pd.DataFrame
 
         try:
-            conn = psycopg2.connect(dbname='postgres', user='postgres', password='Mattx611245!', host='127.0.0.1')
+            conn = psycopg2.connect(dbname='', user='', password='', host='')
             cur = conn.cursor()
         
             sql = 'SELECT * FROM cityframe.weather_fc'
