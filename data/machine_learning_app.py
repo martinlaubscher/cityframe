@@ -12,7 +12,16 @@
 
 # Week Mapping: {'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 }
 
+
 import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(current_path)
+print(cityframe_path)
+
+sys.path.append(cityframe_path)
+
 import pickle
 import xgboost as xgb
 import pandas as pd
