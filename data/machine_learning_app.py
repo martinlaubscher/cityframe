@@ -25,7 +25,7 @@ from io import StringIO
 #machine learning app object
 class MachineLearning:
 
-    def __init__(self, dataFilePath = 'C:/Users/mattx/Downloads/data/data/cleaned data/ml_ready_df.csv', pickleFilePath = 'C:/Users/mattx/Downloads/data/data/model.pkl'):
+    def __init__(self, dataFilePath = '', pickleFilePath = ''):
         """
         initializes filepaths for source data and pickle file
 
@@ -104,7 +104,7 @@ class MachineLearning:
         df = pd.DataFrame
 
         try:
-            conn = psycopg2.connect(dbname='postgres', user='postgres', password='Mattx611245!', host='127.0.0.1')
+            conn = psycopg2.connect(dbname='', user='', password='', host='')
             cur = conn.cursor()
         
             sql = 'SELECT * FROM cityframe.weather_fc'
@@ -141,8 +141,11 @@ class MachineLearning:
         df = self.fetch_data()
 
         ml_ready_df = pd.DataFrame(columns=['taxi_zone'])
-        ml_ready_df['taxi_zone'] = [7,  88,  90, 125, 100, 103, 107, 113, 114, 116, 120, 127, 128, 151, 140, 137, 141, 142, 152, 143, 144, 148, 153, 158, 161, 162, 163, 164, 170, 166, 186, 194, 202, 209, 211, 224, 229, 230, 231, 239, 232, 233, 234, 236, 237, 238, 263, 243, 244, 246, 249, 261, 262]
-        
+        ml_ready_df['taxi_zone'] = [4, 24, 12, 13, 41, 45, 42, 43, 48, 50, 68, 79, 74, 75, 87, 88, 90, 125, 100, 103,
+                                    107, 113, 114, 116, 120, 127, 128, 151, 140, 137, 141, 142, 152, 143, 144, 148, 153,
+                                    158, 161, 162, 163, 164, 170, 166, 186, 194, 202, 209, 211, 224, 229, 230, 231, 239,
+                                    232, 233, 234, 236, 237, 238, 263, 243, 244, 246, 249, 261, 262]
+
         df['month'] = df['dt_iso'].dt.month
         df['day'] = df['dt_iso'].dt.day
         df['hour'] = df['dt_iso'].dt.hour
