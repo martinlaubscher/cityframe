@@ -32,10 +32,22 @@ def update_weather():
         'timezone': data['timezone']
     }
 
-    # These values exist only sometimes, assigned 0 if not in data
-    gust = data['wind'].get('gust', 0) if 'wind' in data else 0
-    rain_1h = data['rain'].get('1h', 0) if 'rain' in data else 0
-    snow_1h = data['snow'].get('1h', 0) if 'snow' in data else 0
+    # These values exist only when the weather conditions exist, assigned 0 if not in data
+    if 'wind' in data and 'gust' in data['wind']:
+        gust = data['wind']['gust']
+    else:
+        gust = 0
+
+    if 'rain' in data and '1h' in data['rain']:
+        rain_1h = data['rain']['1h']
+    else:
+        rain_1h = 0
+
+    if 'snow' in data and '1h' in data['snow']:
+        snow_1h = data['snow']['1h']
+    else:
+        snow_1h = 0
+
     weather_data.update({
         'wind_gust': gust,
         'rain_1h': rain_1h,
