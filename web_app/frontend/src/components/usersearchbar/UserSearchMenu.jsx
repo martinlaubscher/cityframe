@@ -28,7 +28,7 @@ export default function UserSearchMenu() {
     ); // Log optionName and optionValue
     setSearchOptions({ ...searchOptions, [optionName]: optionValue });
   };
-  // ------------Notice：uncomment below code in final version---------------------
+  // ------------Notice：de-comment below code in final version---------------------
 
   const onSearch = async () => {
     const results = await handleSearch(searchOptions);
