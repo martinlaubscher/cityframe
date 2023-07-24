@@ -6,6 +6,6 @@ pg_conn = {'username': 'postgres',
            'database': 'postgres',
            'port': 5432}
 
-openweather_key = "25508d420f626cbc78680910ec16ccd5"
+openweather_key = "dadd1bf4240392ee40c8a8c4bc81ce0b"
 timezone_db_key = 'LGUOSL08JVU1'
 django_key = get_random_secret_key()
