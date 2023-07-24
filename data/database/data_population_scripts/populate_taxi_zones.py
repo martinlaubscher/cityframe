@@ -9,13 +9,13 @@ tree_path = os.path.join(current_path, "../..", "GeoJSON", "tree_points.geojson"
 
 sys.path.append(cityframe_path)
 
-
 from sqlalchemy import create_engine, URL, MetaData, Table
 from sqlalchemy.dialects.postgresql import insert
 import json
 from credentials import pg_conn
 import geopandas as gpd
-from data.Mapping_Buildings_and_Zones.points_in_zones import map_points_to_zones, rank_zones_by_point_presence, map_to_scale
+from data.Mapping_Buildings_and_Zones.points_in_zones import map_points_to_zones, rank_zones_by_point_presence, \
+    map_to_scale
 
 # SCRIPT TO POPULATE THE TAXI_ZONES TABLE WITH STATIC DATA FROM TAXI ZONES, BUILDINGS, AND TREES GEOJSON FILES
 
@@ -45,7 +45,6 @@ tree_counts_scaled = map_to_scale(tree_counts_in_zones)
 
 # connect to db
 with engine.begin() as connection:
-
     # clear table
     connection.execute(table.delete())
 

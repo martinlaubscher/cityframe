@@ -6,7 +6,6 @@ cityframe_path = os.path.dirname(os.path.dirname(current_path))
 
 sys.path.append(cityframe_path)
 
-
 from sqlalchemy import create_engine, URL, MetaData, Table, delete, select, func
 from sqlalchemy.dialects.postgresql import insert
 import requests
