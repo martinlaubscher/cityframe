@@ -2,15 +2,21 @@ import {MapContainer, TileLayer, Marker, Popup, Polygon} from 'react-leaflet'
 import "./MapBackground.css"
 import React from 'react'
 
-import geodata from '../dummydata/geodata'
+//import geodata from '../dummydata/geodata'
 
 export default function Map(props) {
-    const [marker, setMarker] = React.useState([40.7831, -73.9712])
+
     const defaultOptions = {color: '#808080', weight: 1, fillOpacity: 0}
     const purpleOptions = {color: "purple", weight: 2, fillColor:"green", fillOpacity: 0.5}
     const [geojsonData, setGeojsonData] = React.useState(null);
 
+    React.useEffect(() => {
+        fetch('/assets/manhattan_taxi_zones.geojson')
+            .then(res => res.json())
+            .then(data => setGeojsonData(data));
+    }, []);
 
+    console.log("Geojson data?", geojsonData)
 
     function handleClick(){
         console.log("She doesn't even go here")
@@ -24,8 +30,9 @@ export default function Map(props) {
         return `hsl(${hue}, ${100}%, ${lightness}%)`
 
     }
-    
-    const polygons=geodata.features.map((feature, idx) => {
+    var polygons
+    if (geojsonData){
+        polygons=geojsonData.features.map((feature, idx) => {
         var path
         var click
         var score=props.scores[feature.properties.location_id]
@@ -43,7 +50,6 @@ export default function Map(props) {
             return(
             <Polygon
                 key={`${idx}-${polygonIndex}`}
-                id={feature.properties.location_id}
                 positions={polygon[0].map(coord => [coord[1], coord[0]])} // swap lat and lng
                 pathOptions={path}
                 eventHandlers={{
@@ -51,29 +57,8 @@ export default function Map(props) {
                 }}
             />)
             });
-    })
-/*
-    React.useEffect(() => {
-        fetch('/assets/manhattan_taxi_zones.geojson')
-            .then(res => res.json())
-            .then(data => setGeojsonData(data));
-    }, []);
-
-var polygons
-    if (geojsonData){
-    polygons=geojsonData.features.map((feature, idx) => {
-        return feature.geometry.coordinates.map((polygon, polygonIndex) => (
-            <Polygon
-                key={`${idx}-${polygonIndex}`}
-                positions={polygon[0].map(coord => [coord[1], coord[0]])} // swap lat and lng
-                // pathOptions={style}
-                eventHandlers={{
-                    click: () => props.buildlist(feature)
-                }}
-            />
-        ));
     })}
-*/
+
 
 
     return (
