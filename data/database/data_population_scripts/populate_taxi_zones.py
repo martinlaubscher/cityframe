@@ -2,7 +2,7 @@ import os
 import sys
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-cityframe_path = os.path.dirname(os.path.dirname(current_path))
+cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
 taxi_path = os.path.join(current_path, "../..", "GeoJSON", "manhattan_taxi_zones.geojson")
 building_path = os.path.join(current_path, "../..", "GeoJSON", "Building_points.geojson")
 tree_path = os.path.join(current_path, "../..", "GeoJSON", "tree_points.geojson")
