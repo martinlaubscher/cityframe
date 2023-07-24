@@ -1,3 +1,11 @@
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
+
+sys.path.append(cityframe_path)
+
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
@@ -8,6 +16,7 @@ from api_endpoints.dummy_response import create_response
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
+from django.core.cache import cache
 
 
 def convert_to_datetime_string(timestamp):
@@ -32,27 +41,41 @@ class CurrentWeatherAPIView(APIView):
         Returns:
             Response(weather_data): JSON data of current Manhattan weather
         """
-        # Try to get the data from the database
-        weather_data = WeatherCurrent.get_current()
+        # Try to get the data from the cache
+        weather_data = cache.get('current_weather')
 
         if weather_data is not None:
-            # If there is data in the database, return it
+            # If there is data in the cache, return it
             # for debugging
-            print("\nWeather data fetched from Database")
+            print("\nWeather data fetched from Cache")
 
             return Response(weather_data)
-
         else:
-            # If no data in the database, fetch from the OpenWeather API
-            url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-            response = requests.get(url)
-            weather_data = response.json()
+            # Try to get the data from the database
+            weather_data = WeatherCurrent.get_current()
 
-            # for debugging
-            print("\nWeather data fetched from openweather API call")
+            if weather_data is not None:
+                # If there is data in the database, return it
+                # for debugging
+                print("\nWeather data fetched from Database")
 
-            return Response(weather_data)
-            # return Response({"error": "No weather data found in the database"}, status=500)
+                # Add the data to the cache, with a timeout of 5 minutes
+                cache.set('current_weather', weather_data, 300)
+
+                return Response(weather_data)
+            else:
+                # If no data in the database, fetch from the OpenWeather API
+                url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+                response = requests.get(url)
+                weather_data = response.json()
+
+                # for debugging
+                print("\nWeather data fetched from openweather API call")
+
+                # Store the new data in the cache for next time
+                cache.set('current_weather', weather_data, 300)
+
+                return Response(weather_data)
 
 
 class FutureWeatherAPIView(APIView):
@@ -147,6 +170,33 @@ class FutureSuntimesAPIView(APIView):
         return Response(processed_data)
 
 
+class GoldenHourAPIView(APIView):
+    def get(self, request, chosen_date):
+        """Get request for predicted weather data
+
+        Args:
+            chosen_date (String): format "yyyy-mm-dd"
+
+        Returns:
+            filtered_data (JSON): JSON data containing golden hour and sunset in format "H:MM:SS PM"
+        """
+        url = f'https://api.sunrisesunset.io/json?lat=40.7831&lng=-73.9712&timezone=%22America/New_York%22' \
+              f'&date={chosen_date}'
+        response = requests.get(url)
+        data = response.json()
+
+        # Extract relevant keys/values from the response
+        golden_hour = data['results']['golden_hour']
+        sunset = data['results']['sunset']
+
+        filtered_data = {
+            'golden_hour': golden_hour,
+            'sunset': sunset
+        }
+
+        return Response(filtered_data)
+
+
 # The below provider had an incorrect offset, meaning local time was one hour off. Potential backup if issue fixed.
 # url = 'http://worldtimeapi.org/api/timezone/America/New_York'
 
@@ -177,9 +227,6 @@ class CurrentManhattanTimeAPIView(APIView):
             }
 
         return Response(processed_data)
-
-
-# now create an endpoint for golden hour
 
 
 class ResponseSerializer(serializers.Serializer):

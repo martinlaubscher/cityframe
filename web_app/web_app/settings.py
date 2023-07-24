@@ -10,6 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname((current_path)))
+
+sys.path.append(cityframe_path)
+
 from credentials import pg_conn, django_key
 from pathlib import Path
 from whitenoise import WhiteNoise
@@ -25,7 +33,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# this is now set in the environment specific settings files
+# DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
 
@@ -100,18 +109,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_URL.database,
-#         'USER': DATABASE_URL.username,
-#         'PASSWORD': DATABASE_URL.password,
-#         'HOST': DATABASE_URL.host,
-#         'PORT': DATABASE_URL.port,
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -148,6 +145,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'), os.path.join(BASE_DIR, 'frontend', 'public')]
 
 STORAGES = {
@@ -160,4 +158,3 @@ STORAGES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

@@ -1,3 +1,11 @@
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
+
+sys.path.append(cityframe_path)
+
 from random import randint, randrange
 from sqlalchemy import create_engine, URL, MetaData, Table, select, func
 from credentials import pg_conn
@@ -42,11 +50,15 @@ def create_response():
         random_weather_query = select(table).order_by(func.random()).limit(10)
         random_weather = connection.execute(random_weather_query).fetchall()
 
+        # get one random row, the dt_iso value will be used to populate all dt_iso values in the response
+        random_weather_row = connection.execute(random_weather_query).fetchone()
+        dt_iso_value = random_weather_row.dt_iso.strftime('%Y-%m-%d %H:%M')
+
     for row in random_weather:
         random_index = randint(0, len(zone_ids) - 1)
         random_zone = zone_ids.pop(random_index)
 
-        dummy_response[random_zone] = {"dt_iso": row.dt_iso.strftime('%Y-%m-%d %H:%M'),
+        dummy_response[random_zone] = {"dt_iso": row.dt_iso.strftime(dt_iso_value),
                                        "busyness": randrange(1, 6),
                                        "trees": randrange(1, 6),
                                        "style": "default",
