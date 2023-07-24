@@ -49,8 +49,8 @@ export default function Homepage() {
     var tempScores={}
     for (let key in items){
       var score=100-Math.round((Math.abs(items[key].busyness-params.busyness)+Math.abs(items[key].trees-params.trees)+(params.style===items[key].style ? 0 : 5))*20/3)
-      
-      tempScores[key]=score
+      var time=items[key].dt_iso
+      tempScores[key]={score: score, time: time}
     }
     setScores(tempScores)
     /*

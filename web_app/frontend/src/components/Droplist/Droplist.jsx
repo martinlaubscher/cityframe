@@ -25,8 +25,8 @@ export default function Droplist (props){
         <div className="droplist">
             <h2>{props.results.place.properties.zone}</h2>
             <button onClick={props.hideList}>X</button>
-            <h4>Time:</h4>
-            <h3>Score: {props.results.score}</h3>
+            <h4>Time: {props.results.score.time}</h4>
+            <h3>Score: {props.results.score.score}</h3>
         </div>
     )
 

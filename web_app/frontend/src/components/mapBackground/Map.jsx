@@ -38,7 +38,7 @@ export default function Map(props) {
         var score=props.scores[feature.properties.location_id]
         //Object.keys(props.scores).find(key => key === feature.properties.location_id)
         if (score){
-            path= {color: "purple", weight: 2, fillColor:getColour(score), fillOpacity: 0.8}
+            path= {color: "purple", weight: 2, fillColor:getColour(score.score), fillOpacity: 0.8}
             click= () => props.buildlist(feature, score)
         }
         else{
