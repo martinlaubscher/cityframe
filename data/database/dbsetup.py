@@ -110,7 +110,7 @@ if __name__ == '__main__':
     DatabaseTable(
         'weather_fc', MetaData(),
         Column('dt', BigInteger, primary_key=True),
-        Column('dt_iso', DateTime),
+        Column('dt_iso', DateTime(timezone=True), unique=True),
         Column('temp', Float),
         Column('visibility', Integer),
         Column('feels_like', Float),
