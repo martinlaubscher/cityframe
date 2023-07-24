@@ -3,7 +3,7 @@ import { Logo } from "../components/logo/Logo";
 import MapBackground from '../components/mapBackground/MapBackground.jsx';
 import UserSearchBar from '../components/usersearchbar/UserSearchBar.jsx';
 import "./homePageCSS.css"
-import WeatherComponent from '../components/weatherInfo/WeatherComponent.jsx';
+
 
 import Map from '../components/mapBackground/Map.jsx';
 import dynamic from '../components/dummydata/dynamicjunk.js';

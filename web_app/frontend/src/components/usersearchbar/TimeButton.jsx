@@ -6,7 +6,6 @@ import "react-datetime/css/react-datetime.css";
 import moment from "moment-timezone";
 
 const TimeButton = ({ onChange }) => {
-  const [showOptions, setShowOptions] = useState(true);
   const [datetime, setDatetime] = useState(moment().tz("America/New_York"));
 
   const handleDateTimeChange = (newDateTime) => {
@@ -25,7 +24,6 @@ const TimeButton = ({ onChange }) => {
 
   return (
     <div>
-      {showOptions && (
         <div className="option-container">
           <div className="option-label">Time</div>
           <div className="option-list">
@@ -41,7 +39,6 @@ const TimeButton = ({ onChange }) => {
             />
           </div>
         </div>
-      )}
     </div>
   );
 };

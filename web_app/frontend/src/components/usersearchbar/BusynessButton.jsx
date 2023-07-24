@@ -2,27 +2,12 @@ import "./UserSearchMenuCSS.css";
 import React, { useState } from "react";
 
 const BusynessButton = ({ onChange }) => {
-  const [showOptions, setShowOptions] = useState(true);
-  // const handleButtonClick = () => {
-  //   setShowOptions(!showOptions);
-  // };
-
   const handleOptionChange = (event) => {
     onChange("busyness", Number(event.target.value.slice(-1)));
   };
 
   return (
     <div>
-      {/* {!showOptions && (
-        <button
-          type="button"
-          className="btn btn-primary btn-lg btn-block"
-          onClick={handleButtonClick}
-        >
-          Busyness
-        </button>
-      )} */}
-      {/* {showOptions && ( */}
       <div className="option-container">
         <div className="option-label">Buyness</div>
         <div className="option-list">
@@ -93,7 +78,6 @@ const BusynessButton = ({ onChange }) => {
           </div>
         </div>
       </div>
-      {/* )} */}
     </div>
   );
 };

@@ -16,11 +16,6 @@ const styleOptions = {
 };
 
 const StyleButton = ({ onChange }) => {
-  const [showOptions, setShowOptions] = useState(true);
-
-  // const handleButtonClick = () => {
-  //   setShowOptions(true);
-  // };
 
   const handleOptionChange = (event) => {
     const selectedStyle = styleOptions[Number(event.target.value.slice(-1))];
@@ -29,16 +24,6 @@ const StyleButton = ({ onChange }) => {
 
   return (
     <div>
-      {/* {!showOptions && (
-        <button
-          type="button"
-          className="btn btn-primary btn-lg btn-block"
-          onClick={handleButtonClick}
-        >
-          Style
-        </button>
-      )} */}
-      {/* {showOptions && ( */}
       <div className="option-container">
         <div className="option-label">Style</div>
         <div className="option-list">
@@ -56,7 +41,6 @@ const StyleButton = ({ onChange }) => {
           </select>
         </div>
       </div>
-      {/* )} */}
     </div>
   );
 };

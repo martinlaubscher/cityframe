@@ -30,11 +30,16 @@
 
 .offcanvas-body {
   display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   color: black !important;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: hidden; /* Change this */
 }
 
 .offcanvas-body form label {
@@ -48,6 +53,9 @@
 .offcanvas-body.small {
   display: flex;
   flex-direction: column;
+  max-height: 500px; /* Adjust as needed */
+  overflow-y: auto; /* Show vertical scrollbar when necessary */
+  overflow-x: hidden; /* Keep horizontal scrollbar hidden */
 }
 
 .button-container {
@@ -56,7 +64,9 @@
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
+  overflow: visible; /* Add this if the content might overflow */
 }
+
 
 .button-container > * {
   width: 100%;
@@ -180,4 +190,3 @@
   color: white;
   font-weight: bold !important;
 }
-
