@@ -1,4 +1,92 @@
+/* SearchResultCSS.css */
 .result-container {
-    overflow: visible; /* Add this if the content might overflow */
-    background-color: pink;
-  }
+  overflow: visible; 
+  background-color: black;
+}
+
+.overlay-info {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 5px;
+  color: white;
+  font-family: 'Pixel', monospace;
+}
+
+.info-zone-style {
+  display: flex;
+  justify-content: space-between; /* 使内容在横向上分散对齐 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* 充满父级元素的宽度 */
+}
+
+.info-zone-style p:first-child {
+  margin-left: 10px; /* 将ZONE信息放在左侧 */
+  font-size: 20px;
+}
+
+.info-zone-style p:last-child {
+  margin-right: auto; /* 将STYLE信息放在中间 */
+  font-size: 20px;
+}
+
+
+.info-busyness-tree {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-busyness-tree p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.info-time {
+  color: orange;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.carousel-inner {
+  display: flex;
+  height: 50vh; 
+}
+
+.carousel-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px; 
+  width: 500px; 
+  border: 15px solid black; 
+  margin-top: 10px; 
+  background-position: center; 
+  background-size: cover;
+}
+
+.carousel-item img {
+  object-fit: cover; 
+  height: 100%; 
+  width: 100%; 
+}
+
+.caption-background {
+  background-color: rgba(0, 0, 0, 0.8); 
+  padding: 10px;
+}
+
+.border-top-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  color: white;
+  padding: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
