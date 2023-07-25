@@ -106,9 +106,6 @@ DATABASES = {
         'PASSWORD': pg_conn['password'],
         'HOST': pg_conn['host'],
         'PORT': pg_conn['port'],
-        'OPTIONS': {
-            'options': '-c search_path=cityframe'
-        },
     }
 }
 
