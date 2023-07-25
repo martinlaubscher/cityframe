@@ -15,7 +15,7 @@ const BusynessButton = ({ onChange }) => {
             <input
               className="form-check-input"
               type="radio"
-              name="inlineRadioOptions"
+              name="busynessRadioOptions"
               id="inlineRadio1"
               value="option1"
               onChange={handleOptionChange}
@@ -28,7 +28,7 @@ const BusynessButton = ({ onChange }) => {
             <input
               className="form-check-input"
               type="radio"
-              name="inlineRadioOptions"
+              name="busynessRadioOptions"
               id="inlineRadio2"
               value="option2"
               onChange={handleOptionChange}
@@ -41,7 +41,7 @@ const BusynessButton = ({ onChange }) => {
             <input
               className="form-check-input"
               type="radio"
-              name="inlineRadioOptions"
+              name="busynessRadioOptions"
               id="inlineRadio3"
               value="option3"
               onChange={handleOptionChange}
@@ -54,7 +54,7 @@ const BusynessButton = ({ onChange }) => {
             <input
               className="form-check-input"
               type="radio"
-              name="inlineRadioOptions"
+              name="busynessRadioOptions"
               id="inlineRadio4"
               value="option4"
               onChange={handleOptionChange}
@@ -67,7 +67,7 @@ const BusynessButton = ({ onChange }) => {
             <input
               className="form-check-input"
               type="radio"
-              name="inlineRadioOptions"
+              name="busynessRadioOptions"
               id="inlineRadio5"
               value="option5"
               onChange={handleOptionChange}
