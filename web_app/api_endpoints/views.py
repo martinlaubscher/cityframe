@@ -12,7 +12,7 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from credentials import openweather_key, timezone_db_key
-from api_endpoints.dummy_response import create_response
+from api_endpoints.dummy_response import create_response, create_current_busyness_response
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
@@ -203,7 +203,9 @@ class GoldenHourAPIView(APIView):
 class CurrentManhattanTimeAPIView(APIView):
     def get(self, request, formatting=None):
         """Get request for the current time in Manhattan
+
         One optional argument ('formatting')
+
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
@@ -227,6 +229,11 @@ class CurrentManhattanTimeAPIView(APIView):
             }
 
         return Response(processed_data)
+
+
+class CurrentManhattanBusyness(APIView):
+    def get(self, request):
+        return Response(create_current_busyness_response())
 
 
 class ResponseSerializer(serializers.Serializer):

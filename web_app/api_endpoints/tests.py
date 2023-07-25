@@ -1,3 +1,4 @@
+import json
 import re
 from django.test import TestCase
 from django.db import connections
@@ -185,6 +186,23 @@ class EndpointTests(TestCase):
         timestamp_pattern = re.compile(r'^\d{10}$')
         self.assertTrue(timestamp_pattern.match(str(response.data['timestamp'])))
 
+    def test_current_busyness(self):
+        """
+        """
+        url = reverse('current-manhattan-busyness')
+        response = self.client.get(url)
+
+        zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 100, 103, 107, 113, 114, 116,
+                    120, 125, 127, 128, 137, 140, 141, 142, 143, 144, 148, 151, 152, 153, 158, 161, 162, 163, 164, 166,
+                    170, 186, 194, 202, 209, 211, 224, 229, 230, 231, 232, 233, 234, 236, 237, 238, 239, 243, 244, 246,
+                    249, 261, 262, 263]
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check correct keys are in the response data
+        for zone in zone_ids:
+            self.assertIn(f'{zone}', response.data)
+
     def test_current_time_str(self):
         """This is a unit test case for the 'api/current-time/<str:formatting>' endpoint. It retrieves the URL using the
         reverse() function based on the url pattern name (see urls.py), and uses the optional 'datetime' formatting.
@@ -242,6 +260,59 @@ class EndpointTests(TestCase):
         datetime_pattern = re.compile(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$')
         self.assertTrue(datetime_pattern.match(response.data['sunrise']))
         self.assertTrue(datetime_pattern.match(response.data['sunset']))
+
+    def test_golden_hour(self):
+        """This is a unit test case for the api/golden-hour/<str:chosen_date>/ endpoint. It retrieves the URL using the
+        reverse() function based on the url pattern name (see urls.py), and supplies a valid chosen_date. Tests that
+        endpoint returns the expected JSON data with the required keys in the expected format.
+        """
+        # Note: The external API endpoint has historical and future data. chosen_date in test should not require update
+        chosen_date = "2023-08-28"
+        url = reverse('golden_hour', kwargs={'chosen_date': chosen_date})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check 'sunrise' and 'sunset' keys in response
+        self.assertIn('sunset', response.data)
+        self.assertIn('golden_hour', response.data)
+
+        # Check 'sunrise' and 'sunset' match expected regex pattern ('H/HH-MM-SS AM/PM')
+        datetime_pattern = re.compile(r'^\d{1,2}:\d{2}:\d{2} (?:AM|PM)$')
+        self.assertTrue(datetime_pattern.match(response.data['golden_hour']))
+        self.assertTrue(datetime_pattern.match(response.data['sunset']))
+
+    def test_main_form_submission(self):
+        """This is a unit test case for the api/submit-main POST request endpoint. It retrieves the URL using the
+        reverse() function based on the url pattern name (see urls.py), and supplies valid POST requests data.
+        Tests that endpoint returns the expected JSON data with the required nested keys in the expected format.
+        """
+        # Test data to send in the POST request
+        data = {
+            "time": "2023-07-23 07:05",
+            "busyness": 5,
+            "trees": 5,
+            "style": "Art Deco"
+        }
+
+        url = reverse('main-form-submission')
+
+        # Make the POST request
+        response = self.client.post(url, data=json.dumps(data), content_type='application/json')
+
+        # Convert the response content from JSON string to Python dictionary
+        response_data = json.loads(response.content)
+
+        # Checks for correct structure of nested keys
+        for value in response_data.values():
+            self.assertIn("dt_iso", value)
+            self.assertIn("busyness", value)
+            self.assertIn("trees", value)
+            self.assertIn("style", value)
+            self.assertIn("weather", value)
+            self.assertIn("temp", value["weather"])
+            self.assertIn("wind_speed", value["weather"])
+            self.assertIn("weather_description", value["weather"])
+            self.assertIn("weather_icon", value["weather"])
 
     def tearDown(self):
         # Nothing to teardown, may be required for future tests
