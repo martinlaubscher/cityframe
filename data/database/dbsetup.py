@@ -1,3 +1,13 @@
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(current_path))
+taxi_path = os.path.join(current_path, "..", "GeoJSON", "manhattan_taxi_zones.geojson")
+building_path = os.path.join(current_path, "..", "GeoJSON", "Building_points.geojson")
+
+sys.path.append(cityframe_path)
+
 from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Integer, BigInteger, String, Float, \
     DateTime
 from sqlalchemy.schema import CreateSchema
@@ -110,7 +120,7 @@ if __name__ == '__main__':
     DatabaseTable(
         'weather_fc', MetaData(),
         Column('dt', BigInteger, primary_key=True),
-        Column('dt_iso', DateTime),
+        Column('dt_iso', DateTime(timezone=True), unique=True),
         Column('temp', Float),
         Column('visibility', Integer),
         Column('feels_like', Float),
@@ -170,8 +180,8 @@ if __name__ == '__main__':
     )
 
     # getting architecture styles
-    building_points = gpd.read_file("../GeoJSON/Building_points.geojson")
-    zone_polygons = gpd.read_file("../GeoJSON/manhattan_taxi_zones.geojson")
+    building_points = gpd.read_file(building_path)
+    zone_polygons = gpd.read_file(taxi_path)
     building_feature_filter = 'Style_Prim'
     building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
 

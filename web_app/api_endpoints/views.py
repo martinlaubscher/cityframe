@@ -1,3 +1,11 @@
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
+
+sys.path.append(cityframe_path)
+
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
@@ -24,6 +32,7 @@ def convert_to_datetime_string(timestamp):
     dt = datetime.datetime.utcfromtimestamp(timestamp)
     dt_string = dt.strftime('%Y-%m-%d %H:%M:%S')
     return dt_string
+
 
 class CurrentWeatherAPIView(APIView):
     def get(self, request):
@@ -156,13 +165,16 @@ class GoldenHourAPIView(APIView):
 
         return Response(filtered_data)
 
+
 # The below provider had an incorrect offset, meaning local time was one hour off. Potential backup if issue fixed.
 # url = 'http://worldtimeapi.org/api/timezone/America/New_York'
 
 class CurrentManhattanTimeAPIView(APIView):
     def get(self, request, formatting=None):
         """Get request for the current time in Manhattan
+
         One optional argument ('formatting')
+
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """

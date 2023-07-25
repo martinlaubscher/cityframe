@@ -10,6 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname((current_path)))
+
+sys.path.append(cityframe_path)
+
 from credentials import pg_conn, django_key
 from pathlib import Path
 from whitenoise import WhiteNoise
