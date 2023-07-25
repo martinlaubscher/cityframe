@@ -41,13 +41,14 @@ def check_error_type(e):
         return f"Caught an unknown exception.\n{e}"
 
 
-def get_results(style, busyness_range, user_time):
+def get_results(style, tree_range, busyness_range, user_time):
     """
     Fetches records associated with the architectural style and busyness range at a specific time.
 
     Args:
         style (str): Architectural style. It should match with the architectural style fields in the taxi_zones table.
         busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range.
+        tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range.
         user_time (str | datetime): The desired time in "YYYY-MM-DD HH:MM" format or as a datetime object.
 
     Returns:
@@ -55,22 +56,9 @@ def get_results(style, busyness_range, user_time):
         number of trees, architectural style count, and weather information.
     """
 
-    style_dict_reverse = {
-        'neo_georgian': 'neo-Georgian',
-        'greek_revival': 'Greek Revival',
-        'romanesque_revival': 'Romanesque Revival',
-        'neo_grec': 'neo-Grec',
-        'renaissance_revival': 'Renaissance Revival',
-        'beaux_arts': 'Beaux-Arts',
-        'queen_anne': 'Queen Anne',
-        'italianate': 'Italianate',
-        'federal': 'Federal',
-        'neo_renaissance': 'neo-Renaissance'
-    }
-
-    # Get top 5 TaxiZones IDs according to input style
-    top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).order_by(F(style).desc()).values_list('id',
-                                                                                                          flat=True)
+    # Get TaxiZones IDs having at least one building in the desired style and within the desired trees_scaled range
+    top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}, trees_scaled__range=tree_range).order_by(
+        F(style).desc()).values_list('id', flat=True)
 
     # Get all Busyness records within the given busyness range and associated with the top zones
     records = Busyness.objects.filter(bucket__range=busyness_range, taxi_zone__in=top_zones_ids,
@@ -92,7 +80,7 @@ def get_results(style, busyness_range, user_time):
                         '%Y-%m-%d %H:%M %z'),
                     'busyness': record.bucket,
                     'trees': taxi_zone.trees_scaled,
-                    style_dict_reverse.get(style): getattr(taxi_zone, style),
+                    'style': getattr(taxi_zone, style),
                     'weather': {
                         'temp': record.dt_iso.temp,
                         'weather_description': record.dt_iso.weather_description,
@@ -105,12 +93,13 @@ def get_results(style, busyness_range, user_time):
     return results
 
 
-def generate_response(target_busyness, target_style, target_dt):
+def generate_response(target_busyness, target_trees, target_style, target_dt):
     """
     Generates a dictionary containing top 10 results based on the target busyness, style, and date-time.
 
     Args:
         target_busyness (int): The desired level of busyness.
+        target_trees (int): The desired level of trees.
         target_style (str): The desired architectural style. It should match with one of the architectural styles in the taxi_zones table.
         target_dt (str | datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
 
@@ -137,11 +126,13 @@ def generate_response(target_busyness, target_style, target_dt):
         'neo-Renaissance': 'neo_renaissance'
     }
 
-    lower = higher = target_busyness
+    lower_busy = higher_busy = target_busyness
+    lower_trees = higher_trees = target_trees
 
     # checking if style is valid
     if style_dict.get(target_style) is None:
-        raise FieldDoesNotExist(f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
+        raise FieldDoesNotExist(
+            f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
 
     # creating a datetime object from the string received by the post request.
     # if the input is neither a correctly formatted string nor a datetime object, raise an error
@@ -164,26 +155,41 @@ def generate_response(target_busyness, target_style, target_dt):
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    # expand the busyness range until there are ten results
-    while len(results) < 10:
-        results = get_results(style_dict.get(target_style), (lower, higher), ny_dt)
+    # first, expand the tree range until there are ten results or the range has been exhausted
+    while len(results) < 10 and (lower_trees > 0 or higher_trees < 6):
+        results = get_results(style_dict.get(target_style), (lower_trees, higher_trees),
+                              (target_busyness, target_busyness),
+                              ny_dt)
         # check for errors
         if isinstance(results, Exception):
             return check_error_type(results)
-        lower -= 1
-        higher += 1
+        lower_trees -= 1
+        higher_trees += 1
 
-    # calculate the difference to the desired busyness level
+    # if there are still not ten results:
+    # expand the busyness range until there are ten results or the range has been exhausted
+    while len(results) < 10 and (lower_busy > 0 or higher_busy < 6):
+        results = get_results(style_dict.get(target_style), (1, 5), (lower_busy, higher_busy),
+                              ny_dt)
+        # check for errors
+        if isinstance(results, Exception):
+            return check_error_type(results)
+        lower_busy -= 1
+        higher_busy += 1
+
+    # calculate the difference to the desired busyness and tree level
     for key, value in results.items():
         value['busyness_diff'] = abs(target_busyness - value['busyness'])
+        value['tree_diff'] = abs(target_trees - value['trees'])
 
     # sort the dictionary first according to the difference to the desired busyness level, then to the count
     sorted_dict = dict(
-        sorted(results.items(), key=lambda item: (item[1]['busyness_diff'], -item[1][target_style])))
+        sorted(results.items(), key=lambda item: (item[1]['busyness_diff'], item[1]['tree_diff'], -item[1]['style'])))
 
     # Remove the temporary 'busyness_diff' from the dictionaries
     for value in sorted_dict.values():
         del value['busyness_diff']
+        del value['tree_diff']
 
     sliced_dict = dict(islice(sorted_dict.items(), 10))
 
@@ -192,7 +198,7 @@ def generate_response(target_busyness, target_style, target_dt):
 
 start_time = time.time()  # Start timing
 
-response = generate_response(3, 'Renaissance Revival', "2023-07-28 12:00")
+response = generate_response(3, 3, 'Renaissance Revival', "2023-07-26 17:00")
 
 end_time = time.time()  # End timing
 execution_time = end_time - start_time  # Calculate the execution time
