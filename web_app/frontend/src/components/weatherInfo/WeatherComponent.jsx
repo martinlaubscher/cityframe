@@ -25,8 +25,8 @@ function WeatherComponent() {
 // and handle static files every time.
 useEffect(() => {
     axios
-      .get("/api/current-weather/") //Notice：de-comment in final version
-      // .get("http://127.0.0.1:8000/api/current-weather/") //Notice：comment in final version
+      // .get("/api/current-weather/") //Notice：de-comment in final version
+      .get("http://127.0.0.1:8000/api/current-weather/") //Notice：comment in final version
       .then((response) => {
         setWeather(response.data);
       })
