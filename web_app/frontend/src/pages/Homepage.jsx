@@ -10,7 +10,7 @@ import junkdynamic from '../components/dummydata/geojunk.js';
 import dynamic from '../components/dummydata/dynamicdata.js';
 import data from '../components/dummydata/locationjunk.js';
 import { useState, useEffect } from 'react';
-import Droplist from '../components/droplist/Droplist.jsx';
+import Droplist from '../components/placeList/Droplist.jsx';
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
 
 export default function Homepage() {
