@@ -10,6 +10,11 @@ from random import randint, randrange
 from sqlalchemy import create_engine, URL, MetaData, Table, select, func
 from credentials import pg_conn
 
+zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 100, 103, 107, 113, 114, 116, 120,
+            125,
+            127, 128, 137, 140, 141, 142, 143, 144, 148, 151, 152, 153, 158, 161, 162, 163, 164, 166, 170, 186, 194,
+            202, 209, 211, 224, 229, 230, 231, 232, 233, 234, 236, 237, 238, 239, 243, 244, 246, 249, 261, 262, 263]
+
 
 def create_response():
     """
@@ -31,11 +36,6 @@ def create_response():
     Returns:
          A dictionary mapping zone IDs to dictionaries containing datetime, busyness, tree density, style and weather data.
     """
-    zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 100, 103, 107, 113, 114, 116, 120,
-                125,
-                127, 128, 137, 140, 141, 142, 143, 144, 148, 151, 152, 153, 158, 161, 162, 163, 164, 166, 170, 186, 194,
-                202, 209, 211, 224, 229, 230, 231, 232, 233, 234, 236, 237, 238, 239, 243, 244, 246, 249, 261, 262, 263]
-
     dummy_response = {}
 
     pg_url = URL.create(
@@ -69,4 +69,21 @@ def create_response():
                                             "weather_icon": row.weather_icon
                                             }
                                        }
+    return dummy_response
+
+
+def create_current_busyness_response():
+    """
+    Creates a response dictionary with every taxi zone and corresponding busyness level
+
+    For each zone ID, the function randomly selects a busyness level (range 1-6) to populate the busyness value
+
+    Returns:
+         A dictionary zone_id and corresponding busyness for each taxi zone
+    """
+    dummy_response = {}
+
+    for zone in zone_ids:
+        dummy_response[str(zone)] = randrange(1, 6)
+
     return dummy_response
