@@ -1,23 +1,22 @@
-#This is a machine learning application intended to link the model derived from the data contained in the final compiled taxi/weather CSV file
-#to the back end application. Data from the database will be provided on the next few days, and predictions will be returned based on the input.
+# This is a machine learning application intended to link the model derived from the data contained in the final compiled taxi/weather CSV file
+# to the back end application. Data from the database will be provided on the next few days, and predictions will be returned based on the input.
 
-#The model selected for the MVP is XGBoost, due to its significant performance increases over linear regression, random forest, and neural network implementation. For more details, see ml_test.ipynb
+# The model selected for the MVP is XGBoost, due to its significant performance increases over linear regression, random forest, and neural network implementation. For more details, see ml_test.ipynb
 
-#Independent varaibles (input): day (1-31), month (1-12), hour (0-23), week (see mapping key), temp (kelvin), feels_like (kelvin), weather_main (see mapping key), taxi_zone (see taxi zone list)
-#Dependent varaible (output): Activity(float)
+# Independent varaibles (input): day (1-31), month (1-12), hour (0-23), week (see mapping key), temp (kelvin), feels_like (kelvin), weather_main (see mapping key), taxi_zone (see taxi zone list)
+# Dependent varaible (output): Activity(float)
 
-#Taxi Zone List: [4, 24, 12, 13, 41, 45, 42, 43, 48, 50, 68, 79, 74, 75, 87, 88, 90, 125, 100, 103, 107, 113, 114, 116, 120, 127, 128, 151, 140, 137, 141, 142, 152, 143, 144, 148, 153, 158, 161, 162, 163, 164, 170, 166, 186, 194, 202, 209, 211, 224, 229, 230, 231, 239, 232, 233, 234, 236, 237, 238, 263, 243, 244, 246, 249, 261, 262]
+# Taxi Zone List: [4, 24, 12, 13, 41, 45, 42, 43, 48, 50, 68, 79, 74, 75, 87, 88, 90, 125, 100, 103, 107, 113, 114, 116, 120, 127, 128, 151, 140, 137, 141, 142, 152, 143, 144, 148, 153, 158, 161, 162, 163, 164, 170, 166, 186, 194, 202, 209, 211, 224, 229, 230, 231, 239, 232, 233, 234, 236, 237, 238, 263, 243, 244, 246, 249, 261, 262]
 
-#Weather Mapping: {'Clear':1, 'Clouds':2, 'Drizzle': 3, 'Fog':4, 'Haze': 5, 'Mist':6, 'Rain': 7, 'Smoke': 8, 'Snow': 9, 'Squall': 10, 'Thunderstorm': 11}
+# Weather Mapping: {'Clear':1, 'Clouds':2, 'Drizzle': 3, 'Fog':4, 'Haze': 5, 'Mist':6, 'Rain': 7, 'Smoke': 8, 'Snow': 9, 'Squall': 10, 'Thunderstorm': 11}
 
-#Week Mapping: {'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 }
+# Week Mapping: {'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6 }
 
 import os
 import sys
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 cityframe_path = os.path.dirname(current_path)
-print(cityframe_path)
 
 sys.path.append(cityframe_path)
 
@@ -27,10 +26,7 @@ import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
 import psycopg
-from sqlalchemy import inspect, create_engine, Table, URL, MetaData, Column, Integer, BigInteger, String, Float, \
-    DateTime
-from sqlalchemy.schema import CreateSchema
-from io import StringIO
+from sqlalchemy import create_engine, URL
 from credentials import pg_conn
 
 
@@ -45,6 +41,7 @@ class MachineLearning:
 
         self.dataFilePath = dataFilePath
         self.pickleFilePath = pickleFilePath
+        self.pg_url = URL.create("postgresql", **pg_conn)
 
     def calculate_metrics(self, y_true, y_pred):
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
@@ -94,7 +91,7 @@ class MachineLearning:
 
         return pkl
 
-    #Loads the pickle file. If it does not yet exist, the pickle model will be generated using the model_train() function
+    # Loads the pickle file. If it does not yet exist, the pickle model will be generated using the model_train() function
     def pickle_load(self):
 
         """
@@ -102,7 +99,7 @@ class MachineLearning:
         Returns: pickled machine learning model (pickle file)
         """
 
-        #checking for pickle of model
+        # checking for pickle of model
         if os.path.isfile(self.pickleFilePath):
 
             with open(self.pickleFilePath, "rb") as f:
@@ -113,8 +110,7 @@ class MachineLearning:
 
         return pkl
 
-
-    #fetches the data from the postgreSQL
+    # fetches the data from the postgreSQL
     def fetch_data(self):
 
         """
@@ -124,13 +120,8 @@ class MachineLearning:
 
         df = pd.DataFrame()
 
-        pg_url = URL.create(
-            "postgresql",
-            **pg_conn
-        )
-
         try:
-            conn = psycopg.connect(pg_url.render_as_string(hide_password=False))
+            conn = psycopg.connect(self.pg_url.render_as_string(hide_password=False))
             cur = conn.cursor()
 
             sql = "SELECT dt, (dt_iso AT TIME ZONE 'America/New_York') as dt_iso, temp, feels_like, temp_min, temp_max, pressure, humidity, visibility, wind_speed, wind_deg, wind_gust, pop, rain_1h, snow_1h, clouds_all, weather_id, weather_main, weather_description, weather_icon FROM cityframe.weather_fc"
@@ -153,7 +144,8 @@ class MachineLearning:
         Returns: Description (int)
         """
 
-        weather_ranges = {(200, 299, 11), (300, 399, 3), (500, 599, 7), (600, 699, 9), (801, 900, 2), (701, 701, 6), (711, 711, 8), (771, 771, 10), (800, 800, 1), (741, 741, 4), (721, 721, 5)}
+        weather_ranges = {(200, 299, 11), (300, 399, 3), (500, 599, 7), (600, 699, 9), (801, 900, 2), (701, 701, 6),
+                          (711, 711, 8), (771, 771, 10), (800, 800, 1), (741, 741, 4), (721, 721, 5)}
         for start, end, description in weather_ranges:
             if start <= code <= end:
                 return description
@@ -170,8 +162,11 @@ class MachineLearning:
         df = self.fetch_data()
 
         ml_ready_df = pd.DataFrame(columns=['taxi_zone'])
-        ml_ready_df['taxi_zone'] =  [4, 24, 12, 13, 41, 45, 42, 43, 48, 50, 68, 79, 74, 75, 87, 88, 90, 125, 100, 103, 107, 113, 114, 116, 120, 127, 128, 151, 140, 137, 141, 142, 152, 143, 144, 148, 153, 158, 161, 162, 163, 164, 170, 166, 186, 194, 202, 209, 211, 224, 229, 230, 231, 239, 232, 233, 234, 236, 237, 238, 263, 243, 244, 246, 249, 261, 262]
-        
+        ml_ready_df['taxi_zone'] = [4, 24, 12, 13, 41, 45, 42, 43, 48, 50, 68, 79, 74, 75, 87, 88, 90, 125, 100, 103,
+                                    107, 113, 114, 116, 120, 127, 128, 151, 140, 137, 141, 142, 152, 143, 144, 148, 153,
+                                    158, 161, 162, 163, 164, 170, 166, 186, 194, 202, 209, 211, 224, 229, 230, 231, 239,
+                                    232, 233, 234, 236, 237, 238, 263, 243, 244, 246, 249, 261, 262]
+
         df['month'] = df['dt_iso'].dt.month
         df['day'] = df['dt_iso'].dt.day
         df['hour'] = df['dt_iso'].dt.hour
@@ -197,12 +192,7 @@ class MachineLearning:
         Args: pandas dataframe
         """
 
-        pg_url = URL.create(
-            "postgresql",
-            **pg_conn
-        )
-
-        engine = create_engine(pg_url)
+        engine = create_engine(self.pg_url)
 
         df.to_sql('Results', engine, schema='cityframe', if_exists='replace', index=False)
 
@@ -230,7 +220,7 @@ class MachineLearning:
         df['bucket'] = pd.qcut(df['prediction'], q=5, labels=range(1, 6))
         df['bucket'] = df['bucket'].astype(int)
 
-        df = df[['month', 'day', 'hour', 'taxi_zone', 'prediction', 'bucket']]
+        df = df[['taxi_zone', 'prediction', 'bucket']]
         df['dt_iso'] = dt_iso.dt.tz_localize('America/New_York')
 
         df['id'] = range(1, len(df) + 1)
@@ -238,7 +228,6 @@ class MachineLearning:
         self.create_db(df)
 
         return None
-    
 
 
 if __name__ == '__main__':
