@@ -68,12 +68,6 @@ def get_results(style, busyness_range, user_time):
         'neo_renaissance': 'neo-Renaissance'
     }
 
-    # Validate input style field exists in TaxiZones model
-    try:
-        TaxiZones._meta.get_field(style)
-    except FieldDoesNotExist as e:
-        return e
-
     # Get top 5 TaxiZones IDs according to input style
     top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).order_by(F(style).desc()).values_list('id',
                                                                                                           flat=True)
@@ -144,6 +138,10 @@ def generate_response(target_busyness, target_style, target_dt):
     }
 
     lower = higher = target_busyness
+
+    # checking if style is valid
+    if style_dict.get(target_style) is None:
+        raise FieldDoesNotExist(f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
 
     # creating a datetime object from the string received by the post request.
     # if the input is neither a correctly formatted string nor a datetime object, raise an error
