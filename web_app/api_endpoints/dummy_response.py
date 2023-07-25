@@ -36,6 +36,7 @@ def create_response():
     Returns:
          A dictionary mapping zone IDs to dictionaries containing datetime, busyness, tree density, style and weather data.
     """
+
     dummy_response = {}
 
     pg_url = URL.create(
