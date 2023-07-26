@@ -90,9 +90,9 @@ export async function handleSearch(searchOptions) {
     // and handle static files every time.
 
     // Notice：de-comment in final version
-    // const response = await axios.post("/api/submit-main", {
+    const response = await axios.post("/api/submit-main", {
     //Notice：comment before commit
-    const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
+    // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
       time: searchOptions.datetime,
       busyness: searchOptions.busyness,
       trees: searchOptions.tree ? 1 : 0,
