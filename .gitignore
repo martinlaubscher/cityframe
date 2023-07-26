@@ -183,3 +183,4 @@ cython_debug/
 /web_app/staticfiles/
 /web_app/credentials.py
 /credentials.py
+credentials.py
