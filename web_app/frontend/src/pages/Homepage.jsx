@@ -5,12 +5,14 @@ import UserSearchBar from '../components/usersearchbar/UserSearchBar.jsx';
 import "./homePageCSS.css"
 
 
+
 import Map from '../components/mapBackground/Map.jsx';
 import junkdynamic from '../components/dummydata/geojunk.js';
 import dynamic from '../components/dummydata/dynamicdata.js';
 import data from '../components/dummydata/locationjunk.js';
 import { useState, useEffect } from 'react';
 import Droplist from '../components/placeList/Droplist.jsx';
+import SearchResult from '../components/searchresult/SearchResult.jsx';
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
 
 export default function Homepage() {
@@ -24,9 +26,11 @@ export default function Homepage() {
 
   const [searchResults, setSearchResults] = useState([]);
   const [isSearched, setIsSearched] = useState(false);
+  const [searchOptions, setSearchOptions] = useState();
 
-  function onSearch (results){
+  function onSearch (results, options){
     console.log("Results in homepage", results)
+    setSearchOptions(options)
     setSearchResults(results);
     setIsSearched(true);
   }
@@ -81,6 +85,7 @@ export default function Homepage() {
   function buildlist(feature, rank){
     //const items=junkdynamic.filter(item => item.id===results.properties.location_id)
     //setListResults({items: items, name: results.properties.zone, score: placeScore})
+    
     setListResults({place: feature, rank: rank})
     setListShow(true)
     }
@@ -112,7 +117,12 @@ export default function Homepage() {
         <div className="main-footer-container">
           <UserSearchBar onSearch={onSearch} isSearched={isSearched} searchResults={searchResults}/>
         </div>
-        {listShow && <Droplist results={listResults} hideList={hideList}/>}
+        {listShow && <Droplist results={listResults} searchOptions={searchOptions} hideList={hideList}/>}
+        {//listShow && <div className="result-container">
+          //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
+        //</div>
+      }
+
         
       </div>
     </div>

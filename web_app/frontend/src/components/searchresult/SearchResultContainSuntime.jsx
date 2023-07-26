@@ -84,13 +84,13 @@ export async function handleSearch(searchOptions) {
       const results = Object.entries(response.data).map(([key, value]) => {
         // Calculate the description of the day time
         let dayTimeDescription = "";
-        if (/* Check if the chosen time is in golden hour */) {
+        if (/* Check if the chosen time is in golden hour */ false) {
           dayTimeDescription = "Golden Hour";
-        } else if (/* Check if the chosen time is in blue hour */) {
+        } else if (/* Check if the chosen time is in blue hour */ false) {
           dayTimeDescription = "Blue Hour";
-        } else if (/* Check if the chosen time is in sunrise */) {
+        } else if (/* Check if the chosen time is in sunrise */ false) {
           dayTimeDescription = "Sunrise";
-        } else if (/* Check if the chosen time is in sunset */) {
+        } else if (/* Check if the chosen time is in sunset */ false) {
           dayTimeDescription = "Sunset";
         }
 

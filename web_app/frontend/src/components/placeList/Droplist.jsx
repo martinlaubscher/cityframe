@@ -1,33 +1,30 @@
 //import ListItem from "./ListItem.jsx"
+import "../searchresult/SearchResultCSS.css"
+import "./DroplistCSS.css"
 
-export default function Droplist (props){
-    console.log(props.results)
-
-    //const oneplace=true //temp variable for if the list is of one place or all of them. Should be passed in as a prop later
-    //console.log("Droplist:", props.results)
-    /*
-    const items=props.results.items.map(item=> {
-        const scoreId=props.results.score.find(id=>id.id===item.id)
-        return (item.data.map(hour=> {
-            const scoreHour=scoreId.data.find(time=>time.time===hour.time)
-            return(
-               <ListItem 
-               key={[item.id, hour.time]}
-               id={item.id}
-               data={hour}
-               score={scoreHour.score}
-               />
-            )
-        }))
-    })*/
-    
-    return(
+export default function Droplist ({results, searchOptions, hideList}){
+        return(
         <div className="droplist">
-            <h2>{props.results.place.properties.zone}</h2>
-            <button onClick={props.hideList}>X</button>
-            <h4>Time: {props.results.rank.dt_iso}</h4>
-            <h3>rank: {props.results.rank.rank}</h3>
+            <div className="overlay-info">
+            <button
+          type="button"
+          className="btn-close"
+          onClick={hideList}></button>
+              <div className="info-zone-style-buyness-tree" style={{marginTop: 30 + "px"}}>
+                <div className="info-zone-style">
+                  <p>{results.rank.zone}</p>
+                  <p>{results.rank.style}  {searchOptions.style}  buildings</p>
+                </div>
+                <div className="info-busyness-tree">
+                  <p>BUSYNESS {results.busyness}</p>
+                  <p>TREES {results.trees}</p>
+                  <p>RANK {results.rank.rank}</p>
+                </div>
+              </div>
+              <div className="info-time">
+                <p>{results.rank.dt_iso}</p>
+              </div>
+            </div>
         </div>
-    )
-
+  );
 }
