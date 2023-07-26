@@ -21,25 +21,25 @@ export default function Navigation_offcanvas() {
       </div>
       <div className="offcanvas-body text-bg-dark">
         <ul className="nav flex-column pe-5">
-          <li className="nav-item ">
+          {/* <li className="nav-item ">
             <NavLink to="/login" className={location.pathname === "/login" ? "active-link" : ""}>Login</NavLink>
-          </li>
+          </li> */}
           <li className="nav-item ">
             <NavLink to="/contact" className={location.pathname === "/contact" ? "active-link" : ""}>Contact</NavLink>
           </li>
-          <li className="nav-item ">
+          {/* <li className="nav-item ">
             <NavLink to="/listview" className={location.pathname === "/listview" ? "active-link" : ""}>List View</NavLink>
           </li>
           <li className="nav-item">
             <NavLink to="/advancedsearch" className={location.pathname === "/advancedsearch" ? "active-link" : ""}>Advanced Search</NavLink>
-          </li>
+          </li> */}
         </ul>
 
         <Routes>
-          <Route path="/advancedsearch" element={<AdvancedSearch />} />
-          <Route path="/listview" element={<ListView />} />
+          {/* <Route path="/advancedsearch" element={<AdvancedSearch />} />
+          <Route path="/listview" element={<ListView />} /> */}
           <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
+          {/* <Route path="/login" element={<Login />} /> */}
         </Routes>
 
       </div>
