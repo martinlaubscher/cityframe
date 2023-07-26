@@ -1,4 +1,5 @@
 CREATE SCHEMA IF NOT EXISTS cityframe;
+
 CREATE TABLE cityframe.weather_fc (
     dt BIGINT PRIMARY KEY,
     dt_iso TIMESTAMP WITH TIME ZONE,
@@ -42,23 +43,21 @@ CREATE TABLE cityframe.weather_current (
     timezone INT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS cityframe."results"
-(
+CREATE TABLE cityframe."Results" (
     taxi_zone bigint,
     prediction real,
     bucket integer,
     dt_iso timestamp with time zone,
     id bigint
-)
+);
 
-TABLESPACE pg_default;
+-- TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS cityframe."results"
+ALTER TABLE IF EXISTS cityframe."Results"
     OWNER to postgres;
 
-CREATE TABLE IF NOT EXISTS cityframe.taxi_zones
-(
-    location_id integer NOT NULL DEFAULT nextval('cityframe.taxi_zones_location_id_seq'::regclass),
+CREATE TABLE IF NOT EXISTS cityframe.taxi_zones (
+    location_id integer NOT NULL,
     zone character varying COLLATE pg_catalog."default",
     trees integer,
     trees_scaled integer,
@@ -73,9 +72,9 @@ CREATE TABLE IF NOT EXISTS cityframe.taxi_zones
     "Federal" integer,
     "neo-Renaissance" integer,
     CONSTRAINT taxi_zones_pkey PRIMARY KEY (location_id)
-)
+);
 
-TABLESPACE pg_default;
+-- TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS cityframe.taxi_zones
     OWNER to postgres;
@@ -112,7 +111,7 @@ VALUES (
     '01d'
 );
 
-INSERT INTO cityframe.results (taxi_zone, prediction, bucket, dt_iso, id)
+INSERT INTO cityframe."Results" (taxi_zone, prediction, bucket, dt_iso, id)
 VALUES
 (4, 6.3052654, 2, '2023-07-25 13:00:00.000000 +00:00', 1),
 (4, 8.086619, 2, '2023-07-25 14:00:00.000000 +00:00', 2),
