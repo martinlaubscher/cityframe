@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.dummy_response import create_response, create_current_busyness_response
+from api_endpoints.get_results import generate_response
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
@@ -268,3 +269,29 @@ class MainFormSubmissionView(APIView):
         print(f"trees: {trees}")
         print(f"style: {style}")
         return Response(create_response())
+
+
+class MainFormSubmissionTestView(APIView):
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
+                'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
+                'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
+                'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
+            }
+        ),
+        responses={200: ResponseSerializer(many=True)}
+    )
+    def post(self, request):
+        time = request.data.get('time')
+        busyness = request.data.get('busyness')
+        trees = request.data.get('trees')
+        style = request.data.get('style')
+        print(f"time: {time}")
+        print(f"busyness: {busyness}")
+        print(f"trees: {trees}")
+        print(f"style: {style}")
+        return Response(generate_response(busyness, trees, style, time))
