@@ -37,7 +37,7 @@ export default function SearchResult({ results, searchOptions }) {
                   <p>BUSYNESS {result.busyness}</p>
                   <p>TREES {result.trees}</p>
                 </div>
-              </div> 
+              </div>
               <div className="info-time">
                 <p>{result.dt_iso}</p>
               </div>
@@ -93,7 +93,7 @@ export async function handleSearch(searchOptions) {
     const response = await axios.post("/api/submit-main", {
     //Notice：comment before commit
     // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
-      
+
       busyness: searchOptions.busyness,
       trees: searchOptions.tree,
       time: searchOptions.datetime,
@@ -110,7 +110,7 @@ export async function handleSearch(searchOptions) {
           id: key,
           ...value,
         };
-      });
+      }).sort((a, b) => a.rank - b.rank);
       return results;
     }
 
