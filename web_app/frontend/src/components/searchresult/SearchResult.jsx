@@ -24,7 +24,7 @@ export default function SearchResult({ results }) {
             key={result.id}
             className={`carousel-item ${index === 0 ? "active" : ""}`}
             style={{
-              backgroundImage: `url(https://picsum.photos/1920/1080?random=${result.id})`,
+              // backgroundImage: `url(https://picsum.photos/1920/1080?random=${result.id})`,
             }}
           >
             <div className="overlay-info">

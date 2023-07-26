@@ -3,8 +3,33 @@
   overflow: visible; 
   background-color: black;
 }
-
 .overlay-info {
+  display: flex;
+  flex-direction: column;  /* 这将让元素竖直排列 */
+  justify-content: center;  /* 这将在垂直方向上居中元素 */
+  align-items: center;  /* 这将在水平方向上居中元素 */
+  position: absolute;
+  top: 0;
+  width: 100%;
+  padding: 5px;
+  color: white;
+  font-family: 'Pixel', monospace;
+}
+
+.info-zone-style-buyness-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-zone-style, .info-busyness-tree {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* .overlay-info {
   display: flex;
   justify-content: space-between;
   position: absolute;
@@ -17,25 +42,25 @@
 
 .info-zone-style {
   display: flex;
-  justify-content: space-between; /* 使内容在横向上分散对齐 */
+  justify-content: space-between; 
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%; /* 充满父级元素的宽度 */
-}
+  width: 100%; 
+} */
 
 .info-zone-style p:first-child {
-  margin-left: 10px; /* 将ZONE信息放在左侧 */
-  font-size: 20px;
+  /* margin-left: 10px; 
+  font-size: 20px; */
 }
 
 .info-zone-style p:last-child {
-  margin-right: auto; /* 将STYLE信息放在中间 */
-  font-size: 20px;
+  /* margin-right: auto; 
+  font-size: 20px; */
 }
 
 
-.info-busyness-tree {
+/* .info-busyness-tree {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -44,7 +69,7 @@
 .info-busyness-tree p {
   margin: 0;
   font-size: 16px;
-}
+} */
 
 .info-time {
   color: orange;
