@@ -48,8 +48,9 @@ class MachineLearning:
         mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
         return rmse, mape
 
-    # Trains the machine learning model and saves it as a pickle file
-    def model_train(self, n=10000, params={"objective": "reg:squarederror", "tree_method": "hist"}):
+
+    #Trains the machine learning model and saves it as a pickle file
+    def model_train(self, n=10000, params={"objective": "reg:tweedie", "tree_method": "hist"}):
 
         """
         Args: n (int), params (dictionary of xgboost parameters)
@@ -231,6 +232,7 @@ class MachineLearning:
 
 
 if __name__ == '__main__':
+
     c = MachineLearning()
 
     c.machine_learn()
