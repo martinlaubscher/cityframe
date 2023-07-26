@@ -1,8 +1,11 @@
-import React, { useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import "./UserSearchBarCSS.css";
 import WeatherComponent from "../weatherInfo/WeatherComponent";
 import UserSearchMenu from "./UserSearchMenu";
-import { getAllBusyness, filterBusyness } from "../busynessInfo/currentBusyness";
+import {
+  getAllBusyness,
+  filterBusyness,
+} from "../busynessInfo/currentBusyness";
 
 export default function UserSearchBar() {
   const [busynessLevel, setBusynessLevel] = useState(3);
@@ -19,7 +22,8 @@ export default function UserSearchBar() {
   }, [busynessLevel, zones]);
 
   const handleBusynessChange = (event) => {
-    setBusynessLevel(event.target.value);
+    setBusynessLevel(Number(event.target.value)); // Convert value to number
+    console.log(`User selected busyness level: ${event.target.value}`);
   };
 
   return (
