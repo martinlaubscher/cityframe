@@ -298,21 +298,19 @@ class EndpointTests(TestCase):
 
         # Make the POST request
         response = self.client.post(url, data=json.dumps(data), content_type='application/json')
-
-        # Convert the response content from JSON string to Python dictionary
-        # response_data = json.loads(response.content)
+        response_data = json.loads(response.content)
 
         # Checks for correct structure of nested keys
-        # for key, value in response_data.items():
-        #     self.assertIn("zone", value)
-        #     self.assertIn("dt_iso", value)
-        #     self.assertIn("busyness", value)
-        #     self.assertIn("trees", value)
-        #     self.assertIn("style", value)
-        #     self.assertIn("weather", value)
-        #     self.assertIn("temp", value["weather"])
-        #     self.assertIn("weather_description", value["weather"])
-        #     self.assertIn("weather_icon", value["weather"])
+        for key, value in response_data.items():
+            self.assertIn("zone", value)
+            self.assertIn("dt_iso", value)
+            self.assertIn("busyness", value)
+            self.assertIn("trees", value)
+            self.assertIn("style", value)
+            self.assertIn("weather", value)
+            self.assertIn("temp", value["weather"])
+            self.assertIn("weather_description", value["weather"])
+            self.assertIn("weather_icon", value["weather"])
 
     def tearDown(self):
         # Nothing to teardown, may be required for future tests
