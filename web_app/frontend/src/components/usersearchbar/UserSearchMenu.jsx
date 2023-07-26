@@ -7,12 +7,13 @@ import SearchResult from "../searchresult/SearchResult";
 import { handleSearch } from "../searchresult/SearchResult";
 import "./UserSearchMenuCSS.css";
 import "../searchresult/SearchResultCSS.css";
+import moment from "moment";
 
 export default function UserSearchMenu() {
   const [searchOptions, setSearchOptions] = useState({
-    datetime: new Date(),
+    datetime: moment().format("YYYY-MM-DD HH:mm"),
     busyness: 1,
-    style: "Beaux-Arts",
+    style: "neo-Georgian",
     tree: 1,
   });
   const [searchResults, setSearchResults] = useState([]);
