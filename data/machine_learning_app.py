@@ -17,6 +17,8 @@ import sys
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 cityframe_path = os.path.dirname(current_path)
+csv_path = os.path.join(current_path, "ml_ready_df.csv")
+pkl_path = os.path.join(current_path, "model.pkl")
 
 sys.path.append(cityframe_path)
 
@@ -25,7 +27,6 @@ import xgboost as xgb
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
-import psycopg
 from sqlalchemy import create_engine, URL
 from credentials import pg_conn
 
@@ -34,22 +35,21 @@ from credentials import pg_conn
 class MachineLearning:
 
     # initializes MachineLearning object with parameters for the data and pickle filepaths
-    def __init__(self, dataFilePath='./ml_ready_df.csv', pickleFilePath='./model.pkl'):
+    def __init__(self, dataFilePath=csv_path, pickleFilePath=pkl_path):
         """
         Args: pickleFilePath: string(must be valid filepath), dataFilePath: string(must be valid filepath)
         """
 
         self.dataFilePath = dataFilePath
         self.pickleFilePath = pickleFilePath
-        self.pg_url = URL.create("postgresql", **pg_conn)
+        self.engine = create_engine(URL.create("postgresql+psycopg", **pg_conn))
 
     def calculate_metrics(self, y_true, y_pred):
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
         mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
         return rmse, mape
 
-
-    #Trains the machine learning model and saves it as a pickle file
+    # Trains the machine learning model and saves it as a pickle file
     def model_train(self, n=10000, params={"objective": "reg:tweedie", "tree_method": "hist"}):
 
         """
@@ -122,18 +122,14 @@ class MachineLearning:
         df = pd.DataFrame()
 
         try:
-            conn = psycopg.connect(self.pg_url.render_as_string(hide_password=False))
-            cur = conn.cursor()
+            with self.engine.begin() as connection:
 
-            sql = "SELECT dt, (dt_iso AT TIME ZONE 'America/New_York') as dt_iso, temp, feels_like, temp_min, temp_max, pressure, humidity, visibility, wind_speed, wind_deg, wind_gust, pop, rain_1h, snow_1h, clouds_all, weather_id, weather_main, weather_description, weather_icon FROM cityframe.weather_fc"
+                sql = "SELECT dt, (dt_iso AT TIME ZONE 'America/New_York') as dt_iso, temp, feels_like, temp_min, temp_max, pressure, humidity, visibility, wind_speed, wind_deg, wind_gust, pop, rain_1h, snow_1h, clouds_all, weather_id, weather_main, weather_description, weather_icon FROM cityframe.weather_fc"
 
-            df = pd.read_sql_query(sql, conn)
+                df = pd.read_sql_query(sql, connection)
 
         except Exception as ex:
             print(ex)
-
-        cur.close()
-        conn.close()
 
         return df
 
@@ -193,9 +189,7 @@ class MachineLearning:
         Args: pandas dataframe
         """
 
-        engine = create_engine(self.pg_url)
-
-        df.to_sql('Results', engine, schema='cityframe', if_exists='replace', index=False)
+        df.to_sql('Results', self.engine, schema='cityframe', if_exists='replace', index=False)
 
         return None
 
@@ -232,7 +226,6 @@ class MachineLearning:
 
 
 if __name__ == '__main__':
-
     c = MachineLearning()
 
     c.machine_learn()

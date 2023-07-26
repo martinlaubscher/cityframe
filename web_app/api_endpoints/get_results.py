@@ -9,9 +9,8 @@ from django.db.models import F
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc
-import time
 from dateutil import tz
-from datetime import datetime, timedelta
+from datetime import datetime
 from itertools import islice
 
 
@@ -77,7 +76,7 @@ def get_results(style, tree_range, busyness_range, user_time):
                 results[record.taxi_zone.id] = {
                     'zone': record.taxi_zone.zone,
                     'dt_iso': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')).strftime(
-                        '%Y-%m-%d %H:%M %z'),
+                        '%Y-%m-%d %H:%M'),
                     'busyness': record.bucket,
                     'trees': taxi_zone.trees_scaled,
                     'style': getattr(taxi_zone, style),
@@ -179,29 +178,21 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
 
     # calculate the difference to the desired busyness and tree level
     for key, value in results.items():
-        value['busyness_diff'] = abs(target_busyness - value['busyness'])
-        value['tree_diff'] = abs(target_trees - value['trees'])
+        # value['busyness_diff'] = abs(target_busyness - value['busyness'])
+        # value['tree_diff'] = abs(target_trees - value['trees'])
+        value['total_diff'] = abs(target_busyness - value['busyness']) + abs(target_trees - value['trees'])
 
     # sort the dictionary first according to the difference to the desired busyness level, then to the count
     sorted_dict = dict(
-        sorted(results.items(), key=lambda item: (item[1]['busyness_diff'], item[1]['tree_diff'], -item[1]['style'])))
+        sorted(results.items(), key=lambda item: (item[1]['total_diff'], -item[1]['style'])))
 
-    # Remove the temporary 'busyness_diff' from the dictionaries
+    i = 1
+    # Remove the temporary 'busyness_diff' from the dictionaries and add the rank
     for value in sorted_dict.values():
-        del value['busyness_diff']
-        del value['tree_diff']
+        del value['total_diff']
+        value['rank'] = i
+        i += 1
 
     sliced_dict = dict(islice(sorted_dict.items(), 10))
 
     return sliced_dict
-
-
-# start_time = time.time()  # Start timing
-#
-# response = generate_response(3, 3, 'Renaissance Revival', "2023-07-26 17:00")
-#
-# end_time = time.time()  # End timing
-# execution_time = end_time - start_time  # Calculate the execution time
-# print(f"The function execution took: {execution_time} seconds\n")  # Print the execution time
-
-# print(sliced_dict)

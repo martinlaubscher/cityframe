@@ -3,7 +3,7 @@ import { Logo } from "../components/logo/Logo";
 //import MapBackground from '../components/mapBackground/MapBackground.jsx';
 import UserSearchBar from '../components/usersearchbar/UserSearchBar.jsx';
 import "./homePageCSS.css"
-import WeatherComponent from '../components/weatherInfo/WeatherComponent.jsx';
+
 
 import Map from '../components/mapBackground/Map.jsx';
 import junkdynamic from '../components/dummydata/geojunk.js';
@@ -21,6 +21,18 @@ export default function Homepage() {
   const [listShow, setListShow]=useState(false)
   const [scores, setScores]=useState({})
   
+
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearched, setIsSearched] = useState(false);
+
+  function onSearch (results){
+    console.log("Results in homepage", results)
+    setSearchResults(results);
+    setIsSearched(true);
+  }
+
+
+    /*
   function searchFilter(){
     //Take in dictionary of all places and times in search (I think??) and all parameters
     //const allIds = junkdynamic.map(place=>{return place.id})
@@ -45,6 +57,7 @@ export default function Homepage() {
     calculateScores(items, search.params)
   }
 
+
   function calculateScores(items, params){
     var tempScores={}
     for (let key in items){
@@ -53,7 +66,7 @@ export default function Homepage() {
       tempScores[key]={score: score, time: time}
     }
     setScores(tempScores)
-    /*
+
     setScores( 
       items.map(item=>{
       return {id: item.id, data: item.data.map(time=>{
@@ -61,23 +74,21 @@ export default function Homepage() {
         return {time: time.time, score: score}
       }
       )}
-    }))*/
+    }))
   }
+  */
 
-  function buildlist(feature, score){
+  function buildlist(feature, rank){
     //const items=junkdynamic.filter(item => item.id===results.properties.location_id)
     //setListResults({items: items, name: results.properties.zone, score: placeScore})
-    setListResults({place: feature, score: score})
+    setListResults({place: feature, rank: rank})
     setListShow(true)
     }
   
   function hideList(){
     setListShow(false)    
   }
-  useEffect(function() {
-        searchFilter()
-  }, [])//put the search thing in the dependancies array
-
+  
 
   return (
     <div className='app-container'>
@@ -94,10 +105,12 @@ export default function Homepage() {
             data={data}
             scores={scores}
             buildlist={buildlist}
+            isSearched={isSearched}
+            searchResults={searchResults}
             />
         </div>
         <div className="main-footer-container">
-          <UserSearchBar/>
+          <UserSearchBar onSearch={onSearch} isSearched={isSearched} searchResults={searchResults}/>
         </div>
         {listShow && <Droplist results={listResults} hideList={hideList}/>}
         

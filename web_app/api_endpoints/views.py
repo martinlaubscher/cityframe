@@ -42,41 +42,10 @@ class CurrentWeatherAPIView(APIView):
         Returns:
             Response(weather_data): JSON data of current Manhattan weather
         """
-        # Try to get the data from the cache
-        weather_data = cache.get('current_weather')
-
-        if weather_data is not None:
-            # If there is data in the cache, return it
-            # for debugging
-            print("\nWeather data fetched from Cache")
-
-            return Response(weather_data)
-        else:
-            # Try to get the data from the database
-            weather_data = WeatherCurrent.get_current()
-
-            if weather_data is not None:
-                # If there is data in the database, return it
-                # for debugging
-                print("\nWeather data fetched from Database")
-
-                # Add the data to the cache, with a timeout of 5 minutes
-                cache.set('current_weather', weather_data, 300)
-
-                return Response(weather_data)
-            else:
-                # If no data in the database, fetch from the OpenWeather API
-                url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-                response = requests.get(url)
-                weather_data = response.json()
-
-                # for debugging
-                print("\nWeather data fetched from openweather API call")
-
-                # Store the new data in the cache for next time
-                cache.set('current_weather', weather_data, 300)
-
-                return Response(weather_data)
+        url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+        response = requests.get(url)
+        data = response.json()
+        return Response(data)
 
 
 class FutureWeatherAPIView(APIView):
