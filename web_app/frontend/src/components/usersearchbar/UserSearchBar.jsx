@@ -70,7 +70,7 @@ export default function UserSearchBar() {
           />
         </div>
       </div>
-      <UserSearchMenu />
+      <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
       {/* <div
         className="offcanvas offcanvas-bottom"
         tabIndex="-1"
