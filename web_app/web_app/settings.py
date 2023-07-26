@@ -53,9 +53,20 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     'drf_yasg',
+
+
+    # add by frontend for testing to facilitate real-time visualization
+    # of changes made to the frontend code.
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+
+    # add by frontend for testing to facilitate real-time visualization
+    # of changes made to the frontend code.
+    'corsheaders.middleware.CorsMiddleware',
+
+
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -66,7 +77,20 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+
+# add by frontend for testing to facilitate real-time visualization
+# of changes made to the frontend code.
+CORS_ORIGIN_WHITELIST = [
+
+    'http://localhost:5173',
+    'http://127.0.0.1:8000',
+]
+
+
 ROOT_URLCONF = 'web_app.urls'
+
+
 
 TEMPLATES = [
     {
