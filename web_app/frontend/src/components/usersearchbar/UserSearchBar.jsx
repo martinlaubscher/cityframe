@@ -3,7 +3,7 @@ import "./UserSearchBarCSS.css";
 import WeatherComponent from "../weatherInfo/WeatherComponent";
 import UserSearchMenu from "./UserSearchMenu";
 
-export default function UserSearchBar() {
+export default function UserSearchBar(props) {
   const [busynessLevel, setBusynessLevel] = useState("");
   return (
     <div className="usersearch-container">
@@ -47,7 +47,7 @@ export default function UserSearchBar() {
           />
         </div>
       </div>
-      <UserSearchMenu  />
+      <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
       {/* <div
         className="offcanvas offcanvas-bottom"
         tabIndex="-1"
