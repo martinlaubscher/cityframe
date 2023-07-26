@@ -185,10 +185,13 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
     sorted_dict = dict(
         sorted(results.items(), key=lambda item: (item[1]['busyness_diff'], item[1]['tree_diff'], -item[1]['style'])))
 
-    # Remove the temporary 'busyness_diff' from the dictionaries
+    i = 0
+    # Remove the temporary 'busyness_diff' from the dictionaries and add the rank
     for value in sorted_dict.values():
         del value['busyness_diff']
         del value['tree_diff']
+        value['rank'] = i
+        i += 1
 
     sliced_dict = dict(islice(sorted_dict.items(), 10))
 
