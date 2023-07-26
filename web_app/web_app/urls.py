@@ -19,7 +19,7 @@ from django.urls import include, path
 from core.views import front_page
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
     FutureSuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
-    CurrentManhattanBusyness
+    CurrentManhattanBusyness  # MainFormSubmissionTestView
 from rest_framework import routers, permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -68,12 +68,14 @@ urlpatterns = [
     # current busyness
     path('api/current-busyness', CurrentManhattanBusyness.as_view(), name='current-manhattan-busyness'),
 
-    # post request
+    # post request (for dummy response)
+    # path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
+    # POST request using real database predictions
     path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
 
     # Generated API documentation (OpenAPI/swagger format)
     path('api/', include(router.urls)),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-
 ]
+
 

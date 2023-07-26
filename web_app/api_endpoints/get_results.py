@@ -196,12 +196,12 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
     return sliced_dict
 
 
-start_time = time.time()  # Start timing
+# start_time = time.time()  # Start timing
+#
+# response = generate_response(3, 3, 'Renaissance Revival', "2023-07-26 17:00")
+#
+# end_time = time.time()  # End timing
+# execution_time = end_time - start_time  # Calculate the execution time
+# print(f"The function execution took: {execution_time} seconds\n")  # Print the execution time
 
-response = generate_response(3, 3, 'Renaissance Revival', "2023-07-26 17:00")
-
-end_time = time.time()  # End timing
-execution_time = end_time - start_time  # Calculate the execution time
-print(f"The function execution took: {execution_time} seconds\n")  # Print the execution time
-
-print(response)
+# print(sliced_dict)
