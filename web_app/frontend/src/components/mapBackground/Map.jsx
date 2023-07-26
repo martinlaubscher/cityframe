@@ -32,6 +32,7 @@ export default function Map(props) {
     }
     var polygons
     if (geojsonData){
+        if (props.isSearched){
         polygons=geojsonData.features.map((feature, idx) => {
         var path
         var click
@@ -58,6 +59,36 @@ export default function Map(props) {
             />)
             });
     })}
+    else{
+        polygons=geojsonData.features.map((feature, idx) => {
+            var path
+            var click
+            var busy=props.scores[feature.properties.location_id]
+            //Object.keys(props.scores).find(key => key === feature.properties.location_id)
+            if (score){
+                path= {color: "purple", weight: 2, fillColor:getColour(score.score), fillOpacity: 0.8}
+                click= () => props.buildlist(feature, score)
+            }
+            else{
+                path=defaultOptions
+                click= handleClick
+            }
+    
+            return feature.geometry.coordinates.map((polygon, polygonIndex) => {
+                return(
+                <Polygon
+                    key={`${idx}-${polygonIndex}`}
+                    positions={polygon[0].map(coord => [coord[1], coord[0]])} // swap lat and lng
+                    pathOptions={path}
+                    eventHandlers={{
+                        click: click
+                    }}
+                />)
+                });
+        })
+
+    }
+}
 
 
 

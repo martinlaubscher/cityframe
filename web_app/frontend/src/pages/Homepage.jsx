@@ -21,6 +21,22 @@ export default function Homepage() {
   const [listShow, setListShow]=useState(false)
   const [scores, setScores]=useState({})
   
+
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearched, setIsSearched] = useState(false);
+/*
+  function onSearch (results){
+    console.log("Results in homepage")
+    setSearchResults(results);
+    setIsSearched(true);
+  } 
+  //onSearch={onSearch} isSearched={isSearched} searchResults={searchResults}
+  // onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}
+*/
+
+
+
+
   function searchFilter(){
     //Take in dictionary of all places and times in search (I think??) and all parameters
     //const allIds = junkdynamic.map(place=>{return place.id})
@@ -94,6 +110,8 @@ export default function Homepage() {
             data={data}
             scores={scores}
             buildlist={buildlist}
+            isSearched={isSearched}
+            searchResults={searchResults}
             />
         </div>
         <div className="main-footer-container">
