@@ -288,10 +288,10 @@ class EndpointTests(TestCase):
         """
         # Test data to send in the POST request
         data = {
-            "time": "2023-07-23 07:05",
-            "busyness": 5,
-            "trees": 5,
-            "style": "Art Deco"
+          "busyness": 3,
+          "trees": 3,
+          "time": "2023-07-26 17:00",
+          "style": "Federal"
         }
 
         url = reverse('main-form-submission')

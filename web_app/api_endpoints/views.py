@@ -245,38 +245,38 @@ class ResponseSerializer(serializers.Serializer):
     style = serializers.CharField()
 
 
+# class MainFormSubmissionView(APIView):
+#
+#     @swagger_auto_schema(
+#         request_body=openapi.Schema(
+#             type=openapi.TYPE_OBJECT,
+#             properties={
+#                 'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
+#                 'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
+#                 'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
+#                 'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
+#             }
+#         ),
+#         responses={200: ResponseSerializer(many=True)}
+#     )
+#     def post(self, request):
+#         time = request.data.get('time')
+#         busyness = request.data.get('busyness')
+#         trees = request.data.get('trees')
+#         style = request.data.get('style')
+#         print(f"busyness: {busyness}")
+#         print(f"trees: {trees}")
+#         print(f"style: {style}")
+#         print(f"time: {time}")
+#         return Response(create_response())
+
+
 class MainFormSubmissionView(APIView):
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
-                'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
-                'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
-                'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
-            }
-        ),
-        responses={200: ResponseSerializer(many=True)}
-    )
-    def post(self, request):
-        time = request.data.get('time')
-        busyness = request.data.get('busyness')
-        trees = request.data.get('trees')
-        style = request.data.get('style')
-        print(f"time: {time}")
-        print(f"busyness: {busyness}")
-        print(f"trees: {trees}")
-        print(f"style: {style}")
-        return Response(create_response())
-
-
-class MainFormSubmissionTestView(APIView):
-
-    @swagger_auto_schema(
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
                 'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
                 'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
                 'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
@@ -290,8 +290,8 @@ class MainFormSubmissionTestView(APIView):
         busyness = request.data.get('busyness')
         trees = request.data.get('trees')
         style = request.data.get('style')
-        print(f"time: {time}")
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
+        print(f"time: {time}")
         return Response(generate_response(busyness, trees, style, time))
