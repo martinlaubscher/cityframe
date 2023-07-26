@@ -30,6 +30,7 @@ export default function SearchResult({ results, searchOptions }) {
             <div className="overlay-info">
               <div className="info-zone-style-buyness-tree">
                 <div className="info-zone-style">
+                  <p>RANK {result.rank}</p>
                   <p>{result.zone}</p>
                   <p>{result.style}  {searchOptions.style}  buildings</p>
                 </div>
@@ -92,7 +93,7 @@ export async function handleSearch(searchOptions) {
     // Notice：de-comment in final version
     // const response = await axios.post("/api/submit-main", {
     //Notice：comment before commit
-    // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
+    const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
       
       busyness: searchOptions.busyness,
       trees: searchOptions.tree,
