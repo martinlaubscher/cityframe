@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import include, path
 from core.views import front_page
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
-    FutureSuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView
+    FutureSuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
+    CurrentManhattanBusyness
 from rest_framework import routers, permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -63,6 +64,9 @@ urlpatterns = [
 
     # golden hour
     path('api/golden-hour/<str:chosen_date>/', GoldenHourAPIView.as_view(), name='golden_hour'),
+
+    # current busyness
+    path('api/current-busyness', CurrentManhattanBusyness.as_view(), name='current-manhattan-busyness'),
 
     # post request
     path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),

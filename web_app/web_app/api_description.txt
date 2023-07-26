@@ -52,3 +52,9 @@
    - Method: POST
    - Parameters: JSON data containing 'time' (a datetime string), 'busyness' (an int from 1-5 inclusive), 'trees' (an int from 1-5 inclusive), and 'style' (a string mathing pre-defined styles).
    - Response: Returns a JSON object containing predictions for the specified parameters.
+
+8. CurrentManhattanBusyness:
+   - Description: Retrieve the current busyness levels for each taxi zone in Manhattan.
+   - Endpoint: /api/current-busyness/
+   - Method: GET
+   - Response: Returns a dictionary with each taxi zone as a key and a randomly selected busyness level (range 1-6) as the corresponding value.
