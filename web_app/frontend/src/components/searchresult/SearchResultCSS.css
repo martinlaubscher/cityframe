@@ -5,9 +5,9 @@
 }
 .overlay-info {
   display: flex;
-  flex-direction: column;  /* 这将让元素竖直排列 */
-  justify-content: center;  /* 这将在垂直方向上居中元素 */
-  align-items: center;  /* 这将在水平方向上居中元素 */
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center;  
   position: absolute;
   top: 0;
   width: 100%;

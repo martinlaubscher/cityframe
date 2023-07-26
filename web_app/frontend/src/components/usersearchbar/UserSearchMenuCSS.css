@@ -196,7 +196,7 @@
 }
 
 .offcanvas-body, .result-container {
-  /* 确保内容不会被压缩 */
+
   flex-shrink: 0;
 }
 
