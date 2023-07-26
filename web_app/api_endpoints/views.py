@@ -12,7 +12,7 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from credentials import openweather_key, timezone_db_key
-from api_endpoints.dummy_response import create_response, create_current_busyness_response
+from api_endpoints.dummy_response import create_current_busyness_response
 from api_endpoints.get_results import generate_response
 from .models import WeatherFc, WeatherCurrent
 import requests
@@ -42,10 +42,41 @@ class CurrentWeatherAPIView(APIView):
         Returns:
             Response(weather_data): JSON data of current Manhattan weather
         """
-        url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-        response = requests.get(url)
-        data = response.json()
-        return Response(data)
+        # Try to get the data from the cache
+        weather_data = cache.get('current_weather')
+
+        if weather_data is not None:
+            # If there is data in the cache, return it
+            # for debugging
+            print("\nWeather data fetched from Cache")
+
+            return Response(weather_data)
+        else:
+            # Try to get the data from the database
+            weather_data = WeatherCurrent.get_current()
+
+            if weather_data is not None:
+                # If there is data in the database, return it
+                # for debugging
+                print("\nWeather data fetched from Database")
+
+                # Add the data to the cache, with a timeout of 5 minutes
+                cache.set('current_weather', weather_data, 300)
+
+                return Response(weather_data)
+            else:
+                # If no data in the database, fetch from the OpenWeather API
+                url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+                response = requests.get(url)
+                weather_data = response.json()
+
+                # for debugging
+                print("\nWeather data fetched from openweather API call")
+
+                # Store the new data in the cache for next time
+                cache.set('current_weather', weather_data, 300)
+
+                return Response(weather_data)
 
 
 class FutureWeatherAPIView(APIView):
@@ -203,7 +234,19 @@ class CurrentManhattanTimeAPIView(APIView):
 
 class CurrentManhattanBusyness(APIView):
     def get(self, request):
-        return Response(create_current_busyness_response())
+        busyness_data = cache.get('current_busyness')
+
+        if busyness_data is not None:
+            # If there is data in the cache, return it
+            # for debugging
+            print("\nBusyness data fetched from Cache")
+            return Response(busyness_data)
+        else:
+            busyness_data = create_current_busyness_response()
+            # Add the data to the cache, with a timeout of 5 minutes
+            cache.set('current_busyness', busyness_data, 300)
+            print("\nBusyness data fetched from DB")
+            return Response(busyness_data)
 
 
 class ResponseSerializer(serializers.Serializer):
