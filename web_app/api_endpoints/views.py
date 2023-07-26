@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.dummy_response import create_current_busyness_response
-from api_endpoints.get_results import generate_response
+from api_endpoints.get_results import generate_response, current_busyness
 from .models import WeatherFc, WeatherCurrent
 import requests
 import datetime
@@ -233,7 +233,7 @@ class CurrentManhattanTimeAPIView(APIView):
 
 
 class CurrentManhattanBusyness(APIView):
-    def get(self, request):
+    def get(self, request, chosen_datetime):
         busyness_data = cache.get('current_busyness')
 
         if busyness_data is not None:
@@ -242,8 +242,12 @@ class CurrentManhattanBusyness(APIView):
             print("\nBusyness data fetched from Cache")
             return Response(busyness_data)
         else:
-            busyness_data = create_current_busyness_response()
-            # Add the data to the cache, with a timeout of 5 minutes
+            # busyness_data = create_current_busyness_response()
+            # # Add the data to the cache, with a timeout of 5 minutes
+            # cache.set('current_busyness', busyness_data, 300)
+            # print("\nBusyness data fetched from DB")
+            # return Response(busyness_data)
+            busyness_data = current_busyness(chosen_datetime)
             cache.set('current_busyness', busyness_data, 300)
             print("\nBusyness data fetched from DB")
             return Response(busyness_data)
