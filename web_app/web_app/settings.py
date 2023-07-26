@@ -169,7 +169,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'), os.path.join(BASE_DIR, 'frontend', 'public')]
 
 STORAGES = {
     'staticfiles': {
