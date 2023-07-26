@@ -21,26 +21,29 @@ export default function Map(props) {
     function handleClick(){
         console.log("She doesn't even go here")
     }
-    function getColour(score){
+    function getColour(rank){
 
         // Define the hue and lightness range for the heatmap. Saturation remains at 100%
-        const hue = score+230; // PURPLE!!!
+        const colourVar=(11-rank)*10
+        const hue = colourVar+230; // PURPLE!!!
 
-        const lightness = 90-(score/2);
+        const lightness = 90-(colourVar/2);
         return `hsl(${hue}, ${100}%, ${lightness}%)`
 
     }
     var polygons
     if (geojsonData){
         if (props.isSearched){
+
         polygons=geojsonData.features.map((feature, idx) => {
         var path
         var click
-        var score=props.scores[feature.properties.location_id]
-        //Object.keys(props.scores).find(key => key === feature.properties.location_id)
-        if (score){
-            path= {color: "purple", weight: 2, fillColor:getColour(score.score), fillOpacity: 0.8}
-            click= () => props.buildlist(feature, score)
+        
+        var placeRank = props.searchResults.find(place => place.id === feature.properties.location_id)
+
+        if (placeRank){
+            path= {color: "purple", weight: 2, fillColor:getColour(placeRank.rank), fillOpacity: 0.8}
+            click= () => props.buildlist(feature, placeRank)
         }
         else{
             path=defaultOptions
@@ -59,29 +62,18 @@ export default function Map(props) {
             />)
             });
     })}
+
     else{
         polygons=geojsonData.features.map((feature, idx) => {
-            var path
-            var click
-            var busy=props.scores[feature.properties.location_id]
-            //Object.keys(props.scores).find(key => key === feature.properties.location_id)
-            if (score){
-                path= {color: "purple", weight: 2, fillColor:getColour(score.score), fillOpacity: 0.8}
-                click= () => props.buildlist(feature, score)
-            }
-            else{
-                path=defaultOptions
-                click= handleClick
-            }
     
             return feature.geometry.coordinates.map((polygon, polygonIndex) => {
                 return(
                 <Polygon
                     key={`${idx}-${polygonIndex}`}
                     positions={polygon[0].map(coord => [coord[1], coord[0]])} // swap lat and lng
-                    pathOptions={path}
+                    pathOptions={defaultOptions}
                     eventHandlers={{
-                        click: click
+                        click: handleClick
                     }}
                 />)
                 });
@@ -89,7 +81,6 @@ export default function Map(props) {
 
     }
 }
-
 
 
     return (

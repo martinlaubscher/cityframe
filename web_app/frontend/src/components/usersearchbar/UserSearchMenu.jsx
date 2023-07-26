@@ -9,15 +9,15 @@ import "./UserSearchMenuCSS.css";
 import "../searchresult/SearchResultCSS.css";
 import moment from "moment-timezone";
 
-export default function UserSearchMenu() {
+export default function UserSearchMenu(props) {
   const [searchOptions, setSearchOptions] = useState({
     datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
     busyness: 1,
     style: "neo-Georgian",
     tree: 1,
   });
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearched, setIsSearched] = useState(false);
+  //const [searchResults, setSearchResults] = useState([]);
+  //const [isSearched, setIsSearched] = useState(false);
 
   // Create a ref for the offcanvas
   const offCanvasRef = useRef(null);
@@ -28,8 +28,9 @@ export default function UserSearchMenu() {
 
   const onSearch = async () => {
     const results = await handleSearch(searchOptions);
-    setSearchResults(results);
-    setIsSearched(true);
+    props.onSearch(results)
+    //setSearchResults(results);
+    //setIsSearched(true);
 
     // Change the height of the offcanvas after search
     offCanvasRef.current.style.height = "60%";
@@ -65,7 +66,7 @@ export default function UserSearchMenu() {
           </div>
         </div>
         <div className="result-container">
-          {isSearched && <SearchResult results={searchResults} searchOptions={searchOptions} />
+          {props.isSearched && <SearchResult results={props.searchResults} searchOptions={searchOptions} />
 }
         </div>
       </div>
