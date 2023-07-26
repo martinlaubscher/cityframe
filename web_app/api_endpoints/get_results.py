@@ -154,32 +154,21 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    # first, expand the tree range until there are ten results or the range has been exhausted
-    while len(results) < 10 and (lower_trees > 0 or higher_trees < 6):
+    # search for results - expand parameters until at least ten have been found
+    while len(results) < 10 and ((lower_trees > 0 or higher_trees < 6) or (lower_busy > 0 or higher_busy < 6)):
         results = get_results(style_dict.get(target_style), (lower_trees, higher_trees),
-                              (target_busyness, target_busyness),
+                              (lower_busy, higher_busy),
                               ny_dt)
         # check for errors
         if isinstance(results, Exception):
             return check_error_type(results)
         lower_trees -= 1
         higher_trees += 1
-
-    # if there are still not ten results:
-    # expand the busyness range until there are ten results or the range has been exhausted
-    while len(results) < 10 and (lower_busy > 0 or higher_busy < 6):
-        results = get_results(style_dict.get(target_style), (1, 5), (lower_busy, higher_busy),
-                              ny_dt)
-        # check for errors
-        if isinstance(results, Exception):
-            return check_error_type(results)
         lower_busy -= 1
         higher_busy += 1
 
     # calculate the difference to the desired busyness and tree level
     for key, value in results.items():
-        # value['busyness_diff'] = abs(target_busyness - value['busyness'])
-        # value['tree_diff'] = abs(target_trees - value['trees'])
         value['total_diff'] = abs(target_busyness - value['busyness']) + abs(target_trees - value['trees'])
 
     # sort the dictionary first according to the difference to the desired busyness level, then to the count
