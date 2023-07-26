@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     # add by frontend for testing to facilitate real-time visualization
     # of changes made to the frontend code.
 #     'corsheaders',
-# ]
+]
 
 MIDDLEWARE = [
 
