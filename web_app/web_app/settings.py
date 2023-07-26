@@ -57,14 +57,14 @@ INSTALLED_APPS = [
 
     # add by frontend for testing to facilitate real-time visualization
     # of changes made to the frontend code.
-    'corsheaders',
-]
+#     'corsheaders',
+# ]
 
 MIDDLEWARE = [
 
     # add by frontend for testing to facilitate real-time visualization
     # of changes made to the frontend code.
-    'corsheaders.middleware.CorsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
 
 
     'django.middleware.security.SecurityMiddleware',
@@ -81,11 +81,11 @@ MIDDLEWARE = [
 
 # add by frontend for testing to facilitate real-time visualization
 # of changes made to the frontend code.
-CORS_ORIGIN_WHITELIST = [
+# CORS_ORIGIN_WHITELIST = [
 
-    'http://localhost:5173',
-    'http://127.0.0.1:8000',
-]
+#     'http://localhost:5173',
+#     'http://127.0.0.1:8000',
+# ]
 
 
 ROOT_URLCONF = 'web_app.urls'
