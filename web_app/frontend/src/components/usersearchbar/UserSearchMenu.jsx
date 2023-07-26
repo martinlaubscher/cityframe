@@ -65,7 +65,8 @@ export default function UserSearchMenu() {
           </div>
         </div>
         <div className="result-container">
-          {isSearched && <SearchResult results={searchResults} />}
+          {isSearched && <SearchResult results={searchResults} searchOptions={searchOptions} />
+}
         </div>
       </div>
     </div>

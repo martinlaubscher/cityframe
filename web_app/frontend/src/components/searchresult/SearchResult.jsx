@@ -2,7 +2,7 @@
 import axios from "axios";
 import "./SearchResultCSS.css"
 
-export default function SearchResult({ results },searchOptions) {
+export default function SearchResult({ results, searchOptions }) {
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -31,7 +31,7 @@ export default function SearchResult({ results },searchOptions) {
               <div className="info-zone-style-buyness-tree">
                 <div className="info-zone-style">
                   <p>{result.zone}</p>
-                  <p>{result.style}  buildings in {searchOptions.style}</p>
+                  <p>{result.style}  {searchOptions.style}  buildings</p>
                 </div>
                 <div className="info-busyness-tree">
                   <p>BUSYNESS {result.busyness}</p>
