@@ -28,7 +28,7 @@ export default function UserSearchMenu(props) {
 
   const onSearch = async () => {
     const results = await handleSearch(searchOptions);
-    props.onSearch(results)
+    props.onSearch(results, searchOptions)
     //setSearchResults(results);
     //setIsSearched(true);
 
@@ -66,7 +66,7 @@ export default function UserSearchMenu(props) {
           </div>
         </div>
         <div className="result-container">
-          {props.isSearched && <SearchResult results={props.searchResults} searchOptions={searchOptions} />
+          {props.isSearched && <SearchResult results={props.searchResults} searchOptions={searchOptions}/>
 }
         </div>
       </div>
