@@ -7,7 +7,7 @@ import {
   filterBusyness,
 } from "../busynessInfo/currentBusyness";
 
-export default function UserSearchBar() {
+export default function UserSearchBar(props) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [zones, setZones] = useState({});
 
