@@ -1,6 +1,6 @@
 import os
 import sys
-
+sys.path.insert(0, '/Users/jingao/Desktop/cityframe/web_app/')
 current_path = os.path.dirname(os.path.abspath(__file__))
 cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
 taxi_path = os.path.join(current_path, "../..", "GeoJSON", "manhattan_taxi_zones.geojson")
