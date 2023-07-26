@@ -37,7 +37,7 @@
   text-decoration: none; /* removes underline */
   font-weight: bold; /* makes font bold */
   font-size: 1.2em; /* makes font bigger, adjust as necessary */
-  font-family: Arial, sans-seif !important;
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif !important;
 }
 
 .nav-item a:hover {

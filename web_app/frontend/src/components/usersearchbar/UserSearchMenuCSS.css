@@ -1,85 +1,214 @@
 .offcanvas {
-    height: 60% !important;
+  height: 60% !important;
 }
-  
+
 .button-wrapper-close {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    background-color: white;
-  }
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background-color: black;
+}
+
+.btn-close {
+  margin-top: 10px;
+}
 
 .offcanvas-button svg {
-    width: 24px;
-    height: 24px;
-    }
+  width: 24px;
+  height: 24px;
+}
 
 .offcanvas-button {
-    display: flex!important;
-    align-items: center!important;
-    justify-content: center!important;
-    background-color: transparent !important;
-    border: none !important;
-    cursor: pointer!important;
-    padding: 0;
-    } 
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 0;
+}
+
 .offcanvas-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color:white;
-    }
-    
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: black !important;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: hidden; /* Change this */
+}
+
 .offcanvas-body form label {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.option-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-.option-label .option-name {
-    margin-right: 10px;
-    font-size: 14px;
-}
-
-.option-label input[type="checkbox"],
-    .option-label select {
-    font-size: 14px;
-}
 
 .offcanvas-body.small {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .button-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .button-container > * {
-    flex: 1;
-    width: 100%;
-  }
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Show vertical scrollbar when necessary */
+  overflow-x: hidden; /* Keep horizontal scrollbar hidden */
+}
 
-  .option-button {
-    width: 100%;
-    height: 40px;
-  }
+.button-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  overflow: visible; /* Add this if the content might overflow */
+}
+
+
+.button-container > * {
+  width: 100%;
+  text-align: left; 
+}
+
+.option-button {
+  width: 100%;
+  height: 40px;
+}
 
 .btn-block {
-    width: 100% !important;
-    background-color: black !important;
-    border: none !important;
-  }
-  
+  width: 100% !important;
+  background-color: black !important;
+  border: none !important;
+}
+
+/* -------------option part------------------------- */
+.option-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  font-weight: bold;
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+.option-label {
+  margin-left: 20px;
+  font-size: 20px;
+}
+.option-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+
+
+
+/* -------------date time picker------------------------- */
+/* Set all optional date text to black */
+.rdtPicker table tbody tr td {
+  color: black;
+}
+
+/* Set non-selectable date text to grey */
+.rdtPicker table tbody tr td.rdtDisabled {
+  color: gray;
+}
+
+/* Set the background colour of the selected date to black and the text colour to white */
+.rdtPicker table tbody tr td.rdtActive {
+  background-color: black;
+  color: white;
+}
+
+/* Set the time picker icon and text to black */
+.rdtPicker table thead tr th,
+.rdtPicker table thead tr th span {
+  color: black;
+}
+
+.rdtPicker .rdtTimeToggle {
+  color: black;
+}
+
+.rdtSwitch {
+  background-color: white;
+  color: black;
+}
+
+.dateTimePicker {
+  width: 135px;
+  font-size: 12px;
+  margin-right: 50px;
+}
+
+.form-control {
+  padding: 0.5px !important; /* date time picker */
+}
+
+.rdtOpen .rdtPicker {
+  left: -50px; /* date time picker */
+}
+
+/* -------------tree switch------------------------- */
+
+.form-switch {
+  margin-right: 100px;
+}
+
+/* .form-check-input:checked {
+  background-color: green !important;
+  border-color: green !important;
+} */
+
+/* -------------busyness level------------------------- */
+.option-list .form-check-label {
+  font-size: 15px; /* modify the size of the option font */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;  /* align-items: centre */
+}
+
+.option-list .form-check-inline {
+  margin-right: 5px; 
+}
+
+
+/* -------------architecture style------------------------- */
+.style-select{
+  font-size: 17px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+/* -------------search button------------------------- */
+.btn-dark {
+  color: white;
+  font-weight: bold !important;
+}
+
+.scroll-container {
+  overflow: auto;
+  height: 100vh;
+}
+
+.offcanvas-body, .result-container {
+
+  flex-shrink: 0;
+}
+
+.offcanvas-backdrop.show {
+  opacity: 0 !important;
+}
+
+.offcanvas.offcanvas-bottom {
+  right: 0;
+  left: 0;
+  height: var(--bs-offcanvas-height);
+  max-height: 60% !important;    /* change selections and results window size */
+  border-top: var(--bs-offcanvas-border-width) solid var(--bs-offcanvas-border-color);
+  transform: translateY(100%);
+}
