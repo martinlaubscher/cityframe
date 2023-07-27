@@ -12,13 +12,13 @@ export default function Droplist ({results, searchOptions, hideList}){
           onClick={hideList}></button>
               <div className="info-zone-style-buyness-tree" style={{marginTop: 30 + "px"}}>
                 <div className="info-zone-style">
+                  <p>RANK {results.rank.rank}</p>
                   <p>{results.rank.zone}</p>
                   <p>{results.rank.style}  {searchOptions.style}  buildings</p>
                 </div>
                 <div className="info-busyness-tree">
-                  <p>BUSYNESS {results.busyness}</p>
-                  <p>TREES {results.trees}</p>
-                  <p>RANK {results.rank.rank}</p>
+                  <p>BUSYNESS {results.rank.busyness}</p>
+                  <p>TREES {results.rank.trees}</p>
                 </div>
               </div>
               <div className="info-time">
