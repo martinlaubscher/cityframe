@@ -66,7 +66,7 @@ urlpatterns = [
     path('api/golden-hour/<str:chosen_date>/', GoldenHourAPIView.as_view(), name='golden_hour'),
 
     # current busyness
-    path('api/current-busyness/<str:chosen_datetime>', CurrentManhattanBusyness.as_view(), name='current-manhattan-busyness'),
+    path('api/current-busyness/', CurrentManhattanBusyness.as_view(), name='current-manhattan-busyness'),
 
     # post request (for dummy response)
     # path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),

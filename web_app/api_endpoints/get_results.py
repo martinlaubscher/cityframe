@@ -12,6 +12,7 @@ from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Results
 from dateutil import tz
 from datetime import datetime
 from itertools import islice
+import pytz
 
 
 def check_error_type(e):
@@ -187,27 +188,10 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
     return sliced_dict
 
 
-def current_busyness(target_dt):
-    # creating a datetime object from the string received by the post request.
-    # if the input is neither a correctly formatted string nor a datetime object, raise an error
-    if isinstance(target_dt, str):
-        ny_dt = datetime.strptime(target_dt, "%Y-%m-%d %H:%M").replace(minute=0)
-    elif isinstance(target_dt, datetime):
-        ny_dt = target_dt.replace(minute=0, second=0, microsecond=0)
-    else:
-        raise ValueError("Invalid date input. Expected a string or datetime object.")
-
-    # setting timezone to ny. if the supplied value/object is tz aware, convert it. if it is naive, assume it's ny time.
-    if is_aware(ny_dt):
-        ny_dt = ny_dt.astimezone(tz.gettz('America/New_York'))
-    else:
-        ny_dt = ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
-
-    # if the time supplied is earlier than the earliest available time, take that one
-    # if the time supplied is later than the latest available time, take that one
-    earliest_dt_iso = Results.objects.earliest('dt_iso').dt_iso
-    latest_dt_iso = Results.objects.latest('dt_iso').dt_iso
-    ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
+def current_busyness():
+    ny_tz = pytz.timezone('America/New_York')
+    ny_dt = datetime.now(ny_tz)
+    ny_dt = ny_dt.replace(minute=0, second=0, microsecond=0)
 
     # find records where dt_iso = ny_dt
     results = Results.objects.filter(dt_iso=ny_dt)

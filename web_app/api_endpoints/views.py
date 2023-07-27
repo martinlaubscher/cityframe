@@ -233,7 +233,7 @@ class CurrentManhattanTimeAPIView(APIView):
 
 
 class CurrentManhattanBusyness(APIView):
-    def get(self, request, chosen_datetime):
+    def get(self, request):
         busyness_data = cache.get('current_busyness')
 
         if busyness_data is not None:
@@ -247,7 +247,7 @@ class CurrentManhattanBusyness(APIView):
             # cache.set('current_busyness', busyness_data, 300)
             # print("\nBusyness data fetched from DB")
             # return Response(busyness_data)
-            busyness_data = current_busyness(chosen_datetime)
+            busyness_data = current_busyness()
             cache.set('current_busyness', busyness_data, 300)
             print("\nBusyness data fetched from DB")
             return Response(busyness_data)
