@@ -1,0 +1,13 @@
+.droplist{
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60%; 
+    width: 100%; 
+    background-color: black;
+    border: 15px solid black; 
+}
+

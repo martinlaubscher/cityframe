@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import include, path
 from core.views import front_page
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
-    FutureSuntimesAPIView, CurrentManhattanTimeAPIView
+    FutureSuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
+    CurrentManhattanBusyness  # MainFormSubmissionTestView
 from rest_framework import routers, permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -62,11 +63,19 @@ urlpatterns = [
     path('api/current-time/<str:formatting>', CurrentManhattanTimeAPIView.as_view(), name='current_manhattan_time_str'),
 
     # golden hour
+    path('api/golden-hour/<str:chosen_date>/', GoldenHourAPIView.as_view(), name='golden_hour'),
+
+    # current busyness
+    path('api/current-busyness', CurrentManhattanBusyness.as_view(), name='current-manhattan-busyness'),
+
+    # post request (for dummy response)
+    # path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
+    # POST request using real database predictions
+    path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
 
     # Generated API documentation (OpenAPI/swagger format)
     path('api/', include(router.urls)),
     path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-
 ]
 
 

@@ -1,10 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./UserSearchBarCSS.css";
 import WeatherComponent from "../weatherInfo/WeatherComponent";
 import UserSearchMenu from "./UserSearchMenu";
+import {
+  getAllBusyness,
+  filterBusyness,
+} from "../busynessInfo/currentBusyness";
 
-export default function UserSearchBar() {
-  const [busynessLevel, setBusynessLevel] = useState("");
+export default function UserSearchBar(props) {
+  const [busynessLevel, setBusynessLevel] = useState(3);
+  const [zones, setZones] = useState({});
+
+  // Get data from API when component mounts
+  useEffect(() => {
+    getAllBusyness().then((data) => setZones(data));
+  }, []);
+
+  useEffect(() => {
+    const selectedZones = filterBusyness(busynessLevel, zones);
+    console.log(selectedZones);
+  }, [busynessLevel, zones]);
+
+  const handleBusynessChange = (event) => {
+    setBusynessLevel(Number(event.target.value)); // Convert value to number
+    console.log(`User selected busyness level: ${event.target.value}`);
+  };
 
   return (
     <div className="usersearch-container">
@@ -45,10 +65,12 @@ export default function UserSearchBar() {
             min="0"
             max="5"
             id="customRange2"
+            onChange={handleBusynessChange}
+            value={busynessLevel}
           />
         </div>
       </div>
-      <UserSearchMenu />
+      <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
       {/* <div
         className="offcanvas offcanvas-bottom"
         tabIndex="-1"

@@ -10,14 +10,21 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from data_apis.creds import db_name, db_user, db_password, db_host, db_port, django_key
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname((current_path)))
+
+sys.path.append(cityframe_path)
+
+from credentials import pg_conn, django_key
 from pathlib import Path
 from whitenoise import WhiteNoise
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -26,12 +33,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = django_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# this is now set in the environment specific settings files
+# DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
 
-
 # Application definition
+# INSTALLED_APPS and MIDDLEWARE set in environment specific settings files
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -42,6 +50,7 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     # cityFrame apps
+    'api_endpoints',
     'core',
     'rest_framework',
     'drf_yasg',
@@ -78,7 +87,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'web_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -94,25 +102,13 @@ WSGI_APPLICATION = 'web_app.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        'NAME': db_name,
-        'USER': db_user,
-        'PASSWORD': db_password,
-        'HOST': db_host,
-        'PORT': db_port,
+        'NAME': pg_conn['database'],
+        'USER': pg_conn['username'],
+        'PASSWORD': pg_conn['password'],
+        'HOST': pg_conn['host'],
+        'PORT': pg_conn['port'],
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_URL.database,
-#         'USER': DATABASE_URL.username,
-#         'PASSWORD': DATABASE_URL.password,
-#         'HOST': DATABASE_URL.host,
-#         'PORT': DATABASE_URL.port,
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -132,7 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -144,7 +139,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -152,8 +146,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'), os.path.join(BASE_DIR, 'frontend', 'public')]
 
 STORAGES = {
     'staticfiles': {
