@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from '@/axiosConfig';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSun,

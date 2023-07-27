@@ -39,6 +39,7 @@ SECRET_KEY = django_key
 ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
 
 # Application definition
+# INSTALLED_APPS and MIDDLEWARE set in environment specific settings files
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -53,20 +54,9 @@ INSTALLED_APPS = [
     'core',
     'rest_framework',
     'drf_yasg',
-
-
-    # add by frontend for testing to facilitate real-time visualization
-    # of changes made to the frontend code.
-#     'corsheaders',
 ]
 
 MIDDLEWARE = [
-
-    # add by frontend for testing to facilitate real-time visualization
-    # of changes made to the frontend code.
-    # 'corsheaders.middleware.CorsMiddleware',
-
-
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,20 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-
-# add by frontend for testing to facilitate real-time visualization
-# of changes made to the frontend code.
-# CORS_ORIGIN_WHITELIST = [
-
-#     'http://localhost:5173',
-#     'http://127.0.0.1:8000',
-# ]
-
-
 ROOT_URLCONF = 'web_app.urls'
-
-
 
 TEMPLATES = [
     {
@@ -169,7 +146,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
-
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'), os.path.join(BASE_DIR, 'frontend', 'public')]
 
 STORAGES = {
@@ -182,4 +158,3 @@ STORAGES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

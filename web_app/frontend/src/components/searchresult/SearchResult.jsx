@@ -1,5 +1,5 @@
 // SearchResult.jsx
-import axios from "axios";
+import axios from '@/axiosConfig';
 import "./SearchResultCSS.css"
 
 export default function SearchResult({ results, searchOptions }) {
