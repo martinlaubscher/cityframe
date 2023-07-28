@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 cityframe_path = os.path.dirname(os.path.dirname(current_path))
@@ -360,3 +361,47 @@ class IntegrationTests(StaticLiveServerTestCase):
     def test_search(self):
         self._navigate_to_site()
         self._open_search_menu()
+
+        # select tree level - change second to last div:nth-child -> div:nth-child(tree level)
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                    '.button-container > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > input:nth-child(1)'))).click()
+
+        # select busyness level - change second to last div:nth-child -> div:nth-child(busyness level)
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                    '.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > input:nth-child(1)'))).click()
+
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.btn:nth-child(5)'))).click()
+
+        scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
+
+        # Find the inner element that you want to scroll to
+        result = scroll_container.find_element(By.CSS_SELECTOR,
+                                               'div.carousel-item:nth-child(1) > div:nth-child(1) > div:nth-child(1)')
+
+        # scroll the container to the bottom so the results are visible
+        self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
+
+        result_patterns = {'rank': r'^\d+.$', 'zone': r'^([\w/-]+\s*)+$', 'buildings': r'^([\w/-]+\s*)+\sbuildings$',
+                           'busyness': r'^BUSYNESS \d$', 'trees': r'^TREES \d$'}
+
+        for i in range(1, 11):
+            rank = self.selenium.find_element(By.CSS_SELECTOR,
+                                              f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1)')
+            zone = self.selenium.find_element(By.CSS_SELECTOR,
+                                              f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(2)')
+            buildings = self.selenium.find_element(By.CSS_SELECTOR,
+                                                   f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(3)')
+            busyness = self.selenium.find_element(By.CSS_SELECTOR,
+                                                  f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)')
+            trees = self.selenium.find_element(By.CSS_SELECTOR,
+                                               f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(2)')
+
+            result_values = {'rank': rank.text, 'zone': zone.text, 'buildings': buildings.text,
+                             'busyness': busyness.text, 'trees': trees.text}
+
+            for j in result_values.keys():
+                self.assertTrue(bool(re.match(result_patterns.get(j), result_values.get(j))),
+                                f'In result {i}: {result_values.get(j)} is not an expected pattern for {j}')
+
+            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.carousel-control-next-icon'))).click()
+            time.sleep(1)
