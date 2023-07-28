@@ -1,9 +1,9 @@
 .logo-container {
-  width: 40%;
+  width: 70%;
   height: 8%; /* Adjust the height as needed */
   align-items: center;
   position: fixed;
-  left: 3%;
+  /*left: 3%;*/
   display: flex;
   justify-content: flex-start;
 }

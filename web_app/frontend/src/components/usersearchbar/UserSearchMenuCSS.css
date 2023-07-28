@@ -89,8 +89,8 @@
   align-items: center;
   justify-content: space-between;
   color: white;
-  font-weight: bold;
-  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  /*font-weight: bold;*/
+  font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 .option-label {
   margin-left: 20px;
@@ -109,7 +109,8 @@
 /* -------------date time picker------------------------- */
 /* Set all optional date text to black */
 .rdtPicker table tbody tr td {
-  color: black;
+  color: white;
+  background-color: black;
 }
 
 /* Set non-selectable date text to grey */
@@ -119,37 +120,86 @@
 
 /* Set the background colour of the selected date to black and the text colour to white */
 .rdtPicker table tbody tr td.rdtActive {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
 }
 
 /* Set the time picker icon and text to black */
 .rdtPicker table thead tr th,
 .rdtPicker table thead tr th span {
-  color: black;
+  color: white;
+  background-color: black;
 }
 
 .rdtPicker .rdtTimeToggle {
-  color: black;
+  color: white;
+  background-color: black;
 }
 
 .rdtSwitch {
-  background-color: white;
-  color: black;
+  background-color: black;
+  color: white;
 }
 
 .dateTimePicker {
   width: 135px;
   font-size: 12px;
   margin-right: 50px;
+  color: white;
+  background-color: black;
 }
 
 .form-control {
-  padding: 0.5px !important; /* date time picker */
+  padding: 3px !important; /* date time picker */
+}
+.form-control:after {
+  color: white;
+  background-color: black;
+}
+.form-control:active {
+  color: white;
+  background-color: black;
 }
 
 .rdtOpen .rdtPicker {
   left: -50px; /* date time picker */
+  background-color: black;
+  border: 1px white solid;
+}
+.rdtDays table {
+  color: white;
+  background-color: black;
+  border: transparent;
+}
+.rdtPicker {
+  color: white;
+  background-color: black;
+}
+input[type="text"] {
+  color: white;
+  background-color: black;
+  padding: 5px;
+}
+.rdtBtn:active {
+  background-color: transparent;
+}
+
+
+/*----------- radio button styling ----------- */
+input[type="radio"] {
+  appearance: none;
+  background-color: transparent;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.10em solid currentColor;
+  border-radius: 50%;
+}
+input[type="radio"]:checked {
+  background-color: transparent;
+  border-color: #ffffff;
 }
 
 /* -------------tree switch------------------------- */
@@ -165,7 +215,7 @@
 
 /* -------------busyness level------------------------- */
 .option-list .form-check-label {
-  font-size: 15px; /* modify the size of the option font */
+  font-size: 12px; /* modify the size of the option font */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -173,7 +223,7 @@
 }
 
 .option-list .form-check-inline {
-  margin-right: 5px; 
+  margin-right: 5px;
 }
 
 
@@ -182,6 +232,12 @@
   font-size: 17px;
   margin-left: 20px;
   margin-right: 20px;
+  color: white;
+  background-color: black;
+  border-width: 1px;
+  border-color: #FFFFFF;
+  border-radius: 5px;
+  padding: 4px;
 }
 
 /* -------------search button------------------------- */
