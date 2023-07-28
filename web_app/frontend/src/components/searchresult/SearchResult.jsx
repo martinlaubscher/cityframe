@@ -30,7 +30,7 @@ export default function SearchResult({ results, searchOptions }) {
             <div className="overlay-info">
               <div className="info-zone-style-buyness-tree">
                 <div className="info-zone-style">
-                  <p>RANK {result.rank}</p>
+                  <p>{result.rank}.</p>
                   <p>{result.zone}</p>
                   <p>{result.style}  {searchOptions.style}  buildings</p>
                 </div>
