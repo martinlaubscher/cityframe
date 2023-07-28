@@ -12,7 +12,6 @@ from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from credentials import openweather_key, timezone_db_key
-from api_endpoints.dummy_response import create_current_busyness_response
 from api_endpoints.get_results import generate_response, current_busyness
 from .models import WeatherFc, WeatherCurrent
 import requests
@@ -242,12 +241,8 @@ class CurrentManhattanBusyness(APIView):
             print("\nBusyness data fetched from Cache")
             return Response(busyness_data)
         else:
-            # busyness_data = create_current_busyness_response()
-            # # Add the data to the cache, with a timeout of 5 minutes
-            # cache.set('current_busyness', busyness_data, 300)
-            # print("\nBusyness data fetched from DB")
-            # return Response(busyness_data)
             busyness_data = current_busyness()
+            # adds data to cache, timeout of 5 minutes
             cache.set('current_busyness', busyness_data, 300)
             print("\nBusyness data fetched from DB")
             return Response(busyness_data)
@@ -259,32 +254,6 @@ class ResponseSerializer(serializers.Serializer):
     busyness = serializers.IntegerField()
     trees = serializers.IntegerField()
     style = serializers.CharField()
-
-
-# class MainFormSubmissionView(APIView):
-#
-#     @swagger_auto_schema(
-#         request_body=openapi.Schema(
-#             type=openapi.TYPE_OBJECT,
-#             properties={
-#                 'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
-#                 'busyness': openapi.Schema(type=openapi.TYPE_INTEGER, description='Busyness'),
-#                 'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
-#                 'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
-#             }
-#         ),
-#         responses={200: ResponseSerializer(many=True)}
-#     )
-#     def post(self, request):
-#         time = request.data.get('time')
-#         busyness = request.data.get('busyness')
-#         trees = request.data.get('trees')
-#         style = request.data.get('style')
-#         print(f"busyness: {busyness}")
-#         print(f"trees: {trees}")
-#         print(f"style: {style}")
-#         print(f"time: {time}")
-#         return Response(create_response())
 
 
 class MainFormSubmissionView(APIView):
