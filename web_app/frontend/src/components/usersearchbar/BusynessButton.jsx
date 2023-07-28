@@ -9,7 +9,7 @@ const BusynessButton = ({ onChange }) => {
   return (
     <div>
       <div className="option-container">
-        <div className="option-label">Buyness</div>
+        <div className="option-label">Busyness</div>
         <div className="option-list">
           <div className="form-check form-check-inline">
             <input

@@ -204,3 +204,15 @@ class Busyness(models.Model):
         ]
         managed = False
         db_table = 'cityframe\".\"Results'
+
+
+class Results(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    taxi_zone = models.BigIntegerField()
+    prediction = models.FloatField()
+    bucket = models.IntegerField()
+    dt_iso = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"Results'

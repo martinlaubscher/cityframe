@@ -1,4 +1,4 @@
-import CFlogo from '../../assets/CFlogo.png';
+import CFlogo from '../../assets/SWcityframe.png';
 import './LogoCSS.css';
 
 export function Logo() {

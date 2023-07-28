@@ -8,10 +8,11 @@ django.setup()
 from django.db.models import F
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
-from api_endpoints.models import TaxiZones, Busyness, WeatherFc
+from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Results
 from dateutil import tz
 from datetime import datetime
 from itertools import islice
+import pytz
 
 
 def check_error_type(e):
@@ -185,3 +186,20 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
     sliced_dict = dict(islice(sorted_dict.items(), 10))
 
     return sliced_dict
+
+
+def current_busyness():
+    ny_tz = pytz.timezone('America/New_York')
+    ny_dt = datetime.now(ny_tz)
+    ny_dt = ny_dt.replace(minute=0, second=0, microsecond=0)
+
+    # find records where dt_iso = ny_dt
+    results = Results.objects.filter(dt_iso=ny_dt)
+
+    # New dict to store the busyness for each taxi zone
+    busyness_dict = {}
+
+    for result in results:
+        busyness_dict[result.taxi_zone] = result.bucket
+
+    return busyness_dict
