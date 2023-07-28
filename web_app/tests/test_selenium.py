@@ -291,9 +291,9 @@ class IntegrationTests(StaticLiveServerTestCase):
             self._click_dt_selection()
             self._prev_month()
 
-        assert ElementHasClass((By.XPATH,
+        self.assertTrue(ElementHasClass((By.XPATH,
                                 f'//td[@data-value="{self.lower_exceeding_time.day}" and @data-month="{self.lower_exceeding_time.month - 1}" and @data-year="{self.lower_exceeding_time.year}"]'),
-                               'rdtDay rdtDisabled')(self.selenium)
+                               'rdtDay rdtDisabled')(self.selenium))
 
     def test_upper_bound(self):
         self._navigate_to_site()
@@ -307,9 +307,9 @@ class IntegrationTests(StaticLiveServerTestCase):
             if self.upper_exceeding_time.month > self.upper_bound_time.month or self.upper_exceeding_time.year > self.upper_bound_time.year:
                 self._next_month()
 
-        assert ElementHasClass((By.XPATH,
+        self.assertTrue(ElementHasClass((By.XPATH,
                                 f'//td[@data-value="{self.upper_exceeding_time.day}" and @data-month="{self.upper_exceeding_time.month - 1}" and @data-year="{self.upper_exceeding_time.year}"]'),
-                               'rdtDay rdtDisabled')(self.selenium)
+                               'rdtDay rdtDisabled')(self.selenium))
 
     def test_hour_rollover_upwards(self):
         self._navigate_to_site()
@@ -326,8 +326,8 @@ class IntegrationTests(StaticLiveServerTestCase):
             time_value = self.wait.until(TextMatchesPattern((By.CSS_SELECTOR, '.rdtCount'), self.hour_pattern)).text
             click_counter += 1
         # assert the datetime value is equivalent to today's date at hour 0 and minute 0
-        assert self.dt_selection.get_attribute("value") == self.current_time.replace(hour=0, minute=0).strftime(
-            '%d/%m/%Y %H:%M')
+        self.assertEqual(self.dt_selection.get_attribute("value"), self.current_time.replace(hour=0, minute=0).strftime(
+            '%d/%m/%Y %H:%M'))
 
     def test_hour_rollover_downwards(self):
         self._navigate_to_site()
@@ -344,8 +344,8 @@ class IntegrationTests(StaticLiveServerTestCase):
             time_value = self.wait.until(TextMatchesPattern((By.CSS_SELECTOR, '.rdtCount'), self.hour_pattern)).text
             click_counter += 1
         # assert the datetime value is equivalent to today's date at hour 23 and minute 0
-        assert self.dt_selection.get_attribute("value") == self.current_time.replace(hour=23, minute=0).strftime(
-            '%d/%m/%Y %H:%M')
+        self.assertEqual(self.dt_selection.get_attribute("value"), self.current_time.replace(hour=23, minute=0).strftime(
+            '%d/%m/%Y %H:%M'))
 
     def test_last_day(self):
         self._navigate_to_site()
@@ -357,6 +357,9 @@ class IntegrationTests(StaticLiveServerTestCase):
             self._next_month()
             # click on the last day
             self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
+
+        self.assertEqual(self.dt_selection.get_attribute("value"), self.upper_bound_time.replace(hour=self.current_time.hour, minute=0).strftime(
+            '%d/%m/%Y %H:%M'))
 
     def test_search(self):
         self._navigate_to_site()
@@ -370,15 +373,11 @@ class IntegrationTests(StaticLiveServerTestCase):
         self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
                                                     '.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > input:nth-child(1)'))).click()
 
+        # click the search button
         self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.btn:nth-child(5)'))).click()
 
-        scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
-
-        # Find the inner element that you want to scroll to
-        result = scroll_container.find_element(By.CSS_SELECTOR,
-                                               'div.carousel-item:nth-child(1) > div:nth-child(1) > div:nth-child(1)')
-
         # scroll the container to the bottom so the results are visible
+        scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
         self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
 
         result_patterns = {'rank': r'^\d+.$', 'zone': r'^([\w/-]+\s*)+$', 'buildings': r'^([\w/-]+\s*)+\sbuildings$',
