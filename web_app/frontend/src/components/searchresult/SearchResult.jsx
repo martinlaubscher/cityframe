@@ -2,6 +2,8 @@
 import axios from '@/axiosConfig';
 import "./SearchResultCSS.css"
 
+let style
+
 export default function SearchResult({ results, searchOptions }) {
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
@@ -32,7 +34,7 @@ export default function SearchResult({ results, searchOptions }) {
                 <div className="info-zone-style">
                   <p>{result.rank}.</p>
                   <p>{result.zone}</p>
-                  <p>{result.style}  {searchOptions.style}  buildings</p>
+                  <p>{result.style}  {style}  buildings</p>
                 </div>
                 <div className="info-busyness-tree">
                   <p>BUSYNESS {result.busyness}</p>
@@ -89,6 +91,9 @@ export async function handleSearch(searchOptions) {
     // of changes made to the frontend code. This allows the frontend to instantly view the modifications
     // on the web page while utilizing data obtained from the backend, eliminating the need to run "npm build"
     // and handle static files every time.
+
+    // save style at request time to use for results later
+    style = searchOptions.style;
 
     // Notice：de-comment in final version
     const response = await axios.post("/api/submit-main", {
