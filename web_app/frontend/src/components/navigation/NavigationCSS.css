@@ -1,0 +1,60 @@
+.nav-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 10px;
+  position: fixed;
+  z-index: 2;
+  right: 3%;
+}
+
+
+
+.navigation-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-header {
+  cursor: pointer;
+}
+
+.menu-button {
+  width: 40px !important;
+  height: 40px !important;
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+.nav-item a {
+  color: white; 
+  text-decoration: none; /* removes underline */
+  font-weight: bold; /* makes font bold */
+  font-size: 1.2em; /* makes font bigger, adjust as necessary */
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif !important;
+}
+
+.nav-item a:hover {
+  color: grey; /* link color changes to grey on hover */
+}
+
+.nav-item a.active-link {
+  color: #efefef3f; /* link color changes to purple when active */
+}
+
+.offcanvas-header{
+  background-color: black!important;
+}
+
+.offcanvas-body{
+  background-color: black!important;
+}
+.btn-close {
+  filter: invert(1);
+}
