@@ -1,5 +1,5 @@
 import requests
-# from credentials import flickr_api_key as key
+from credentials import flickr_api_key as key
 
 
 def get_flickr_image(api_key, lat, lon):
@@ -40,7 +40,7 @@ def get_flickr_image(api_key, lat, lon):
 
 search_query = "landscape"  # Change this to your desired search query
 
-image_url = get_flickr_image("5fdce5ee86d5986e46fb9477e27cc578", -74.01826464517814, 40.69283698869548)
+image_url = get_flickr_image(key , -74.01826464517814, 40.69283698869548)
 
 if image_url:
     print("Image URL:", image_url)
