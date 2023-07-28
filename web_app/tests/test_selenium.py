@@ -6,43 +6,22 @@ cityframe_path = os.path.dirname(os.path.dirname(current_path))
 sys.path.append(cityframe_path)
 
 import datetime
-import time
 import re
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.core.management import call_command
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 import selenium.webdriver.support.expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from dateutil import tz
 from datetime import datetime, timedelta
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from django.db import connections
-from parameterized import parameterized_class
-from data.database.data_population_scripts import apiupdate, update_weather_fc
+from data.database.data_population_scripts import update_weather_fc
 from data import machine_learning_app
 
-
-
-# list to store the different browsers
-# browsers = []
-#
-# chrome_options = webdriver.ChromeOptions()
-# chrome_options.add_argument('--disable-popup-blocking')
-# chrome = Service(ChromeDriverManager().install())
-# browsers.append((webdriver.Chrome, chrome, chrome_options))
-#
-# firefox_options = webdriver.FirefoxOptions()
-# firefox_options.add_argument('-headless')
-# firefox = Service(GeckoDriverManager().install())
-# browsers.append((webdriver.Firefox, firefox, firefox_options))
 
 class ElementHasValue:
     def __init__(self, locator):
@@ -378,4 +357,6 @@ class IntegrationTests(StaticLiveServerTestCase):
             # click on the last day
             self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
 
-
+    def test_search(self):
+        self._navigate_to_site()
+        self._open_search_menu()
