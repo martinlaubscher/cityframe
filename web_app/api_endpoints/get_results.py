@@ -41,6 +41,27 @@ def check_error_type(e):
         return f"Caught an unknown exception.\n{e}"
 
 
+def normalise(value, min_value, max_value):
+    """Normalises a value within a specified range.
+
+    This function takes a value and the minimum and maximum values of the range,
+    and returns the normalised value within the range [0, 1].
+
+    Args:
+        value (float): The value to be normalised.
+        min_value (float): The minimum value of the range.
+        max_value (float): The maximum value of the range.
+
+    Returns:
+        float: The normalised value within the range [0, 1].
+
+    Raises:
+        ZeroDivisionError: If `max_value` is equal to `min_value`.
+    """
+
+    return (value - min_value) / (max_value - min_value)
+
+
 def get_results(style, tree_range, busyness_range, user_time):
     """
     Fetches records associated with the architectural style and busyness range at a specific time.
@@ -87,6 +108,7 @@ def get_results(style, tree_range, busyness_range, user_time):
                         'weather_icon': record.dt_iso.weather_icon
                     }
                 }
+
         except ObjectDoesNotExist as e:
             return e
 
@@ -110,8 +132,6 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
         date and time, busyness level, number of trees, count of the target architectural style, and weather information.
     """
 
-    results = {}
-
     # dictionary to translate the style names to django model variables
     style_dict = {
         'neo-Georgian': 'neo_georgian',
@@ -125,9 +145,6 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
         'Federal': 'federal',
         'neo-Renaissance': 'neo_renaissance'
     }
-
-    lower_busy = higher_busy = target_busyness
-    lower_trees = higher_trees = target_trees
 
     # checking if style is valid
     if style_dict.get(target_style) is None:
@@ -155,35 +172,34 @@ def generate_response(target_busyness, target_trees, target_style, target_dt):
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    # search for results - expand parameters until at least ten have been found
-    while len(results) < 10 and ((lower_trees > 0 or higher_trees < 6) or (lower_busy > 0 or higher_busy < 6)):
-        results = get_results(style_dict.get(target_style), (lower_trees, higher_trees),
-                              (lower_busy, higher_busy),
-                              ny_dt)
-        # check for errors
-        if isinstance(results, Exception):
-            return check_error_type(results)
-        lower_trees -= 1
-        higher_trees += 1
-        lower_busy -= 1
-        higher_busy += 1
+    results = get_results(style_dict.get(target_style), (1, 5), (1, 5), ny_dt)
 
-    # calculate the difference to the desired busyness and tree level
+    # check for errors
+    if isinstance(results, Exception):
+        return check_error_type(results)
+
+    max_building_count = max(value['style'] for value in results.values())
+
+    # calculate the normalised scores for busyness, trees, buildings, and total
     for key, value in results.items():
-        value['total_diff'] = abs(target_busyness - value['busyness']) + abs(target_trees - value['trees'])
+        busyness_diff = abs(target_busyness - value['busyness'])
+        tree_diff = abs(target_trees - value['trees'])
+        busyness_score = 1 - normalise(busyness_diff, 0, 4)
+        tree_score = 1 - normalise(tree_diff, 0, 4)
+        building_score = normalise(value['style'], 0, max_building_count)
 
-    # sort the dictionary first according to the difference to the desired busyness level, then to the count
-    sorted_dict = dict(
-        sorted(results.items(), key=lambda item: (item[1]['total_diff'], -item[1]['style'])))
+        value['score'] = (1 / 2) * busyness_score + (1 / 4) * tree_score + (1 / 4) * building_score
 
-    i = 1
-    # Remove the temporary 'busyness_diff' from the dictionaries and add the rank
-    for value in sorted_dict.values():
-        del value['total_diff']
-        value['rank'] = i
-        i += 1
+    sorted_dict = dict(sorted(results.items(), key=lambda item: -item[1]['score']))
 
     sliced_dict = dict(islice(sorted_dict.items(), 10))
+
+    i = 1
+    # add the rank
+    for value in sliced_dict.values():
+        # print(f'Zone: {value["zone"]}\nScore: {value["score"]}\nTime: {value["dt_iso"]}')
+        value['rank'] = i
+        i += 1
 
     return sliced_dict
 
