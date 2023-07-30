@@ -188,7 +188,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         cls.selenium.implicitly_wait(5)
         cls.wait = WebDriverWait(cls.selenium, 5)
         cls.action = ActionChains(cls.selenium)
-        cls.current_time = datetime.utcnow().astimezone(tz=tz.gettz('America/New_York'))
+        cls.current_time = datetime.utcnow().replace(tzinfo=tz.UTC).astimezone(tz=tz.gettz('America/New_York'))
         cls.lower_exceeding_time = cls.current_time - timedelta(days=1)
         cls.upper_bound_time = cls.current_time + timedelta(days=15)
         cls.upper_exceeding_time = cls.upper_bound_time + timedelta(days=1)
@@ -454,6 +454,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                          self.current_time.replace(hour=23, minute=0).strftime(
                              '%d/%m/%Y %H:%M'))
 
+    @tag('last')
     def test_last_day(self):
         """
         Tests if the date selector can correctly select the last allowable day.
