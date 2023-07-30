@@ -1,10 +1,11 @@
 import CFlogo from '../../assets/CFlogo.png';
+import Bcityframe from "../../assets/Bcityframe.png"
 import './LogoCSS.css';
 
 export function Logo() {
   return (
     <div className="logo-container">
-      <img className="logo-image" src={CFlogo} alt="CFlogo" />
+      <img className="logo-image" src={Bcityframe} alt="CFlogo" />
     </div>
   );
 }
