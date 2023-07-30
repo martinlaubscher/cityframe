@@ -41,8 +41,8 @@ def get_ny_dt(target_dt=datetime.now(tz=tz.gettz('America/New_York'))):
     Converts the given target date and time to a New York timezone-aware datetime object.
 
     Args:
-        target_dt (str or datetime, optional): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
-            Defaults to the current time in the New York timezone.
+        target_dt (str or datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
+            Optional, defaults to the current time in the New York timezone.
 
     Returns:
         datetime: A datetime object representing the time in the New York timezone.
@@ -73,9 +73,9 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
 
     Args:
         style (str): Architectural style. It should match with the architectural style fields in the TaxiZones table.
-        tree_range (tuple, optional): A tuple of two integers indicating the lower and upper bounds of the tree range. Defaults to (1, 5).
-        busyness_range (tuple, optional): A tuple of two integers indicating the lower and upper bounds of the busyness range. Defaults to (1, 5).
-        user_time (datetime, optional): The desired time as a timezone-aware datetime object. Defaults to the current time in New York timezone.
+        tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range. Optional, defaults to (1, 5).
+        busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range. Optional, defaults to (1, 5).
+        user_time (datetime): The desired time as a timezone-aware datetime object. Optional, defaults to the current time in New York timezone.
 
     Returns:
         dict: A dictionary containing information about each TaxiZone including zone details, busyness level, number of trees, architectural style count, and weather information.
@@ -116,8 +116,8 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
         target_trees (int): The desired level of trees.
         target_style (str): The desired architectural style. It should match with one of the architectural styles in the taxi_zones table.
         target_dt (str or datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
-        mcdm_method (callable, optional): The multi-criteria decision-making method to be used. Defaults to MAIRCA.
-        mcdm_weights (callable, optional): A function to calculate weights for the MCDM method. Defaults to entropy_weights.
+        mcdm_method (callable): The multi-criteria decision-making method to be used. Optional, defaults to MAIRCA.
+        mcdm_weights (callable): A function to calculate weights for the MCDM method. Optional, defaults to entropy_weights.
 
     Returns:
         dict: A dictionary containing the top 10 results.
