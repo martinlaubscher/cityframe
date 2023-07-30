@@ -275,8 +275,8 @@ class MainFormSubmissionView(APIView):
     )
     def post(self, request):
         time = request.data.get('time')
-        busyness = request.data.get('busyness')
-        trees = request.data.get('trees')
+        busyness = int(request.data.get('busyness'))
+        trees = int(request.data.get('trees'))
         style = request.data.get('style')
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
@@ -298,7 +298,7 @@ class MainFormSubmissionView(APIView):
         responses = []
 
         for zone_id, zone_data in results.items():
-            zone_data['zone_id'] = zone_id  # 'zone_id' instead of 'id'
+            zone_data['zone_id'] = zone_id
             zone_data['submission_id'] = query.id
             responses.append(Response(**zone_data))
 
