@@ -1,7 +1,7 @@
 import os
 import django
 
-# Setup Django
+# Set up Django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'web_app.settings_dev'
 django.setup()
 
@@ -9,9 +9,8 @@ from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Results
 from dateutil import tz
-from datetime import datetime
-from itertools import islice
-from pymcdm.weights import entropy_weights
+from datetime import datetime, timedelta
+from pymcdm.weights import entropy_weights, equal_weights
 from pymcdm.methods import MAIRCA
 from pymcdm.helpers import rankdata
 import numpy as np
@@ -81,28 +80,41 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
         dict: A dictionary containing information about each TaxiZone including zone details, busyness level, number of trees, architectural style count, and weather information.
     """
 
-    # Get TaxiZones IDs having at least one building in the desired style and within the desired trees_scaled range
-    top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}, trees_scaled__range=tree_range).values_list('id',
-                                                                                                                flat=True)
-    # Get all Busyness records within the given busyness range and associated with the top zones
-    records = Busyness.objects.filter(bucket__range=busyness_range, taxi_zone__in=top_zones_ids,
-                                      dt_iso__dt_iso=user_time)
+    weather = {'Clear': 1, 'Clouds': 2, 'Drizzle': 3, 'Fog': 4, 'Haze': 5, 'Mist': 6, 'Rain': 7, 'Smoke': 8, 'Snow': 9,
+               'Squall': 10, 'Thunderstorm': 11}
 
+    # Get TaxiZones IDs having at least one building in the desired style
+    top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).values_list('id', flat=True)
     results = {}
 
+    print(f'filtered zones by style after {(datetime.utcnow() - start_time).total_seconds()} seconds')
+
+    # define the timespan in which to look for results
+    time_from = user_time - timedelta(hours=12)
+    time_to = user_time + timedelta(hours=12)
+
+    records = Busyness.objects.select_related('taxi_zone').filter(
+        taxi_zone__in=top_zones_ids,
+        dt_iso__dt_iso__range=(time_from, time_to))
+
+    print(f'filtered busyness records after {(datetime.utcnow() - start_time).total_seconds()} seconds')
+
     for record in records:
-        taxi_zone = TaxiZones.objects.get(id=record.taxi_zone.id)
-        # If this zone id is not in results yet, add a new dictionary with zone's details
-        if record.taxi_zone.id not in results:
-            results[record.taxi_zone.id] = {
-                'zone': record.taxi_zone.zone,
-                'dt_iso': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')).strftime('%Y-%m-%d %H:%M'),
-                'busyness': record.bucket,
-                'trees': taxi_zone.trees_scaled,
-                'style': getattr(taxi_zone, style),
-                'weather': {'temp': record.dt_iso.temp, 'weather_description': record.dt_iso.weather_description,
-                            'weather_icon': record.dt_iso.weather_icon}
-            }
+        taxi_zone = record.taxi_zone
+        # unique key using zone_id and timestamp - in case more than one time per zone is returned in the future
+        key = f"{taxi_zone.id}_{record.dt_iso.dt_iso}"
+        results[key] = {
+            'id': str(taxi_zone.id),
+            'zone': taxi_zone.zone,
+            'dt_iso': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')).strftime('%Y-%m-%d %H:%M'),
+            'dt_iso_tz': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')),
+            'busyness': record.bucket,
+            'trees': taxi_zone.trees_scaled,
+            'style': getattr(taxi_zone, style),
+            'weather': {'temp': record.dt_iso.temp, 'weather_description': record.dt_iso.weather_description,
+                        'weather_icon': record.dt_iso.weather_icon}
+        }
+
     return results
 
 
@@ -126,6 +138,9 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
         FieldDoesNotExist: If the target_style is not a valid architectural style.
     """
 
+    global start_time
+    start_time = datetime.utcnow()
+
     # dictionary to translate the style names to django model variables
     style_dict = {
         'neo-Georgian': 'neo_georgian',
@@ -145,6 +160,7 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
         raise FieldDoesNotExist(
             f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
 
+    # validate supplied time
     ny_dt = get_ny_dt(target_dt)
 
     # if the time supplied is earlier than the earliest available time, take that one
@@ -153,20 +169,27 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
+    print(f'requesting results after {(datetime.utcnow() - start_time).total_seconds()} seconds')
+
     results = get_results(style_dict.get(target_style), user_time=ny_dt)
+
+    print(f'received results after {(datetime.utcnow() - start_time).total_seconds()} seconds')
 
     # check for errors
     if isinstance(results, Exception):
         return check_error_type(results)
 
-    # prep alternatives with values for three criteria used in mcdm method in a numpy array:
-    # difference to target busyness level, difference to target tree level, and building count
+    # prep alternatives with values for four criteria used in mcdm method in a numpy array:
     alts = np.array([[abs(target_busyness - value['busyness']),
                       abs(target_trees - value['trees']),
-                      value['style']] for value in results.values()], dtype=int)
+                      value['style'],
+                      abs((ny_dt - value['dt_iso_tz']).total_seconds())] for value in
+                     results.values()], dtype=int)
+
+    print(f'prepared alts after {(datetime.utcnow() - start_time).total_seconds()} seconds')
 
     # define types of criteria (-1 for minimisation, 1 for maximisation)
-    types = np.array([-1, -1, 1])
+    types = np.array([-1, -1, 1, -1])
 
     # set weights for criteria (default is entropy_weights)
     weights = mcdm_weights(alts)
@@ -178,6 +201,8 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     pref = method(alts, weights, types)
     ranking = rankdata(pref)
 
+    print(f'mcdm done after {(datetime.utcnow() - start_time).total_seconds()} seconds')
+
     # assign rankings to results
     for idx, key in enumerate(results.keys()):
         results[key]['rank'] = ranking[idx]
@@ -185,12 +210,29 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     # sort results by rank
     sorted_results = {k: v for k, v in sorted(results.items(), key=lambda item: item[1]['rank'])}
 
-    # keep only top 10
-    top_results = dict(islice(sorted_results.items(), 10))
+    print(f'ranking done after {(datetime.utcnow() - start_time).total_seconds()} seconds')
+
+    # Create a dictionary to track zone occurrences
+    zone_occurrences = {}
+
+    max_entries_per_zone = 1
+
+    # Keep only top 10 with each zone appearing no more than twice
+    top_results = {}
+    for k, v in sorted_results.items():
+        zone_name = v['zone']
+        if zone_occurrences.get(zone_name, 0) < max_entries_per_zone:
+            zone_occurrences[zone_name] = zone_occurrences.get(zone_name, 0) + 1
+            top_results[k] = v
+            if len(top_results) == 10:
+                break
 
     # update the rank to be 1-10 for the top results (without repetitions / omissions)
     for idx, key in enumerate(top_results.keys()):
         top_results[key]['rank'] = idx + 1
+        del top_results[key]['dt_iso_tz']
+
+    print(f'top results ready after {(datetime.utcnow()-start_time).total_seconds()} seconds')
 
     return top_results
 
@@ -208,3 +250,5 @@ def current_busyness():
         busyness_dict[result.taxi_zone] = result.bucket
 
     return busyness_dict
+
+

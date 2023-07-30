@@ -99,7 +99,7 @@ export async function handleSearch(searchOptions) {
     const response = await axios.post("/api/submit-main", {
     //Notice：comment before commit
     // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
-      
+
       busyness: searchOptions.busyness,
       trees: searchOptions.tree,
       time: searchOptions.datetime,
@@ -111,13 +111,8 @@ export async function handleSearch(searchOptions) {
       typeof response.data === "object" &&
       !Array.isArray(response.data)
     ) {
-      const results = Object.entries(response.data).map(([key, value]) => {
-        return {
-          id: key,
-          ...value,
-        };
-      }).sort((a, b) => a.rank - b.rank);
-      return results;
+        return Object.values(response.data)
+            .sort((a, b) => a.rank - b.rank);
     }
 
     return [];
