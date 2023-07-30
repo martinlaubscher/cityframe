@@ -1,11 +1,11 @@
 import os
 import sys
-import time
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-cityframe_path = os.path.dirname(os.path.dirname(current_path))
-sys.path.append(cityframe_path)
+web_app_path = os.path.dirname(current_path)
+sys.path.append(web_app_path)
 
+import time
 import datetime
 import re
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -20,11 +20,20 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from dateutil import tz
 from datetime import datetime, timedelta
-from data.database.data_population_scripts import update_weather_fc
-from data import machine_learning_app
+from tests.setup.common_setup import CommonSetup
 
 
 class ElementHasValue:
+    """
+    A callable class to check whether an HTML element has a non-empty value attribute.
+
+    Attributes:
+        locator (tuple): A tuple containing the strategy to locate the element and the value to search for.
+
+    Methods:
+        __call__(driver): Returns True if the element's value attribute is not empty, False otherwise.
+    """
+
     def __init__(self, locator):
         self.locator = locator
 
@@ -34,6 +43,17 @@ class ElementHasValue:
 
 
 class ElementHasClass(object):
+    """
+    A callable class to check whether an HTML element has a specific CSS class.
+
+    Attributes:
+        locator (tuple): A tuple containing the strategy to locate the element and the value to search for.
+        css_class (str): The CSS class to look for in the element's class attribute.
+
+    Methods:
+        __call__(driver): Returns True if the element's class attribute matches the given CSS class, False otherwise.
+    """
+
     def __init__(self, locator, css_class):
         self.locator = locator
         self.css_class = css_class
@@ -48,6 +68,20 @@ class ElementHasClass(object):
 
 
 class TextMatchesPattern(object):
+    """
+    A callable class to check whether the text of an HTML element matches a given pattern.
+
+    This class is used to verify if the text content of a specific HTML element identified by a locator
+    matches a given regular expression pattern.
+
+    Attributes:
+        locator (tuple): A tuple containing the strategy to locate the element and the value to search for.
+        pattern (str): The regular expression pattern to match against the element's text.
+
+    Methods:
+        __call__(driver): Returns the element if the text matches the pattern, False otherwise.
+    """
+
     def __init__(self, locator, pattern):
         self.locator = locator
         self.pattern = pattern
@@ -70,35 +104,56 @@ class TextMatchesPattern(object):
 # ])
 
 
-class IntegrationTests(StaticLiveServerTestCase):
+class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
     """
-    Class to perform integration tests on a Django website using Selenium.
+    IntegrationTests class to test the front-end of a web application.
 
-    This class uses Selenium WebDriver to run tests on live server, checking if website elements function as expected.
+    This class utilizes Selenium WebDriver to perform automated integration tests
+    on the application's UI. It includes tests for navigation menus, date and time
+    selection, rollover of hours, lower and upper bound selection, and specific
+    functional tests such as searching.
 
-    ...
+    Attributes:
+        selenium (webdriver): The Selenium WebDriver instance used for browser automation.
+        current_time (datetime): The current time in a specific timezone.
+        upper_bound_time (datetime): The upper bound time for date/time selection.
+        lower_exceeding_time (datetime): The lower exceeding time for date/time selection.
+        upper_exceeding_time (datetime): The upper exceeding time for date/time selection.
+        hour_pattern (str): A regular expression pattern for validating hour format.
+        dt_selection (WebElement): A WebElement representing the date/time selection element.
+        wait (WebDriverWait): WebDriverWait instance to apply explicit waits.
+        action (ActionChains): ActionChains instance to perform complex actions.
 
-    Attributes
-    ----------
-    selenium : WebDriver
-        An instance of Selenium WebDriver.
+    Class Methods:
+        setUpClass(): Initializes WebDriver and sets up the testing environment.
+        tearDownClass(): Quits the Selenium WebDriver.
+        _navigate_to_site(): Navigates to the testing site.
+        _open_nav_menu(): Opens the navigation/top menu.
+        _close_nav_menu(): Closes the navigation/top menu.
+        _open_search_menu(): Opens the search/bottom menu.
+        _close_search_menu(): Closes the search/bottom menu.
+        _click_dt_selection(): Clicks on the date/time selection element in the search menu.
+        _next_month(): Clicks on the next month button in the date picker.
+        _prev_month(): Clicks on the previous month button in the date picker.
+        _switch_to_dt(): Switches to the date/time picker.
+        _click_on_date(day, month, year): Clicks on a specific date within the application's date picker.
+        _click_time_selection(): Clicks on the time selection button to open the selection.
+        _next_hour(): Clicks on the next hour button in the time picker.
+        _prev_hour(): Clicks on the previous hour button in the time picker.
 
-    ...
-
-    Methods
-    -------
-    setUpClass() -> None:
-        Class method called before all the test cases are run. Initializes Selenium WebDriver and sets implicit wait.
-
-    tearDownClass() -> None:
-        Class method called after all the tests are run. Quits the Selenium WebDriver.
-
-    test_menu() -> None:
-        Test to check the functionality of the top dropdown menu in the website.
-
-    test_bottom() -> None:
-        Test to check the functionality of the bottom offcanvas in the website.
+    Test Methods:
+        test_nav_menu_opens(): Tests if the navigation menu opens successfully.
+        test_nav_menu_closes(): Tests if the navigation menu closes successfully.
+        test_search_menu_opens(): Tests if the search menu opens successfully.
+        test_search_menu_closes(): Tests if the search menu closes successfully.
+        test_lower_bound(): Tests date selector lower bound.
+        test_upper_bound(): Tests date selector upper bound.
+        test_hour_rollover_upwards(): Tests hour rollover from 23 to 0.
+        test_hour_rollover_downwards(): Tests hour rollover from 0 to 23.
+        test_last_day(): Tests last day selection.
+        test_search(): Tests search feature functionality.
     """
+
     selenium = None
     current_time = None
     upper_bound_time = None
@@ -110,10 +165,9 @@ class IntegrationTests(StaticLiveServerTestCase):
         Initializes Selenium WebDriver and sets an implicit wait.
         """
 
-        update_weather_fc.main()
-        machine_learning_app.main()
-
         super().setUpClass()
+
+        cls.common_setup()
 
         chrome_options = webdriver.ChromeOptions()
         # chrome_options.add_argument('--headless')
@@ -266,24 +320,44 @@ class IntegrationTests(StaticLiveServerTestCase):
         self.action.move_to_element(prev_hour_button).click().perform()
 
     def test_nav_menu_opens(self):
+        """
+        Tests if the navigation menu opens successfully.
+        """
+
         self._navigate_to_site()
         self.assertTrue(self._open_nav_menu())
 
     def test_nav_menu_closes(self):
+        """
+        Tests if the navigation menu closes successfully.
+        """
+
         self._navigate_to_site()
         self._open_nav_menu()
         self.assertTrue(self._close_nav_menu())
 
     def test_search_menu_opens(self):
+        """
+        Tests if the search menu opens successfully.
+        """
+
         self._navigate_to_site()
         self.assertTrue(self._open_search_menu())
 
     def test_search_menu_closes(self):
+        """
+        Tests if the search menu closes successfully.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
         self.assertTrue(self._close_search_menu())
 
     def test_lower_bound(self):
+        """
+        Tests if the date selector correctly disables dates below a certain bound.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
 
@@ -292,10 +366,14 @@ class IntegrationTests(StaticLiveServerTestCase):
             self._prev_month()
 
         self.assertTrue(ElementHasClass((By.XPATH,
-                                f'//td[@data-value="{self.lower_exceeding_time.day}" and @data-month="{self.lower_exceeding_time.month - 1}" and @data-year="{self.lower_exceeding_time.year}"]'),
-                               'rdtDay rdtDisabled')(self.selenium))
+                                         f'//td[@data-value="{self.lower_exceeding_time.day}" and @data-month="{self.lower_exceeding_time.month - 1}" and @data-year="{self.lower_exceeding_time.year}"]'),
+                                        'rdtDay rdtDisabled')(self.selenium))
 
     def test_upper_bound(self):
+        """
+        Tests if the date selector correctly disables dates above a certain bound.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
 
@@ -308,10 +386,14 @@ class IntegrationTests(StaticLiveServerTestCase):
                 self._next_month()
 
         self.assertTrue(ElementHasClass((By.XPATH,
-                                f'//td[@data-value="{self.upper_exceeding_time.day}" and @data-month="{self.upper_exceeding_time.month - 1}" and @data-year="{self.upper_exceeding_time.year}"]'),
-                               'rdtDay rdtDisabled')(self.selenium))
+                                         f'//td[@data-value="{self.upper_exceeding_time.day}" and @data-month="{self.upper_exceeding_time.month - 1}" and @data-year="{self.upper_exceeding_time.year}"]'),
+                                        'rdtDay rdtDisabled')(self.selenium))
 
     def test_hour_rollover_upwards(self):
+        """
+        Tests if the hour selector rolls over correctly from 23 to 0.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
         self._click_dt_selection()
@@ -330,6 +412,10 @@ class IntegrationTests(StaticLiveServerTestCase):
             '%d/%m/%Y %H:%M'))
 
     def test_hour_rollover_downwards(self):
+        """
+        Tests if the hour selector rolls over correctly from 0 to 23.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
         self._click_dt_selection()
@@ -344,10 +430,15 @@ class IntegrationTests(StaticLiveServerTestCase):
             time_value = self.wait.until(TextMatchesPattern((By.CSS_SELECTOR, '.rdtCount'), self.hour_pattern)).text
             click_counter += 1
         # assert the datetime value is equivalent to today's date at hour 23 and minute 0
-        self.assertEqual(self.dt_selection.get_attribute("value"), self.current_time.replace(hour=23, minute=0).strftime(
-            '%d/%m/%Y %H:%M'))
+        self.assertEqual(self.dt_selection.get_attribute("value"),
+                         self.current_time.replace(hour=23, minute=0).strftime(
+                             '%d/%m/%Y %H:%M'))
 
     def test_last_day(self):
+        """
+        Tests if the date selector can correctly select the last allowable day.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
         self._click_dt_selection()
@@ -358,10 +449,15 @@ class IntegrationTests(StaticLiveServerTestCase):
             # click on the last day
             self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
 
-        self.assertEqual(self.dt_selection.get_attribute("value"), self.upper_bound_time.replace(hour=self.current_time.hour, minute=0).strftime(
-            '%d/%m/%Y %H:%M'))
+        self.assertEqual(self.dt_selection.get_attribute("value"),
+                         self.upper_bound_time.replace(hour=self.current_time.hour, minute=0).strftime(
+                             '%d/%m/%Y %H:%M'))
 
     def test_search(self):
+        """
+        Tests the functionality of the search feature, including tree level and busyness level selection.
+        """
+
         self._navigate_to_site()
         self._open_search_menu()
 
