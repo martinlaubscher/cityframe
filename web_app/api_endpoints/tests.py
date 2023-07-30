@@ -335,7 +335,7 @@ def populateTestBusyness():
     for zone_id in zone_ids:
         results.append(Results(
             taxi_zone=zone_id,
-            prediction=5,
+            prediction=5,  # arbitrary, not used in any calculations on the test database
             bucket=randint(1, 5),
             dt_iso=timezone.now().replace(minute=0, second=0, microsecond=0)
         ))
