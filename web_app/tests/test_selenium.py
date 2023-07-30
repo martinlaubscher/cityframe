@@ -11,7 +11,6 @@ import re
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 import selenium.webdriver.support.expected_conditions as EC
@@ -20,6 +19,9 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from dateutil import tz
 from datetime import datetime, timedelta
+from parameterized import parameterized_class
+from django.db import connections
+from django.test import tag
 from tests.setup.common_setup import CommonSetup
 
 
@@ -94,16 +96,21 @@ class TextMatchesPattern(object):
             return False
 
 
-# @parameterized_class([
-#     {
-#         "browser_class": browser_class,
-#         "browser": browser,
-#         "option": option,
-#     }
-#     for browser_class, browser, option in browsers
-# ])
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument('--headless')
+chrome_driver = Service(ChromeDriverManager().install())
+chrome = webdriver.Chrome(service=chrome_driver, options=chrome_options)
+
+firefox_options = webdriver.FirefoxOptions()
+firefox_options.add_argument('-headless')
+firefox_driver = Service(GeckoDriverManager().install())
+firefox = webdriver.Firefox(service=firefox_driver, options=firefox_options)
 
 
+@parameterized_class([
+    {"browser": chrome},
+    {"browser": firefox},
+])
 class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
     """
     IntegrationTests class to test the front-end of a web application.
@@ -157,6 +164,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
     selenium = None
     current_time = None
     upper_bound_time = None
+    browser = None
 
     @classmethod
     def setUpClass(cls):
@@ -167,19 +175,16 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
 
         super().setUpClass()
 
-        cls.common_setup()
+        # check if schema 'cityframe' already exists
+        with connections['default'].cursor() as cursor:
+            cursor.execute("SELECT schema_name FROM information_schema.schemata WHERE schema_name = 'cityframe';")
+            schema_exists = cursor.fetchone()
 
-        chrome_options = webdriver.ChromeOptions()
-        # chrome_options.add_argument('--headless')
-        chrome_driver = Service(ChromeDriverManager().install())
-        chrome = webdriver.Chrome(service=chrome_driver, options=chrome_options)
+        # only run common_setup if the schema does not exist
+        if not schema_exists:
+            cls.common_setup()
 
-        firefox_options = webdriver.FirefoxOptions()
-        firefox_options.add_argument('-headless')
-        firefox_driver = Service(GeckoDriverManager().install())
-        firefox = webdriver.Firefox(service=firefox_driver, options=firefox_options)
-
-        cls.selenium = chrome
+        cls.selenium = cls.browser
         cls.selenium.implicitly_wait(5)
         cls.wait = WebDriverWait(cls.selenium, 5)
         cls.action = ActionChains(cls.selenium)
@@ -277,6 +282,10 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self.action.move_to_element(prev_month_button).click().perform()
 
     def _switch_to_dt(self):
+        """
+        Switches to the datetime selection mode in the UI.
+        """
+
         switch_button = self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.rdtSwitch')))
         self.action.move_to_element(switch_button).click().perform()
 
@@ -318,6 +327,17 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
 
         prev_hour_button = self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'span.rdtBtn:nth-child(3)')))
         self.action.move_to_element(prev_hour_button).click().perform()
+
+    def _select_style(self, style):
+        """
+        Selects a specific architecture style option from the dropdown menu
+
+        Args:
+            style (int): The style to be selected as an integer representing the index of the option.
+        """
+
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.style-select'))).click()
+        self.selenium.find_element(By.CSS_SELECTOR, f'.style-select > option:nth-child({style})').click()
 
     def test_nav_menu_opens(self):
         """
@@ -453,50 +473,80 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                          self.upper_bound_time.replace(hour=self.current_time.hour, minute=0).strftime(
                              '%d/%m/%Y %H:%M'))
 
+    @tag('search')
     def test_search(self):
         """
-        Tests the functionality of the search feature, including tree level and busyness level selection.
+        Tests the functionality of the search feature including style, tree level, and busyness level selection.
         """
+
+        style_dict = {
+            1: 'neo-Georgian',
+            2: 'Greek Revival',
+            3: 'Romanesque Revival',
+            4: 'neo-Grec',
+            5: 'Renaissance Revival',
+            6: 'Beaux-Arts',
+            7: 'Queen Anne',
+            8: 'Italianate',
+            9: 'Federal',
+            10: 'neo-Renaissance'
+        }
 
         self._navigate_to_site()
         self._open_search_menu()
 
-        # select tree level - change second to last div:nth-child -> div:nth-child(tree level)
-        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
-                                                    '.button-container > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > input:nth-child(1)'))).click()
-
-        # select busyness level - change second to last div:nth-child -> div:nth-child(busyness level)
-        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
-                                                    '.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child(4) > input:nth-child(1)'))).click()
-
-        # click the search button
-        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.btn:nth-child(5)'))).click()
-
-        # scroll the container to the bottom so the results are visible
-        scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
-        self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
-
-        result_patterns = {'rank': r'^\d+.$', 'zone': r'^([\w/-]+\s*)+$', 'buildings': r'^([\w/-]+\s*)+\sbuildings$',
-                           'busyness': r'^BUSYNESS \d$', 'trees': r'^TREES \d$'}
-
         for i in range(1, 11):
-            rank = self.selenium.find_element(By.CSS_SELECTOR,
-                                              f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1)')
-            zone = self.selenium.find_element(By.CSS_SELECTOR,
-                                              f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(2)')
-            buildings = self.selenium.find_element(By.CSS_SELECTOR,
-                                                   f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(3)')
-            busyness = self.selenium.find_element(By.CSS_SELECTOR,
-                                                  f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)')
-            trees = self.selenium.find_element(By.CSS_SELECTOR,
-                                               f'div.carousel-item:nth-child({i}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(2)')
 
-            result_values = {'rank': rank.text, 'zone': zone.text, 'buildings': buildings.text,
-                             'busyness': busyness.text, 'trees': trees.text}
+            tree_levels = (5, 4, 3, 2, 1, 2, 4, 5, 1, 3)
+            busyness_levels = (1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
 
-            for j in result_values.keys():
-                self.assertTrue(bool(re.match(result_patterns.get(j), result_values.get(j))),
-                                f'In result {i}: {result_values.get(j)} is not an expected pattern for {j}')
+            # select tree level - change second to last div:nth-child -> div:nth-child(tree level)
+            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                        f'.button-container > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child({tree_levels[i - 1]}) > input:nth-child(1)'))).click()
 
-            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.carousel-control-next-icon'))).click()
+            # select busyness level - change second to last div:nth-child -> div:nth-child(busyness level)
+            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                        f'.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child({busyness_levels[i - 1]}) > input:nth-child(1)'))).click()
+
+            # select the style (by its int value)
+            self._select_style(i)
+
+            # click the search button
+            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.btn:nth-child(5)'))).click()
+
+            # scroll the container to the bottom so the results are visible
+            scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
+            self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
+
+            # wait one second to make sure results have had time to load
             time.sleep(1)
+
+            result_patterns = {'rank': r'^\d+.$', 'zone': r'^([\w/\'-]+\s*)+$',
+                               'buildings': rf'^\d+\s{style_dict.get(i)}\sbuildings$',
+                               'busyness': r'^BUSYNESS \d$', 'trees': r'^TREES \d$'}
+
+            # go through all the results in the carousel
+            for j in range(1, 11):
+                rank = self.selenium.find_element(By.CSS_SELECTOR,
+                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1)')
+                zone = self.selenium.find_element(By.CSS_SELECTOR,
+                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(2)')
+                buildings = self.selenium.find_element(By.CSS_SELECTOR,
+                                                       f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(3)')
+                busyness = self.selenium.find_element(By.CSS_SELECTOR,
+                                                      f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)')
+                trees = self.selenium.find_element(By.CSS_SELECTOR,
+                                                   f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(2)')
+
+                result_values = {'rank': rank.text, 'zone': zone.text, 'buildings': buildings.text,
+                                 'busyness': busyness.text, 'trees': trees.text}
+
+                # assert that the result values match the expected patterns
+                for key in result_values.keys():
+                    self.assertTrue(bool(re.match(result_patterns.get(key), result_values.get(key))),
+                                    f'In result {j}: {result_values.get(key)} is not an expected pattern for {key}')
+
+                # click on the next result button
+                self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.carousel-control-next-icon'))).click()
+                # wait for the carousel to transition to the next result
+                time.sleep(1)
