@@ -1,4 +1,25 @@
 .weather-icon {
-    font-size: 16px;
-    color: white;
-  }
+  font-size: 16px;
+  color: white;
+}
+
+.weather-icon-container {
+  position: relative;
+}
+
+.weather-icon {
+  cursor: pointer;
+}
+
+.weather-description-popup {
+  position: absolute;
+  top: -25px;
+  left: 13px;
+  background-color: rgba(128, 128, 128, 0.5);
+  color: white;
+  padding: 3px;
+  border-radius: 10px;
+  white-space: nowrap;
+  width: auto;
+
+}
