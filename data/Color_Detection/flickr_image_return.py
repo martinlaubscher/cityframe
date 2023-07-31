@@ -11,7 +11,17 @@ import requests
 import geopandas as gpd
 from credentials import flickr_api_key
 
+
 def get_flickr_image(api_key, lat, lon):
+    """
+
+    :param api_key: flickr api key to access images
+    :param lat: latitude as int
+    :param lon: longitude as int
+    :return: url to image from lat and long coordinates
+
+    """
+
     base_url = "https://api.flickr.com/services/rest/"
     method = "flickr.photos.search"
     params = {
@@ -45,21 +55,19 @@ def get_flickr_image(api_key, lat, lon):
 
     return None
 
-gdf = gpd.read_file(taxi_path)
-api_key = flickr_api_key
-print(gdf.shape)
-image_urls = []
 
-for index, row in gdf.iterrows():
-    point = row['point']
-    split = point.split()
-    lng = split[0]
-    lat = split[1]
-    image_url = get_flickr_image(api_key, lat, lng)
-    if image_url is None:
-        image_url = "https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg"
-    image_urls.append(image_url)
-print(len(image_urls))
-print(image_urls)
+def get_images_for_taxi_zones():
+    gdf = gpd.read_file(taxi_path)
+    api_key = flickr_api_key
 
+    for index, row in gdf.iterrows():
+        point = row['point']
+        split = point.split()
+        lng = split[0]
+        lat = split[1]
+        image_url = get_flickr_image(api_key, lat, lng)
+        if image_url is None:
+            image_url = "https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg"
+        gdf.at[index, 'image_url'] = image_url
 
+    gdf.to_file("../GeoJSON/zones_with_images.geojson", driver='GeoJSON')
