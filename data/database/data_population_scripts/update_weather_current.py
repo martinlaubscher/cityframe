@@ -100,4 +100,5 @@ def update_weather():
     conn.close()
 
 
-update_weather()
+if __name__ == '__main__':
+    update_weather()
