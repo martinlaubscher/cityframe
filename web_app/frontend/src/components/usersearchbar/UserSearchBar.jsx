@@ -7,34 +7,40 @@ import {
   filterBusyness,
 } from "../busynessInfo/currentBusyness";
 
+
+
 export default function UserSearchBar(props) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [zones, setZones] = useState({});
 
-  // Get data from API when component mounts
   useEffect(() => {
     getAllBusyness().then((data) => setZones(data));
   }, []);
+  const [selectedZones, setSelectedZones] = useState({});
   useEffect(() => {
-    if (Object.keys(zones).length !== 0) { // check if zones is not an empty object
+    if (Object.keys(zones).length !== 0) {
       const selectedZones = filterBusyness(busynessLevel, zones);
+      setSelectedZones(selectedZones);  // 保存选定的区域
       console.log(selectedZones);
     }
   }, [busynessLevel, zones]);
-  
-
-  // useEffect(() => {
-  //   const selectedZones = filterBusyness(busynessLevel, zones);
-  //   console.log(selectedZones);
-  // }, [busynessLevel, zones]);
 
   const handleBusynessChange = (event) => {
-    setBusynessLevel(Number(event.target.value)); // Convert value to number
+    setBusynessLevel(Number(event.target.value));
     console.log(`User selected busyness level: ${event.target.value}`);
   };
 
+  function onSliderChange(event) {
+    const newValue = event.target.value;
+    props.setBusynessLevel(newValue);
+    props.onBusynessLevelChange(newValue); // 调用新的函数来打印值
+  }
+ 
+
+
   return (
     <div className="usersearch-container">
+          {/* <Map selectedZones={selectedZones} /> */}
       <div className="button-wrapper">
         <button
           className="btn btn-primary offcanvas-button"
@@ -72,8 +78,9 @@ export default function UserSearchBar(props) {
             min="0"
             max="5"
             id="customRange2"
-            onChange={handleBusynessChange}
-            value={busynessLevel}
+
+            value={props.busynessLevel}
+            onChange={e => props.setBusynessLevel(e.target.value)}
           />
         </div>
       </div>

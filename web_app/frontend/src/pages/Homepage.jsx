@@ -1,43 +1,40 @@
-import Navigation from '../components/navigation/Navigation.jsx';
+import Navigation from "../components/navigation/Navigation.jsx";
 import { Logo } from "../components/logo/Logo";
 //import MapBackground from '../components/mapBackground/MapBackground.jsx';
-import UserSearchBar from '../components/usersearchbar/UserSearchBar.jsx';
-import "./homePageCSS.css"
+import UserSearchBar from "../components/usersearchbar/UserSearchBar.jsx";
+import "./homePageCSS.css";
 
-
-
-
-import Map from '../components/mapBackground/Map.jsx';
-import junkdynamic from '../components/dummydata/geojunk.js';
-import dynamic from '../components/dummydata/dynamicdata.js';
-import data from '../components/dummydata/locationjunk.js';
-import { useState, useEffect } from 'react';
-import Droplist from '../components/placeList/Droplist.jsx';
-import SearchResult from '../components/searchresult/SearchResult.jsx';
+import Map from "../components/mapBackground/Map.jsx";
+import junkdynamic from "../components/dummydata/geojunk.js";
+import dynamic from "../components/dummydata/dynamicdata.js";
+import data from "../components/dummydata/locationjunk.js";
+import { useState, useEffect } from "react";
+import Droplist from "../components/placeList/Droplist.jsx";
+import SearchResult from "../components/searchresult/SearchResult.jsx";
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
 
 export default function Homepage() {
   //console.log(dynamic)
 
-  
-  const [listResults, setListResults]=useState({results: junkdynamic, name: "All Zones"})
-  const [listShow, setListShow]=useState(false)
-  const [scores, setScores]=useState({})
-  
+  const [listResults, setListResults] = useState({
+    results: junkdynamic,
+    name: "All Zones",
+  });
+  const [listShow, setListShow] = useState(false);
+  const [scores, setScores] = useState({});
 
   const [searchResults, setSearchResults] = useState([]);
   const [isSearched, setIsSearched] = useState(false);
   const [searchOptions, setSearchOptions] = useState();
 
-  function onSearch (results, options){
-    console.log("Results in homepage", results)
-    setSearchOptions(options)
+  function onSearch(results, options) {
+    console.log("Results in homepage", results);
+    setSearchOptions(options);
     setSearchResults(results);
     setIsSearched(true);
   }
 
-
-    /*
+  /*
   function searchFilter(){
     //Take in dictionary of all places and times in search (I think??) and all parameters
     //const allIds = junkdynamic.map(place=>{return place.id})
@@ -83,28 +80,33 @@ export default function Homepage() {
   }
   */
 
-  function buildlist(feature, rank){
+  function buildlist(feature, rank) {
     //const items=junkdynamic.filter(item => item.id===results.properties.location_id)
     //setListResults({items: items, name: results.properties.zone, score: placeScore})
-    
-    setListResults({place: feature, rank: rank})
-    setListShow(true)
-    }
-  
-  function hideList(){
-    setListShow(false)    
+
+    setListResults({ place: feature, rank: rank });
+    setListShow(true);
   }
-  
+
+  function hideList() {
+    setListShow(false);
+  }
+
+  const [busynessLevel, setBusynessLevel] = useState(3);
+  function onBusynessLevelChange(newValue) {
+    setBusynessLevel(newValue);
+    console.log(busynessLevel); // 可能还没更新，因为 setState 是异步的
+  }
 
 
-  const [zones, setZones] = useState({});
+
 
   return (
-    <div className='app-container'>
-      <div className='header-container'>
-        <Logo/>
+    <div className="app-container">
+      <div className="header-container">
+        <Logo />
         <div className="side-naviagtion-container">
-            <Navigation/>
+          <Navigation />
         </div>
       </div>
       <div className="main-application-container">
@@ -116,20 +118,32 @@ export default function Homepage() {
             buildlist={buildlist}
             isSearched={isSearched}
             searchResults={searchResults}
-            // zones={zones} 
-            />
+            busynessLevel={busynessLevel}
+          />
         </div>
         <div className="main-footer-container">
-          <UserSearchBar onSearch={onSearch} isSearched={isSearched} searchResults={searchResults}/>
+          const [busynessLevel, setBusynessLevel] = useState(3);
+          <UserSearchBar
+            onSearch={onSearch}
+            isSearched={isSearched}
+            searchResults={searchResults}
+            setBusynessLevel={setBusynessLevel}
+            onBusynessLevelChange={onBusynessLevelChange} 
+          />
         </div>
-        {listShow && <Droplist results={listResults} searchOptions={searchOptions} hideList={hideList}/>}
-        {//listShow && <div className="result-container">
+        {listShow && (
+          <Droplist
+            results={listResults}
+            searchOptions={searchOptions}
+            hideList={hideList}
+          />
+        )}
+        {
+          //listShow && <div className="result-container">
           //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
-        //</div>
-      }
-
-        
+          //</div>
+        }
       </div>
     </div>
-  )
+  );
 }
