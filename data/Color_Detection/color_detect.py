@@ -1,6 +1,16 @@
 # This application takes an image and gives us the color palette as an output
 # Based on https://towardsdatascience.com/image-color-extraction-with-python-in-4-steps-8d9370d9216e
 
+
+import os
+import sys
+
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(current_path))
+zone_path = os.path.join(current_path, "..", "GeoJSON", "zones_with_images.geojson")
+sys.path.append(cityframe_path)
+
+
 import numpy as np
 import pandas as pd
 import extcolors
@@ -52,7 +62,7 @@ def palette_check(input):
 
 
 #opens the geojson file with the taxi zone images, and populates the df with color frequencies
-def open_geo(geojson='C:\\Users\\mattx\\Downloads\\cityframe-1\\data\\Color_Detection\\zones_with_images.geojson'):
+def open_geo(geojson=zone_path):
     
     """
     Args: Geojson File (containing taxi zones/ flickr image links)
