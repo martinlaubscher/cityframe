@@ -7,7 +7,6 @@ from django.utils import timezone
 from random import randint
 import json
 from api_endpoints.models import Results
-from tests.setup.common_setup import CommonSetup
 
 # represents taxi zones, used in multiple methods here
 zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 100, 103, 107, 113, 114, 116,
@@ -16,7 +15,7 @@ zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 1
             249, 261, 262, 263]
 
 
-class EndpointTests(TestCase, CommonSetup):
+class EndpointTests(TestCase):
 
     def setUp(self):
         """This method sets up the cityframe schema and multiple tables on the test database to mirror the
