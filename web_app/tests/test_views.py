@@ -1,12 +1,12 @@
 import re
 from django.test import TestCase
+from django.db import connections
 from django.urls import reverse
 from rest_framework.test import APIClient
 from django.utils import timezone
 from random import randint
 import json
 from api_endpoints.models import Results
-from tests.setup.common_setup import CommonSetup
 
 # represents taxi zones, used in multiple methods here
 zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 100, 103, 107, 113, 114, 116,
@@ -15,7 +15,7 @@ zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 1
             249, 261, 262, 263]
 
 
-class EndpointTests(TestCase, CommonSetup):
+class EndpointTests(TestCase):
 
     def setUp(self):
         """This method sets up the cityframe schema and multiple tables on the test database to mirror the
@@ -23,7 +23,18 @@ class EndpointTests(TestCase, CommonSetup):
         """
         super().setUp()
 
-        self.common_setup()
+        # # Get a cursor for your test database
+        # cursor = connections['default'].cursor()
+        #
+        # cursor.execute('CREATE SCHEMA IF NOT EXISTS cityframe;')
+        #
+        # # Executes SQL script to create and populate the test database tables required to unit test endpoints
+        # with open('api_endpoints/test_db_setup.sql') as f:
+        #     cursor.execute(f.read())
+        #
+        # # call function to populate the test Database Busyness table with required data
+        # populateTestBusyness()
+        # self.common_setup()
 
         self.client = APIClient()
 
@@ -328,7 +339,7 @@ def populateTestBusyness():
     for zone_id in zone_ids:
         results.append(Results(
             taxi_zone=zone_id,
-            prediction=5,
+            prediction=5,  # arbitrary, not used in any calculations on the test database
             bucket=randint(1, 5),
             dt_iso=timezone.now().replace(minute=0, second=0, microsecond=0)
         ))
