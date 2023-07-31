@@ -36,11 +36,9 @@ SECRET_KEY = django_key
 # this is now set in the environment specific settings files
 # DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
+ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me', 'localhost']
 
 # Application definition
-# INSTALLED_APPS and MIDDLEWARE set in environment specific settings files
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

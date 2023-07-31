@@ -41,7 +41,7 @@ class ApiUpdate:
             **pg_conn
         )
 
-        self.engine = create_engine(pg_url, echo=True)
+        self.engine = create_engine(pg_url)
         self.table = Table(table_name, MetaData(), autoload_with=self.engine, schema=schema_name)
         self.url = url
         self.params = params

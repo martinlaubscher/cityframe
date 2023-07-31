@@ -225,7 +225,11 @@ class MachineLearning:
         return None
 
 
-if __name__ == '__main__':
+def main():
     c = MachineLearning()
 
     c.machine_learn()
+
+
+if __name__ == '__main__':
+    main()
