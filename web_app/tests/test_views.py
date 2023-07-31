@@ -1,4 +1,3 @@
-import json
 import re
 from django.test import TestCase
 from django.db import connections
@@ -6,7 +5,9 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from django.utils import timezone
 from random import randint
+import json
 from api_endpoints.models import Results
+from tests.setup.common_setup import CommonSetup
 
 # represents taxi zones, used in multiple methods here
 zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 100, 103, 107, 113, 114, 116,
@@ -15,7 +16,8 @@ zone_ids = [4, 12, 13, 24, 41, 42, 43, 45, 48, 50, 68, 74, 75, 79, 87, 88, 90, 1
             249, 261, 262, 263]
 
 
-class EndpointTests(TestCase):
+class EndpointTests(TestCase, CommonSetup):
+
     def setUp(self):
         """This method sets up the cityframe schema and multiple tables on the test database to mirror the
         cityframe database. This method also sets up a client used to make HTTP requests to API endpoints
@@ -33,6 +35,7 @@ class EndpointTests(TestCase):
         #
         # # call function to populate the test Database Busyness table with required data
         # populateTestBusyness()
+        # self.common_setup()
 
         self.client = APIClient()
 
