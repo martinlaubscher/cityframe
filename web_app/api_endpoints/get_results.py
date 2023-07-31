@@ -10,7 +10,8 @@ from django.utils.timezone import is_aware
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Results
 from dateutil import tz
 from datetime import datetime, timedelta
-from pymcdm.weights import entropy_weights, equal_weights
+from pymcdm.weights import critic_weights
+from pymcdm import weights as mcdm_w
 from pymcdm.methods import MAIRCA
 from pymcdm.helpers import rankdata
 import numpy as np
@@ -119,7 +120,7 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
 
 
 def generate_response(target_busyness, target_trees, target_style, target_dt, mcdm_method=MAIRCA,
-                      mcdm_weights=entropy_weights):
+                      mcdm_weights=critic_weights):
     """
     Generates a dictionary containing top results based on the target busyness, style, and date-time.
 
@@ -192,7 +193,13 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     types = np.array([-1, -1, 1, -1])
 
     # set weights for criteria (default is entropy_weights)
+    # weights = mcdm_weights(alts)
     weights = mcdm_weights(alts)
+    print(f' Variance weights: {mcdm_w.variance_weights(alts)}')
+    print(f' Gini weights: {mcdm_w.gini_weights(alts)}')
+    print(f' Angle weights: {mcdm_w.angle_weights(alts)}')
+    print(f' Critic weights: {mcdm_w.critic_weights(alts)}')
+    print(f' Entropy weights: {mcdm_w.entropy_weights(alts)}')
 
     # initialise mcdm method (default is MAIRCA)
     method = mcdm_method()
