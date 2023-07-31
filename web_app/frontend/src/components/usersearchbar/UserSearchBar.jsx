@@ -15,11 +15,18 @@ export default function UserSearchBar(props) {
   useEffect(() => {
     getAllBusyness().then((data) => setZones(data));
   }, []);
-
   useEffect(() => {
-    const selectedZones = filterBusyness(busynessLevel, zones);
-    console.log(selectedZones);
+    if (Object.keys(zones).length !== 0) { // check if zones is not an empty object
+      const selectedZones = filterBusyness(busynessLevel, zones);
+      console.log(selectedZones);
+    }
   }, [busynessLevel, zones]);
+  
+
+  // useEffect(() => {
+  //   const selectedZones = filterBusyness(busynessLevel, zones);
+  //   console.log(selectedZones);
+  // }, [busynessLevel, zones]);
 
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
