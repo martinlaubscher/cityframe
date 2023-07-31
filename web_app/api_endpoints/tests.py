@@ -22,15 +22,17 @@ class EndpointTests(TestCase):
         """
         super().setUp()
 
-        # Get a cursor for your test database
-        cursor = connections['default'].cursor()
-
-        # Executes SQL script to create and populate the test database tables required to unit test endpoints
-        with open('api_endpoints/test_db_setup.sql') as f:
-            cursor.execute(f.read())
-
-        # call function to populate the test Database Busyness table with required data
-        populateTestBusyness()
+        # # Get a cursor for your test database
+        # cursor = connections['default'].cursor()
+        #
+        # cursor.execute('CREATE SCHEMA IF NOT EXISTS cityframe;')
+        #
+        # # Executes SQL script to create and populate the test database tables required to unit test endpoints
+        # with open('api_endpoints/test_db_setup.sql') as f:
+        #     cursor.execute(f.read())
+        #
+        # # call function to populate the test Database Busyness table with required data
+        # populateTestBusyness()
 
         self.client = APIClient()
 

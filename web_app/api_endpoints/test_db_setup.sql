@@ -43,7 +43,7 @@ CREATE TABLE cityframe.weather_current (
     timezone INT NOT NULL
 );
 
-CREATE TABLE cityframe."Results" (
+CREATE TABLE if NOT EXISTS cityframe."Results" (
     taxi_zone bigint,
     prediction real,
     bucket integer,
