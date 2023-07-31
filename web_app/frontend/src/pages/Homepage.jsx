@@ -6,6 +6,7 @@ import "./homePageCSS.css"
 
 
 
+
 import Map from '../components/mapBackground/Map.jsx';
 import junkdynamic from '../components/dummydata/geojunk.js';
 import dynamic from '../components/dummydata/dynamicdata.js';
@@ -95,6 +96,9 @@ export default function Homepage() {
   }
   
 
+
+  const [zones, setZones] = useState({});
+
   return (
     <div className='app-container'>
       <div className='header-container'>
@@ -112,6 +116,7 @@ export default function Homepage() {
             buildlist={buildlist}
             isSearched={isSearched}
             searchResults={searchResults}
+            // zones={zones} 
             />
         </div>
         <div className="main-footer-container">

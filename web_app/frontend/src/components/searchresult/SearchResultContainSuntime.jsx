@@ -64,7 +64,7 @@ export default function SearchResult({ results }) {
 export async function handleSearch(searchOptions) {
   try {
     // Get the golden hour and sunset times
-    const goldenHourResponse = await axios.get(`/api/golden-hour/${searchOptions.datetime.toISOString().split('T')[0]}`);
+    // const goldenHourResponse = await axios.get(`/api/golden-hour/${searchOptions.datetime.toISOString().split('T')[0]}`);
     const currentSuntimesResponse = await axios.get(`/api/current-suntimes/datetime`);
     const goldenHour = goldenHourResponse.data;
     const currentSuntimes = currentSuntimesResponse.data;
