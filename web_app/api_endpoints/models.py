@@ -216,3 +216,30 @@ class Results(models.Model):
     class Meta:
         managed = False
         db_table = 'cityframe\".\"Results'
+
+
+class Query(models.Model):
+    busyness = models.IntegerField()
+    trees = models.IntegerField()
+    time = models.CharField(max_length=255)
+    style = models.CharField(max_length=255)
+    query_time = models.DateTimeField()
+
+    class Meta:
+        db_table = 'cityframe\".\"user_query'
+
+
+class Response(models.Model):
+    id = models.AutoField(primary_key=True)
+    zone_id = models.IntegerField()
+    zone = models.CharField(max_length=255)
+    dt_iso = models.CharField(max_length=255)
+    busyness = models.IntegerField()
+    trees = models.IntegerField()
+    style = models.IntegerField()
+    weather = models.JSONField()
+    rank = models.IntegerField()
+    submission = models.ForeignKey(Query, related_name='responses', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'cityframe\".\"user_query_response'
