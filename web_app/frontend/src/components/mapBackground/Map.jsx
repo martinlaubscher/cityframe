@@ -43,10 +43,10 @@ export default function Map(props) {
 
   const getBusynessColor = (busynessLevel) => {
     const busynessColors = {
-      1: "#FFE16D",
-      2: "#FFCC69",
-      3: "#FFAE6D",
-      4: "#FF937A",
+      1: "#99EE47",
+      2: "#DCD029",
+      3: "#FFD944",
+      4: "#F9A75E",
       5: "#FF7D8B",
     };
     return busynessColors[busynessLevel];
@@ -119,14 +119,17 @@ export default function Map(props) {
           path = {
             fillColor: getBusynessColor(busynessLevel),
             color: "black",
-            weight: 0.3,
-            // stroke: true
+            weight: 1,
             fillOpacity: 0.9,
+            dashArray: '5, 5'
           };
-          // console.log("Path set with busyness color:", path);
         } else {
-          path = { color: "white", weight: 0.5, fillOpacity: 0.3 };
-          // console.log("Path set with default options:", path);
+          path = { 
+            color: "black", 
+            weight: 1, 
+            fillOpacity: 0,
+            dashArray: '5, 5' // add dash line style
+          };
         }
 
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
@@ -148,8 +151,10 @@ export default function Map(props) {
     <div className="Map--div">
       <MapContainer
         center={[40.7831, -73.9712]}
-        zoom={13}
+        zoom={12}
         scrollWheelZoom={true}
+        maxZoom={14}
+        minZoom={11}  
       >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
