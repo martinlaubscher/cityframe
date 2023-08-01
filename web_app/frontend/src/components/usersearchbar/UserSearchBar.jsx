@@ -6,41 +6,41 @@ import {
   getAllBusyness,
   filterBusyness,
 } from "../busynessInfo/currentBusyness";
-
-
+import Map from "../mapBackground/Map"
 
 export default function UserSearchBar(props) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [zones, setZones] = useState({});
+  const [selectedZones, setSelectedZones] = useState();
 
+  // Get data from API when component mounts
   useEffect(() => {
     getAllBusyness().then((data) => setZones(data));
   }, []);
-  const [selectedZones, setSelectedZones] = useState({});
+
   useEffect(() => {
-    if (Object.keys(zones).length !== 0) {
-      const selectedZones = filterBusyness(busynessLevel, zones);
-      setSelectedZones(selectedZones);  // 保存选定的区域
-      console.log(selectedZones);
+    if (Object.keys(zones).length !== 0) { // check if zones is not an empty object
+      const filteredZones = filterBusyness(busynessLevel, zones);
+      console.log("filteredZones:",filteredZones);
+      setSelectedZones(filteredZones);
     }
   }, [busynessLevel, zones]);
+  
+  useEffect(() => {
+    console.log("selectedZones:",selectedZones);
+  }, [selectedZones]);
+  // useEffect(() => {
+  //   const selectedZones = filterBusyness(busynessLevel, zones);
+  //   console.log(selectedZones);
+  // }, [busynessLevel, zones]);
 
   const handleBusynessChange = (event) => {
-    setBusynessLevel(Number(event.target.value));
+    setBusynessLevel(Number(event.target.value)); // Convert value to number
     console.log(`User selected busyness level: ${event.target.value}`);
   };
 
-  function onSliderChange(event) {
-    const newValue = event.target.value;
-    props.setBusynessLevel(newValue);
-    props.onBusynessLevelChange(newValue); // 调用新的函数来打印值
-  }
- 
-
-
   return (
     <div className="usersearch-container">
-          {/* <Map selectedZones={selectedZones} /> */}
       <div className="button-wrapper">
         <button
           className="btn btn-primary offcanvas-button"
@@ -75,16 +75,16 @@ export default function UserSearchBar(props) {
           <input
             type="range"
             className="form-range range-cust"
-            min="0"
+            min="1"
             max="5"
             id="customRange2"
-
-            value={props.busynessLevel}
-            onChange={e => props.setBusynessLevel(e.target.value)}
+            onChange={handleBusynessChange}
+            value={busynessLevel}
           />
         </div>
       </div>
       <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
+      <Map busynessZones={selectedZones}/>
       {/* <div
         className="offcanvas offcanvas-bottom"
         tabIndex="-1"

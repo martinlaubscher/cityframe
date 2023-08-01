@@ -7,70 +7,14 @@ import { MapContainer, TileLayer, Marker, Popup, Polygon } from "react-leaflet";
 
 export default function Map(props) {
   const defaultOptions = { color: "#808080", weight: 1, fillOpacity: 0 };
-//   const purpleOptions = {
-//     color: "purple",
-//     weight: 2,
-//     fillColor: "green",
-//     fillOpacity: 0.5,
-//   };
+  //   const purpleOptions = {
+  //     color: "purple",
+  //     weight: 2,
+  //     fillColor: "green",
+  //     fillOpacity: 0.5,
+  //   };
+  const homepageDefaultOptions = {color: "white", weight: 1, fillOpacity: 0.5 }
   const [geojsonData, setGeojsonData] = React.useState(null);
-
-  // 定义繁忙程度对应的颜色
-  const busynessColors = {
-    1: "#FFE16D",
-    2: "#FFCC69",
-    3: "#FFAE6D",
-    4: "#FF937A",
-    5: "#FF7D8B",
-  };
-
-  // 获得繁忙程度数据
-  async function getAllBusyness() {
-    try {
-      const response = await axios.get(`/api/current-busyness`);
-      console.log(response.data);
-      return response.data;
-    } catch (error) {
-      console.error("There was an error retrieving the data: ", error);
-    }
-  }
-
-  // 根据繁忙程度获得样式
-  function getStyle(feature) {
-    const busynessLevel = feature.properties.busynessLevel;
-    return {
-      fillColor: busynessColors[busynessLevel],
-      weight: 2,
-      opacity: 1,
-      color: "white",
-      dashArray: "3",
-      fillOpacity: 0,
-    };
-  }
-
-  // 从后端获得GeoJSON数据并加载到地图上
-  React.useEffect(() => {
-    axios
-      .get("/assets/manhattan_taxi_zones.geojson")
-      .then((response) => {
-        const geojsonData = response.data;
-        // 将繁忙程度数据添加到GeoJSON数据中
-        getAllBusyness().then((busynessData) => {
-          for (const feature of geojsonData.features) {
-            const zoneId = feature.properties.zoneId;
-            if (zoneId in busynessData) {
-              feature.properties.busynessLevel = busynessData[zoneId];
-            } else {
-              feature.properties.busynessLevel = 1;
-            }
-          }
-          setGeojsonData(geojsonData);
-        });
-      })
-      .catch((error) => {
-        console.error("There was an error retrieving the data: ", error);
-      });
-  }, []);
 
   function handleClick() {
     console.log("She doesn't even go here");
@@ -89,6 +33,8 @@ export default function Map(props) {
 
   console.log("Geojson data?", geojsonData);
 
+  console.log("busynessZones-Map recieve the prop:", props.busynessZones);
+
   function handleClick() {
     console.log("She doesn't even go here");
   }
@@ -101,6 +47,24 @@ export default function Map(props) {
     const lightness = 90 - colourVar / 2;
     return `hsl(${hue}, ${100}%, ${lightness}%)`;
   }
+
+  // ======================homepage heatmap============================
+  console.log("busynessZones-Map recieve the prop:", props.busynessZones);
+
+  const getBusynessColor = (busynessLevel) => {
+    const busynessColors = {
+      1: "#FFE16D",
+      2: "#FFCC69",
+      3: "#FFAE6D",
+      4: "#FF937A",
+      5: "#FF7D8B",
+    };
+    return busynessColors[busynessLevel];
+  };
+  
+
+  
+  // ================================================================================
 
   var polygons;
   if (geojsonData) {
@@ -139,21 +103,59 @@ export default function Map(props) {
           );
         });
       });
-    } else {
+    }
+    // ======================homepage heatmap============================
+    else {
+      // polygons = geojsonData.features.map((feature, idx) => {
+      //   return feature.geometry.coordinates.map((polygon, polygonIndex) => {
+      //     return (
+      //       <Polygon
+      //         key={`${idx}-${polygonIndex}`}
+      //         positions={polygon[0].map((coord) => [coord[1], coord[0]])} // swap lat and lng
+      //         pathOptions={getStyle(feature)}
+      //       />
+      //     );
+      //   });
+      // });
       polygons = geojsonData.features.map((feature, idx) => {
+        var path;
+        // var click;
+      
+        // form props.busynessZones get feature's busyness level
+        const busynessLevel = props.busynessZones && Object.keys(props.busynessZones).find(
+          (level) => {
+            const includesLocation = props.busynessZones[level].includes(feature.properties.location_id);
+            console.log("iterating feature:",feature.properties.location_id);
+            console.log(`Checking level ${level}: ${includesLocation ? 'matches' : 'does not match'}`);
+            console.log(includesLocation); 
+            return includesLocation;
+          }
+        );
+        if (busynessLevel) {
+          path = {
+            // color: getBusynessColor(busynessLevel),
+            color: "red",
+            weight: 2,
+            fillOpacity: 0.8,
+          };
+          console.log("Path set with busyness color:", path.color);
+        } else {
+          path = homepageDefaultOptions;
+          console.log("Path set with default options:", path);
+        }
+        
+      
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
             <Polygon
               key={`${idx}-${polygonIndex}`}
-              positions={polygon[0].map((coord) => [coord[1], coord[0]])} // swap lat and lng
-              pathOptions={getStyle(feature)}
-              eventHandlers={{
-                click: handleClick,
-              }}
+              positions={polygon[0].map((coord) => [coord[1], coord[0]])} 
+              pathOptions={path}
             />
           );
         });
       });
+      
     }
   }
 

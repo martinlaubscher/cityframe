@@ -92,15 +92,6 @@ export default function Homepage() {
     setListShow(false);
   }
 
-  const [busynessLevel, setBusynessLevel] = useState(3);
-  function onBusynessLevelChange(newValue) {
-    setBusynessLevel(newValue);
-    console.log(busynessLevel); // 可能还没更新，因为 setState 是异步的
-  }
-
-
-
-
   return (
     <div className="app-container">
       <div className="header-container">
@@ -111,24 +102,19 @@ export default function Homepage() {
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
-          {/* <WeatherComponent/> */}
           <Map
             data={data}
             scores={scores}
             buildlist={buildlist}
             isSearched={isSearched}
             searchResults={searchResults}
-            busynessLevel={busynessLevel}
           />
         </div>
         <div className="main-footer-container">
-          const [busynessLevel, setBusynessLevel] = useState(3);
           <UserSearchBar
             onSearch={onSearch}
             isSearched={isSearched}
             searchResults={searchResults}
-            setBusynessLevel={setBusynessLevel}
-            onBusynessLevelChange={onBusynessLevelChange} 
           />
         </div>
         {listShow && (
