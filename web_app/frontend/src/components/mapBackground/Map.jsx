@@ -99,7 +99,6 @@ export default function Map(props) {
         //path={color: '#808080', weight: 1, fillColor:"blue", fillOpacity: 0.5}
 
         polygons=geojsonData.features.map((feature, idx) => {
-            console.log(feature)
             path={color: '#808080', weight: 1, fillColor: busyColour(1), fillOpacity: 0.5}
             return feature.geometry.coordinates.map((polygon, polygonIndex) => {
                 return(

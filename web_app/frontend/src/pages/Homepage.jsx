@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import Droplist from '../components/placeList/Droplist.jsx';
 import SearchResult from '../components/searchresult/SearchResult.jsx';
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
+import colours from '../components/dummydata/colours.js';
 
 export default function Homepage() {
 
@@ -27,6 +28,11 @@ export default function Homepage() {
   const [searchOptions, setSearchOptions] = useState();
 
   function onSearch (results, options){
+    results=results.map(result=>{
+      var resultColour = colours.find(colour => colour.location_id===result.id)
+      return {...result, pallete: resultColour.colors}}
+    )
+
     setSearchOptions(options)
     setSearchResults(results);
     setIsSearched(true);

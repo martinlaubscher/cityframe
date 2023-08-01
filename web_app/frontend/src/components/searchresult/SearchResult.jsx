@@ -5,6 +5,7 @@ import "./SearchResultCSS.css"
 let style
 
 export default function SearchResult({ results, searchOptions }) {
+
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -32,9 +33,9 @@ export default function SearchResult({ results, searchOptions }) {
             <div className="overlay-info">
               <div className="info-zone-style-buyness-tree">
                 <div className="info-zone-style">
-                  <p>{result.rank}.</p>
-                  <p>{result.zone}</p>
-                  <p>{result.style}  {style}  buildings</p>
+                  <h3>{result.rank}</h3>
+                  <h4>{result.zone}</h4>
+                  <p>{result.style} {style} buildings</p>
                 </div>
                 <div className="info-busyness-tree">
                   <p>BUSYNESS {result.busyness}</p>
@@ -44,6 +45,14 @@ export default function SearchResult({ results, searchOptions }) {
               <div className="info-time">
                 <p>{result.dt_iso}</p>
               </div>
+              <div className="info-busyness-tree">              
+                <p>Color pallete</p>
+                  <div className='color-pallete'>
+                  {result.pallete.map(hex => <div className='hexdiv' style={{backgroundColor: hex}}></div>
+                  )}
+              </div>
+            </div>
+
             </div>
           </div>
         ))}
