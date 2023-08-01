@@ -7,12 +7,12 @@
     top: 0;
     width: 100%;
     height: 12%;
-    background-color: white;
+    background-color: black;
     display: flex;
-    flex-direction: row; /* The default value is "row", so you can omit this line */
     align-items: center;
-    z-index: 2;
-    padding:15px
+    z-index: 1;
+    padding: 2vh;
+    
 }
 
 .main-application-container{
@@ -29,6 +29,6 @@
     position: fixed; /* fix the position to the bottom of the screen */
     bottom: 0; /* set it to the bottom */
     width: 100%; /* have it span the full width of the viewport */
-    height: 20%; /* set the height to 40% of the viewport height z-index: 1;*/
-    
+    height: 15%; /* set the height to 20% of the viewport height z-index: 1;*/
+ 
 }

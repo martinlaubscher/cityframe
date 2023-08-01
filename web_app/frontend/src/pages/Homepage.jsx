@@ -111,7 +111,7 @@ export default function Homepage() {
             searchResults={searchResults}
             />
         </div>
-        {/*
+
         <div className="main-footer-container">
           <UserSearchBar onSearch={onSearch} isSearched={isSearched} searchResults={searchResults}/>
         </div>
@@ -119,7 +119,7 @@ export default function Homepage() {
         {//listShow && <div className="result-container">
           //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
         //</div>
-      }*/}
+      }
 
 
       </div>

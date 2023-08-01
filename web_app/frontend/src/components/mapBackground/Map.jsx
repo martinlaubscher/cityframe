@@ -124,7 +124,7 @@ export default function Map(props) {
                     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
                  {
-                    //<ZoomControl position={'topright'} />
+                    <ZoomControl position={'topright'} />
                 }
                 {polygons}
             </MapContainer>
