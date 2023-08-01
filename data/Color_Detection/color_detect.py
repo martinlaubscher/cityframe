@@ -14,13 +14,11 @@ import numpy as np
 import pandas as pd
 import extcolors
 from colormap import rgb2hex
-from sqlalchemy import create_engine, URL
 import json
 import geojson
 import requests
 from PIL import Image
 from io import BytesIO
-from credentials import pg_conn
 
 
 # loads in the image and extracts a basic RGB color palette
@@ -81,20 +79,13 @@ def open_geo(geojson=zone_path):
         image = img_load(properties['image_url'])
         colors.append(palette_check(image))
 
-    df = pd.DataFrame({'zone': zones, 'image_url': image_urls, 'colors': colors})
+    df = pd.DataFrame({'location_id': zones, 'image_url': image_urls, 'colors': colors})
     return df
 
 
-# creates a new database to hold results
-def create_db(df):
-    """
-    Args: pandas dataframe
-    Returns: None
-    """
+#saving the finished dataframe to json
+df = open_geo()
 
-    engine = create_engine(URL.create("postgresql+psycopg", **pg_conn))
-
-    df.to_sql('Color_Results', engine, schema='cityframe', if_exists='replace', index=False)
+df.to_json('color_json', orient='records', lines=True)
 
 
-create_db(open_geo())
