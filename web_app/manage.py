@@ -3,6 +3,12 @@
 import os
 import sys
 
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(current_path)
+sys.path.append(cityframe_path)
+from data.database.data_population_scripts import update_weather_fc, update_weather_current
+from data import machine_learning_app
+
 
 def main():
     """Run administrative tasks."""
@@ -19,4 +25,7 @@ def main():
 
 
 if __name__ == '__main__':
+    update_weather_current.update_weather()
+    update_weather_fc.main()
+    machine_learning_app.main()
     main()
