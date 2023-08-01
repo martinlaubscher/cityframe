@@ -142,7 +142,7 @@ class FutureSuntimesAPIView(APIView):
         Returns a json listing sunrise and sunset for that day in unix timestamp format (with offset applied)
         """
         url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
-              f'lat=40.7831&lon=-73.9712&cnt=6&appid={openweather_key}'
+              f'lat=40.7831&lon=-73.9712&cnt=16&appid={openweather_key}'
         response = requests.get(url)
         data = response.json()
         timezone_offset = data['city']['timezone']
