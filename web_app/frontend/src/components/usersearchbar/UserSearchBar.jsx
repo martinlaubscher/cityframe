@@ -22,17 +22,14 @@ export default function UserSearchBar(props) {
     if (Object.keys(zones).length !== 0) { // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);
       console.log("filteredZones:",filteredZones);
-      setSelectedZones(filteredZones);
+      props.setSelectedZones(filteredZones);
     }
   }, [busynessLevel, zones]);
   
   useEffect(() => {
     console.log("selectedZones:",selectedZones);
   }, [selectedZones]);
-  // useEffect(() => {
-  //   const selectedZones = filterBusyness(busynessLevel, zones);
-  //   console.log(selectedZones);
-  // }, [busynessLevel, zones]);
+
 
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
@@ -84,13 +81,9 @@ export default function UserSearchBar(props) {
         </div>
       </div>
       <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
-      <Map busynessZones={selectedZones}/>
-      {/* <div
-        className="offcanvas offcanvas-bottom"
-        tabIndex="-1"
-        id="offcanvasBottom"
-        aria-labelledby="offcanvasBottomLabel"
-      ></div> */}
+      {(!selectedZones || Object.keys(selectedZones).length === 0) ? 
+      <div>Loading...</div> : 
+      <Map busynessZones={selectedZones}/>}
     </div>
   );
 }

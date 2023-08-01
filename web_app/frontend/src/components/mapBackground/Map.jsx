@@ -1,4 +1,3 @@
-// import {MapContainer, TileLayer, Marker, Popup, Polygon} from 'react-leaflet'
 import "./MapBackground.css";
 import React from "react";
 import axios from "@/axiosConfig";
@@ -7,13 +6,6 @@ import { MapContainer, TileLayer, Marker, Popup, Polygon } from "react-leaflet";
 
 export default function Map(props) {
   const defaultOptions = { color: "#808080", weight: 1, fillOpacity: 0 };
-  //   const purpleOptions = {
-  //     color: "purple",
-  //     weight: 2,
-  //     fillColor: "green",
-  //     fillOpacity: 0.5,
-  //   };
-  const homepageDefaultOptions = {color: "white", weight: 1, fillOpacity: 0.5 }
   const [geojsonData, setGeojsonData] = React.useState(null);
 
   function handleClick() {
@@ -32,8 +24,6 @@ export default function Map(props) {
   }, []);
 
   console.log("Geojson data?", geojsonData);
-
-  console.log("busynessZones-Map recieve the prop:", props.busynessZones);
 
   function handleClick() {
     console.log("She doesn't even go here");
@@ -61,9 +51,19 @@ export default function Map(props) {
     };
     return busynessColors[busynessLevel];
   };
-  
 
-  
+  React.useEffect(() => {
+    let busynessZonesObj = {};
+    for (let level in props.busynessZones) {
+      props.busynessZones[level].forEach((zone) => {
+        busynessZonesObj[zone] = level;
+      });
+    }
+    setBusynessZonesObj(busynessZonesObj);
+  }, [props.busynessZones]);
+
+  const [busynessZonesObj, setBusynessZonesObj] = React.useState(null);
+
   // ================================================================================
 
   var polygons;
@@ -106,56 +106,37 @@ export default function Map(props) {
     }
     // ======================homepage heatmap============================
     else {
-      // polygons = geojsonData.features.map((feature, idx) => {
-      //   return feature.geometry.coordinates.map((polygon, polygonIndex) => {
-      //     return (
-      //       <Polygon
-      //         key={`${idx}-${polygonIndex}`}
-      //         positions={polygon[0].map((coord) => [coord[1], coord[0]])} // swap lat and lng
-      //         pathOptions={getStyle(feature)}
-      //       />
-      //     );
-      //   });
-      // });
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
-        // var click;
-      
-        // form props.busynessZones get feature's busyness level
-        const busynessLevel = props.busynessZones && Object.keys(props.busynessZones).find(
-          (level) => {
-            const includesLocation = props.busynessZones[level].includes(feature.properties.location_id);
-            console.log("iterating feature:",feature.properties.location_id);
-            console.log(`Checking level ${level}: ${includesLocation ? 'matches' : 'does not match'}`);
-            console.log(includesLocation); 
-            return includesLocation;
-          }
-        );
+
+        const busynessLevel =
+          busynessZonesObj && busynessZonesObj[feature.properties.location_id];
         if (busynessLevel) {
           path = {
-            // color: getBusynessColor(busynessLevel),
-            color: "red",
-            weight: 2,
-            fillOpacity: 0.8,
+            fillColor: getBusynessColor(busynessLevel),
+            color:"black",
+            weight:0.3,
+            // stroke: true
+            fillOpacity: 0.9
           };
-          console.log("Path set with busyness color:", path.color);
+          // console.log("Path set with busyness color:", path);
         } else {
-          path = homepageDefaultOptions;
-          console.log("Path set with default options:", path);
+          path = { color: "white", weight: 0.5, fillOpacity: 0.3};
+          // console.log("Path set with default options:", path);
         }
-        
-      
+
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
             <Polygon
               key={`${idx}-${polygonIndex}`}
-              positions={polygon[0].map((coord) => [coord[1], coord[0]])} 
+              positions={polygon[0].map((coord) => [coord[1], coord[0]])}
               pathOptions={path}
-            />
+            >
+              {console.log("Polygon properties:", feature.properties, path)}
+            </Polygon>
           );
         });
       });
-      
     }
   }
 

@@ -15,7 +15,8 @@ import SearchResult from "../components/searchresult/SearchResult.jsx";
 
 export default function Homepage() {
   //console.log(dynamic)
-
+  const [selectedZones, setSelectedZones] = useState();
+  
   const [listResults, setListResults] = useState({
     results: junkdynamic,
     name: "All Zones",
@@ -92,6 +93,9 @@ export default function Homepage() {
     setListShow(false);
   }
 
+
+
+
   return (
     <div className="app-container">
       <div className="header-container">
@@ -108,6 +112,7 @@ export default function Homepage() {
             buildlist={buildlist}
             isSearched={isSearched}
             searchResults={searchResults}
+            busynessZones={selectedZones}
           />
         </div>
         <div className="main-footer-container">
@@ -115,6 +120,8 @@ export default function Homepage() {
             onSearch={onSearch}
             isSearched={isSearched}
             searchResults={searchResults}
+            setSelectedZones={setSelectedZones} 
+            selectedZones={selectedZones}
           />
         </div>
         {listShow && (
