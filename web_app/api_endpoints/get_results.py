@@ -82,11 +82,6 @@ def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyne
         dict: A dictionary containing information about each TaxiZone including zone details, busyness level, number of trees, architectural style count, and weather information.
     """
 
-    if weather is None:
-        weather = tuple(WeatherFc.objects.values_list('weather_main', flat=True).distinct())
-    else:
-        weather = (weather,)
-
     # Get TaxiZones IDs having at least one building in the desired style
     top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).values_list('id', flat=True)
 
