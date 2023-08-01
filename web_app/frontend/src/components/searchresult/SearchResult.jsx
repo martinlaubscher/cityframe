@@ -1,8 +1,8 @@
 // SearchResult.jsx
-import axios from '@/axiosConfig';
-import "./SearchResultCSS.css"
+import axios from "@/axiosConfig";
+import "./SearchResultCSS.css";
 
-let style
+let style;
 
 export default function SearchResult({ results, searchOptions }) {
   return (
@@ -25,24 +25,38 @@ export default function SearchResult({ results, searchOptions }) {
           <div
             key={result.id}
             className={`carousel-item ${index === 0 ? "active" : ""}`}
-            style={{
-              // backgroundImage: `url(https://picsum.photos/1920/1080?random=${result.id})`,
-            }}
           >
-            <div className="overlay-info">
-              <div className="info-zone-style-buyness-tree">
-                <div className="info-zone-style">
+            <div className="result-info">
+              <div className="result-rank-zonename">
+                <div className="result-rank">
                   <p>{result.rank}.</p>
-                  <p>{result.zone}</p>
-                  <p>{result.style}  {style}  buildings</p>
                 </div>
-                <div className="info-busyness-tree">
+                <div className="result-zonename">
+                  <p>{result.zone}</p>
+                </div>
+
+                <div className="result-busyness">
                   <p>BUSYNESS {result.busyness}</p>
+                </div>
+                <div className="result-trees">
                   <p>TREES {result.trees}</p>
                 </div>
-              </div>
-              <div className="info-time">
-                <p>{result.dt_iso}</p>
+                <div className="result-architecture">
+                  <p>
+                    {result.style} {style} buildings
+                  </p>
+                </div>
+                <div className="result-colors"></div>
+                <div className="result-date-time">
+                  {" "}
+                  <p>{result.dt_iso}</p>
+                </div>
+                <div className="result-pictures">
+                  <img
+                    src={`https://picsum.photos/1920/1080?random=${result.id}`}
+                    alt={`Image ${index}`}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -70,8 +84,6 @@ export default function SearchResult({ results, searchOptions }) {
   );
 }
 
-
-
 export async function handleSearch(searchOptions) {
   try {
     // Log the response data to the console
@@ -87,18 +99,13 @@ export async function handleSearch(searchOptions) {
       searchOptions.style
     );
 
-    // Frontend: Implemented CORS in the local environment to facilitate real-time visualization
-    // of changes made to the frontend code. This allows the frontend to instantly view the modifications
-    // on the web page while utilizing data obtained from the backend, eliminating the need to run "npm build"
-    // and handle static files every time.
-
     // save style at request time to use for results later
     style = searchOptions.style;
 
     // Notice：de-comment in final version
     const response = await axios.post("/api/submit-main", {
-    //Notice：comment before commit
-    // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
+      //Notice：comment before commit
+      // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
 
       busyness: searchOptions.busyness,
       trees: searchOptions.tree,
@@ -111,8 +118,7 @@ export async function handleSearch(searchOptions) {
       typeof response.data === "object" &&
       !Array.isArray(response.data)
     ) {
-        return Object.values(response.data)
-            .sort((a, b) => a.rank - b.rank);
+      return Object.values(response.data).sort((a, b) => a.rank - b.rank);
     }
 
     return [];

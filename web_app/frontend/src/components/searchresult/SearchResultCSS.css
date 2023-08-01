@@ -3,7 +3,7 @@
   overflow: visible; 
   background-color: black;
 }
-.overlay-info {
+.result-info {
   display: flex;
   flex-direction: column; 
   justify-content: center; 
@@ -29,57 +29,11 @@
 }
 
 
-/* .overlay-info {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  padding: 5px;
-  color: white;
-  font-family: 'Pixel', monospace;
-}
-
-.info-zone-style {
-  display: flex;
-  justify-content: space-between; 
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%; 
-} */
-
-.info-zone-style p:first-child {
-  /* margin-left: 10px; 
-  font-size: 20px; */
-}
-
-.info-zone-style p:last-child {
-  /* margin-right: auto; 
-  font-size: 20px; */
-}
-
-
-/* .info-busyness-tree {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.info-busyness-tree p {
-  margin: 0;
-  font-size: 16px;
-} */
-
-.info-time {
-  color: orange;
-  font-size: 15px;
-  font-weight: bold;
-}
 
 .carousel-inner {
   display: flex;
-  height: 50vh; 
+  height: 80vh; 
+  /* overflow: visible; */
 }
 
 .carousel-item {
@@ -95,11 +49,7 @@
   background-size: cover;
 }
 
-.carousel-item img {
-  object-fit: cover; 
-  height: 100%; 
-  width: 100%; 
-}
+
 
 .caption-background {
   background-color: rgba(0, 0, 0, 0.8); 
@@ -114,4 +64,8 @@
   color: white;
   padding: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.result-pictures{
+  width:80%;
+  height:50%;
 }
