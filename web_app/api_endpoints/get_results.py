@@ -99,11 +99,11 @@ def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyne
     else:
         records = Busyness.objects.select_related('taxi_zone').filter(
             taxi_zone__in=top_zones_ids,
-            dt_iso__weather_main__in=weather).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
-                                                     'bucket', 'taxi_zone__trees_scaled',
-                                                     f'taxi_zone__{style}',
-                                                     'dt_iso__temp', 'dt_iso__weather_main',
-                                                     'dt_iso__weather_icon')
+            dt_iso__weather_main=weather).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
+                                                 'bucket', 'taxi_zone__trees_scaled',
+                                                 f'taxi_zone__{style}',
+                                                 'dt_iso__temp', 'dt_iso__weather_main',
+                                                 'dt_iso__weather_icon')
 
     results = {}
     ny_tz = tz.gettz('America/New_York')
