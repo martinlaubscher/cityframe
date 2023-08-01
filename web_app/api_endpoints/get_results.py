@@ -67,12 +67,13 @@ def get_ny_dt(target_dt=datetime.now(tz=tz.gettz('America/New_York'))):
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
 
-def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_ny_dt()):
+def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyness_range=(1, 5)):
     """
-    Fetches records associated with the given architectural style, tree range, busyness range, and user time.
+    Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time.
 
     Args:
         style (str): Architectural style. It should match with the architectural style fields in the TaxiZones table.
+        weather (str or None): The desired weather (main category). If not None, it should match one of the present values in the WeatherFc table.
         tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range. Optional, defaults to (1, 5).
         busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range. Optional, defaults to (1, 5).
         user_time (datetime): The desired time as a timezone-aware datetime object. Optional, defaults to the current time in New York timezone.
@@ -81,22 +82,33 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
         dict: A dictionary containing information about each TaxiZone including zone details, busyness level, number of trees, architectural style count, and weather information.
     """
 
-    weather = {'Clear': 1, 'Clouds': 2, 'Drizzle': 3, 'Fog': 4, 'Haze': 5, 'Mist': 6, 'Rain': 7, 'Smoke': 8, 'Snow': 9,
-               'Squall': 10, 'Thunderstorm': 11}
+    if weather is None:
+        weather = tuple(WeatherFc.objects.values_list('weather_main', flat=True).distinct())
+    else:
+        weather = (weather,)
 
     # Get TaxiZones IDs having at least one building in the desired style
     top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).values_list('id', flat=True)
 
-    # define the timespan in which to look for results
-    time_from = user_time - timedelta(hours=12)
-    time_to = user_time + timedelta(hours=12)
-
-    records = Busyness.objects.select_related('taxi_zone').filter(
-        taxi_zone__in=top_zones_ids,
-        dt_iso__dt_iso__range=(time_from, time_to)).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
-                                                           'bucket', 'taxi_zone__trees_scaled', f'taxi_zone__{style}',
-                                                           'dt_iso__temp', 'dt_iso__weather_description',
-                                                           'dt_iso__weather_icon')
+    if weather is None:
+        # define the timespan in which to look for results
+        time_from = user_time - timedelta(hours=12)
+        time_to = user_time + timedelta(hours=12)
+        records = Busyness.objects.select_related('taxi_zone').filter(
+            taxi_zone__in=top_zones_ids,
+            dt_iso__dt_iso__range=(time_from, time_to)).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
+                                                               'bucket', 'taxi_zone__trees_scaled',
+                                                               f'taxi_zone__{style}',
+                                                               'dt_iso__temp', 'dt_iso__weather_main',
+                                                               'dt_iso__weather_icon')
+    else:
+        records = Busyness.objects.select_related('taxi_zone').filter(
+            taxi_zone__in=top_zones_ids,
+            dt_iso__weather_main__in=weather).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
+                                                     'bucket', 'taxi_zone__trees_scaled',
+                                                     f'taxi_zone__{style}',
+                                                     'dt_iso__temp', 'dt_iso__weather_main',
+                                                     'dt_iso__weather_icon')
 
     results = {}
     ny_tz = tz.gettz('America/New_York')
@@ -113,7 +125,7 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
             'style': record[f'taxi_zone__{style}'],
             'weather': {
                 'temp': record['dt_iso__temp'],
-                'weather_description': record['dt_iso__weather_description'],
+                'weather_description': record['dt_iso__weather_main'],
                 'weather_icon': record['dt_iso__weather_icon']
             }
         }
@@ -121,16 +133,17 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
     return results
 
 
-def generate_response(target_busyness, target_trees, target_style, target_dt, mcdm_method=MAIRCA,
+def generate_response(target_busyness, target_trees, target_style, target_dt, weather=None, mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
-    Generates a dictionary containing top results based on the target busyness, style, and date-time.
+    Generates a dictionary containing top results based on the target busyness, style, date-time, and weather.
 
     Args:
         target_busyness (int): The desired level of busyness.
         target_trees (int): The desired level of trees.
         target_style (str): The desired architectural style. It should match with one of the architectural styles in the taxi_zones table.
         target_dt (str or datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
+        weather (str): The desired weather (main category). Optional, defaults to None.
         mcdm_method (callable): The multi-criteria decision-making method to be used. Optional, defaults to MAIRCA.
         mcdm_weights (callable): A function to calculate weights for the MCDM method. Optional, defaults to entropy_weights.
 
@@ -140,9 +153,6 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     Raises:
         FieldDoesNotExist: If the target_style is not a valid architectural style.
     """
-
-    global start_time
-    start_time = datetime.utcnow()
 
     # dictionary to translate the style names to django model variables
     style_dict = {
@@ -172,7 +182,11 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    results = get_results(style_dict.get(target_style), user_time=ny_dt)
+    results = get_results(style_dict.get(target_style), weather, ny_dt)
+
+    # if there are no records matching the query, return an empty dictionary
+    if len(results) == 0:
+        return results
 
     # check for errors
     if isinstance(results, Exception):
