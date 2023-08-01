@@ -97,12 +97,12 @@ class TextMatchesPattern(object):
 
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
+# chrome_options.add_argument('--headless')
 chrome_driver = Service(ChromeDriverManager().install())
 chrome = webdriver.Chrome(service=chrome_driver, options=chrome_options)
 
 firefox_options = webdriver.FirefoxOptions()
-firefox_options.add_argument('-headless')
+# firefox_options.add_argument('-headless')
 firefox_driver = Service(GeckoDriverManager().install())
 firefox = webdriver.Firefox(service=firefox_driver, options=firefox_options)
 
@@ -467,8 +467,8 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         # navigate to the month with the last day that can be selected
         if self.upper_bound_time.month > self.current_time.month or self.upper_bound_time.year > self.current_time.year:
             self._next_month()
-            # click on the last day
-            self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
+        # click on the last day
+        self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
 
         self.assertEqual(self.dt_selection.get_attribute("value"),
                          self.upper_bound_time.replace(hour=self.current_time.hour, minute=0).strftime(
