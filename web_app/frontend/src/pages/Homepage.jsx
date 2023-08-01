@@ -16,10 +16,8 @@ import SearchResult from '../components/searchresult/SearchResult.jsx';
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
 
 export default function Homepage() {
-  //console.log(dynamic)
 
-  
-  const [listResults, setListResults]=useState({results: junkdynamic, name: "All Zones"})
+  const [listResults, setListResults]=useState({})
   const [listShow, setListShow]=useState(false)
   const [scores, setScores]=useState({})
   
@@ -29,7 +27,6 @@ export default function Homepage() {
   const [searchOptions, setSearchOptions] = useState();
 
   function onSearch (results, options){
-    console.log("Results in homepage", results)
     setSearchOptions(options)
     setSearchResults(results);
     setIsSearched(true);
@@ -99,9 +96,9 @@ export default function Homepage() {
     <div className='app-container'>
       <div className='header-container'>
         <Logo/>
-        <div className="side-naviagtion-container">
-            <Navigation/>
-        </div>
+        {/*<div className="side-naviagtion-container">*/}
+        <Navigation/>
+        {/*</div>*/}
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
@@ -114,6 +111,7 @@ export default function Homepage() {
             searchResults={searchResults}
             />
         </div>
+
         <div className="main-footer-container">
           <UserSearchBar onSearch={onSearch} isSearched={isSearched} searchResults={searchResults}/>
         </div>
@@ -123,7 +121,7 @@ export default function Homepage() {
         //</div>
       }
 
-        
+
       </div>
     </div>
   )
