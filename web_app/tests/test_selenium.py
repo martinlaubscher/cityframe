@@ -217,7 +217,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         Opens the navigation/top menu. Requires the page to be loaded.
         """
 
-        self.selenium.find_element(By.CSS_SELECTOR, 'button.btn.btn-dark.menu-button').click()
+        self.selenium.find_element(By.CSS_SELECTOR, '#SVGRepo_iconCarrier > path:nth-child(1)').click()
         return self.wait.until(
             ElementHasClass((By.XPATH, '//*[@id="offcanvasTop"]'), 'offcanvas offcanvas-top show'))
 
@@ -339,6 +339,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.style-select'))).click()
         self.selenium.find_element(By.CSS_SELECTOR, f'.style-select > option:nth-child({style})').click()
 
+    @tag('open_nav')
     def test_nav_menu_opens(self):
         """
         Tests if the navigation menu opens successfully.
@@ -347,6 +348,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._navigate_to_site()
         self.assertTrue(self._open_nav_menu())
 
+    @tag('close_nav')
     def test_nav_menu_closes(self):
         """
         Tests if the navigation menu closes successfully.
@@ -356,6 +358,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._open_nav_menu()
         self.assertTrue(self._close_nav_menu())
 
+    @tag('open_search')
     def test_search_menu_opens(self):
         """
         Tests if the search menu opens successfully.
@@ -364,6 +367,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._navigate_to_site()
         self.assertTrue(self._open_search_menu())
 
+    @tag('close_search')
     def test_search_menu_closes(self):
         """
         Tests if the search menu closes successfully.
@@ -373,6 +377,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._open_search_menu()
         self.assertTrue(self._close_search_menu())
 
+    @tag('date_lower')
     def test_lower_bound(self):
         """
         Tests if the date selector correctly disables dates below a certain bound.
@@ -389,6 +394,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                                          f'//td[@data-value="{self.lower_exceeding_time.day}" and @data-month="{self.lower_exceeding_time.month - 1}" and @data-year="{self.lower_exceeding_time.year}"]'),
                                         'rdtDay rdtDisabled')(self.selenium))
 
+    @tag('date_upper')
     def test_upper_bound(self):
         """
         Tests if the date selector correctly disables dates above a certain bound.
@@ -409,6 +415,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                                          f'//td[@data-value="{self.upper_exceeding_time.day}" and @data-month="{self.upper_exceeding_time.month - 1}" and @data-year="{self.upper_exceeding_time.year}"]'),
                                         'rdtDay rdtDisabled')(self.selenium))
 
+    @tag('hour_up')
     def test_hour_rollover_upwards(self):
         """
         Tests if the hour selector rolls over correctly from 23 to 0.
@@ -431,6 +438,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self.assertEqual(self.dt_selection.get_attribute("value"), self.current_time.replace(hour=0, minute=0).strftime(
             '%d/%m/%Y %H:%M'))
 
+    @tag('hour_down')
     def test_hour_rollover_downwards(self):
         """
         Tests if the hour selector rolls over correctly from 0 to 23.
