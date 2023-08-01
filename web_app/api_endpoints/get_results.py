@@ -86,9 +86,6 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
 
     # Get TaxiZones IDs having at least one building in the desired style
     top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).values_list('id', flat=True)
-    results = {}
-
-    print(f'filtered zones by style after {(datetime.utcnow() - start_time).total_seconds()} seconds')
 
     # define the timespan in which to look for results
     time_from = user_time - timedelta(hours=12)
@@ -96,24 +93,29 @@ def get_results(style, tree_range=(1, 5), busyness_range=(1, 5), user_time=get_n
 
     records = Busyness.objects.select_related('taxi_zone').filter(
         taxi_zone__in=top_zones_ids,
-        dt_iso__dt_iso__range=(time_from, time_to))
+        dt_iso__dt_iso__range=(time_from, time_to)).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
+                                                           'bucket', 'taxi_zone__trees_scaled', f'taxi_zone__{style}',
+                                                           'dt_iso__temp', 'dt_iso__weather_description',
+                                                           'dt_iso__weather_icon')
 
-    print(f'filtered busyness records after {(datetime.utcnow() - start_time).total_seconds()} seconds')
-
+    results = {}
+    ny_tz = tz.gettz('America/New_York')
     for record in records:
-        taxi_zone = record.taxi_zone
-        # unique key using zone_id and timestamp - in case more than one time per zone is returned in the future
-        key = f"{taxi_zone.id}_{record.dt_iso.dt_iso}"
+        key = f"{record['taxi_zone_id']}_{record['dt_iso_id']}"
+        ny_dt_iso = record['dt_iso_id'].astimezone(ny_tz)
         results[key] = {
-            'id': str(taxi_zone.id),
-            'zone': taxi_zone.zone,
-            'dt_iso': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')).strftime('%Y-%m-%d %H:%M'),
-            'dt_iso_tz': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')),
-            'busyness': record.bucket,
-            'trees': taxi_zone.trees_scaled,
-            'style': getattr(taxi_zone, style),
-            'weather': {'temp': record.dt_iso.temp, 'weather_description': record.dt_iso.weather_description,
-                        'weather_icon': record.dt_iso.weather_icon}
+            'id': str(record['taxi_zone_id']),
+            'zone': record['taxi_zone__zone'],
+            'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
+            'dt_iso_tz': ny_dt_iso,
+            'busyness': record['bucket'],
+            'trees': record['taxi_zone__trees_scaled'],
+            'style': record[f'taxi_zone__{style}'],
+            'weather': {
+                'temp': record['dt_iso__temp'],
+                'weather_description': record['dt_iso__weather_description'],
+                'weather_icon': record['dt_iso__weather_icon']
+            }
         }
 
     return results
@@ -170,11 +172,7 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    print(f'requesting results after {(datetime.utcnow() - start_time).total_seconds()} seconds')
-
     results = get_results(style_dict.get(target_style), user_time=ny_dt)
-
-    print(f'received results after {(datetime.utcnow() - start_time).total_seconds()} seconds')
 
     # check for errors
     if isinstance(results, Exception):
@@ -187,19 +185,17 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
                       abs((ny_dt - value['dt_iso_tz']).total_seconds())] for value in
                      results.values()], dtype=int)
 
-    print(f'prepared alts after {(datetime.utcnow() - start_time).total_seconds()} seconds')
-
     # define types of criteria (-1 for minimisation, 1 for maximisation)
     types = np.array([-1, -1, 1, -1])
 
     # set weights for criteria (default is entropy_weights)
-    # weights = mcdm_weights(alts)
     weights = mcdm_weights(alts)
-    print(f' Variance weights: {mcdm_w.variance_weights(alts)}')
-    print(f' Gini weights: {mcdm_w.gini_weights(alts)}')
-    print(f' Angle weights: {mcdm_w.angle_weights(alts)}')
-    print(f' Critic weights: {mcdm_w.critic_weights(alts)}')
-    print(f' Entropy weights: {mcdm_w.entropy_weights(alts)}')
+
+    # print(f' Variance weights: {mcdm_w.variance_weights(alts)}')
+    # print(f' Gini weights: {mcdm_w.gini_weights(alts)}')
+    # print(f' Angle weights: {mcdm_w.angle_weights(alts)}')
+    # print(f' Critic weights: {mcdm_w.critic_weights(alts)}')
+    # print(f' Entropy weights: {mcdm_w.entropy_weights(alts)}')
 
     # initialise mcdm method (default is MAIRCA)
     method = mcdm_method()
@@ -208,16 +204,12 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
     pref = method(alts, weights, types)
     ranking = rankdata(pref)
 
-    print(f'mcdm done after {(datetime.utcnow() - start_time).total_seconds()} seconds')
-
     # assign rankings to results
     for idx, key in enumerate(results.keys()):
         results[key]['rank'] = ranking[idx]
 
     # sort results by rank
     sorted_results = {k: v for k, v in sorted(results.items(), key=lambda item: item[1]['rank'])}
-
-    print(f'ranking done after {(datetime.utcnow() - start_time).total_seconds()} seconds')
 
     # Create a dictionary to track zone occurrences
     zone_occurrences = {}
@@ -239,8 +231,6 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, mc
         top_results[key]['rank'] = idx + 1
         del top_results[key]['dt_iso_tz']
 
-    print(f'top results ready after {(datetime.utcnow()-start_time).total_seconds()} seconds')
-
     return top_results
 
 
@@ -257,5 +247,3 @@ def current_busyness():
         busyness_dict[result.taxi_zone] = result.bucket
 
     return busyness_dict
-
-
