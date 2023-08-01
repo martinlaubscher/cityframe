@@ -6,6 +6,7 @@ import {
 import "./MapBackground.css";
 import React from "react";
 import axios from "@/axiosConfig";
+import { useEffect, useState } from "react";
 
 export default function Map(props) {
   const defaultOptions = {
@@ -70,6 +71,7 @@ export default function Map(props) {
   };
 
   const [busynessZonesObj, setBusynessZonesObj] = React.useState(null);
+  // const [prevBusynessLevel, setPrevBusynessLevel] = useState(null);
 
   React.useEffect(() => {
     let busynessZonesObj = {};
@@ -83,13 +85,21 @@ export default function Map(props) {
     setBusynessZonesObj(busynessZonesObj);
   }, [props.busynessZones]);
 
+  // useEffect(() => {
+  //   setPrevBusynessLevel(busynessZonesObj);
+  // }, [busynessZonesObj]);
+
   // ================================================================================
 
   var polygons;
   if (geojsonData) {
     var path;
     var click;
+
+    // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
+    
     if (props.isSearched) {
+   console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
         var placeRank = props.searchResults.find(
           (place) => place.id === feature.properties.location_id
@@ -124,6 +134,7 @@ export default function Map(props) {
     }
     // ======================homepage heatmap============================
     else {
+      console.log("map:homepage")
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
