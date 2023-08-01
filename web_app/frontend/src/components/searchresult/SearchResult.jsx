@@ -5,6 +5,7 @@ import "./SearchResultCSS.css";
 let style;
 
 export default function SearchResult({ results, searchOptions }) {
+
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -58,6 +59,14 @@ export default function SearchResult({ results, searchOptions }) {
                   />
                 </div>
               </div>
+              <div className="info-busyness-tree">              
+                <p>Color pallete</p>
+                  <div className='color-pallete'>
+                  {result.pallete.map(hex => <div className='hexdiv' style={{backgroundColor: hex}}></div>
+                  )}
+              </div>
+            </div>
+
             </div>
           </div>
         ))}
