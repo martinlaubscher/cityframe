@@ -28,9 +28,8 @@ export default function Homepage() {
   const [isSearched, setIsSearched] = useState(false);
   const [searchOptions, setSearchOptions] = useState();
 
-  function onSearch(results, options) {
-    console.log("Results in homepage", results);
-    setSearchOptions(options);
+  function onSearch (results, options){
+    setSearchOptions(options)
     setSearchResults(results);
     setIsSearched(true);
   }
@@ -97,12 +96,12 @@ export default function Homepage() {
 
 
   return (
-    <div className="app-container">
-      <div className="header-container">
-        <Logo />
-        <div className="side-naviagtion-container">
-          <Navigation />
-        </div>
+    <div className='app-container'>
+      <div className='header-container'>
+        <Logo/>
+        {/*<div className="side-naviagtion-container">*/}
+        <Navigation/>
+        {/*</div>*/}
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
@@ -115,6 +114,7 @@ export default function Homepage() {
             busynessZones={selectedZones}
           />
         </div>
+
         <div className="main-footer-container">
           <UserSearchBar
             onSearch={onSearch}
@@ -134,8 +134,10 @@ export default function Homepage() {
         {
           //listShow && <div className="result-container">
           //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
-          //</div>
-        }
+        //</div>
+      }
+
+
       </div>
     </div>
   );
