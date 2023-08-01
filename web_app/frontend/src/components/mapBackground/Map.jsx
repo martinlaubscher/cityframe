@@ -52,17 +52,19 @@ export default function Map(props) {
     return busynessColors[busynessLevel];
   };
 
+  const [busynessZonesObj, setBusynessZonesObj] = React.useState(null);
+
   React.useEffect(() => {
     let busynessZonesObj = {};
     for (let level in props.busynessZones) {
-      props.busynessZones[level].forEach((zone) => {
-        busynessZonesObj[zone] = level;
-      });
+      if (props.busynessZones[level]) {
+        props.busynessZones[level].forEach((zone) => {
+          busynessZonesObj[zone] = level;
+        });
+      }
     }
     setBusynessZonesObj(busynessZonesObj);
   }, [props.busynessZones]);
-
-  const [busynessZonesObj, setBusynessZonesObj] = React.useState(null);
 
   // ================================================================================
 
@@ -109,19 +111,21 @@ export default function Map(props) {
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
-        const busynessLevel =
-          busynessZonesObj && busynessZonesObj[feature.properties.location_id];
+        let busynessLevel;
+        if (busynessZonesObj) {
+          busynessLevel = busynessZonesObj[feature.properties.location_id];
+        }
         if (busynessLevel) {
           path = {
             fillColor: getBusynessColor(busynessLevel),
-            color:"black",
-            weight:0.3,
+            color: "black",
+            weight: 0.3,
             // stroke: true
-            fillOpacity: 0.9
+            fillOpacity: 0.9,
           };
           // console.log("Path set with busyness color:", path);
         } else {
-          path = { color: "white", weight: 0.5, fillOpacity: 0.3};
+          path = { color: "white", weight: 0.5, fillOpacity: 0.3 };
           // console.log("Path set with default options:", path);
         }
 

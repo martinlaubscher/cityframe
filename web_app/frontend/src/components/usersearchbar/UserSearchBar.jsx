@@ -80,10 +80,7 @@ export default function UserSearchBar(props) {
           />
         </div>
       </div>
-      <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
-      {(!selectedZones || Object.keys(selectedZones).length === 0) ? 
-      <div>Loading...</div> : 
-      <Map busynessZones={selectedZones}/>}
+
     </div>
   );
 }
