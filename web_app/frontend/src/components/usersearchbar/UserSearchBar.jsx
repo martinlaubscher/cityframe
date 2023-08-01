@@ -6,7 +6,6 @@ import {
   getAllBusyness,
   filterBusyness,
 } from "../busynessInfo/currentBusyness";
-import Map from "../mapBackground/Map"
 
 export default function UserSearchBar(props) {
   const [busynessLevel, setBusynessLevel] = useState(3);
@@ -19,17 +18,17 @@ export default function UserSearchBar(props) {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(zones).length !== 0) { // check if zones is not an empty object
+    if (Object.keys(zones).length !== 0) {
+      // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);
-      console.log("filteredZones:",filteredZones);
+      console.log("filteredZones:", filteredZones);
       props.setSelectedZones(filteredZones);
     }
   }, [busynessLevel, zones]);
-  
-  useEffect(() => {
-    console.log("selectedZones:",selectedZones);
-  }, [selectedZones]);
 
+  useEffect(() => {
+    console.log("selectedZones:", selectedZones);
+  }, [selectedZones]);
 
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
@@ -79,8 +78,12 @@ export default function UserSearchBar(props) {
             value={busynessLevel}
           />
         </div>
+        <UserSearchMenu
+          onSearch={props.onSearch}
+          isSearched={props.isSearched}
+          searchResults={props.searchResults}
+        />
       </div>
-
     </div>
   );
 }
