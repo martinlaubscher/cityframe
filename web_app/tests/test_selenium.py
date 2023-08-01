@@ -467,8 +467,8 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         # navigate to the month with the last day that can be selected
         if self.upper_bound_time.month > self.current_time.month or self.upper_bound_time.year > self.current_time.year:
             self._next_month()
-            # click on the last day
-            self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
+        # click on the last day
+        self._click_on_date(self.upper_bound_time.day, self.upper_bound_time.month, self.upper_bound_time.year)
 
         self.assertEqual(self.dt_selection.get_attribute("value"),
                          self.upper_bound_time.replace(hour=self.current_time.hour, minute=0).strftime(
