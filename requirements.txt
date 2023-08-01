@@ -53,3 +53,8 @@ numpy==1.24.4
 selenium==4.8.2
 parameterized==0.9.0
 webdriver_manager==4.0.0
+extcolors==1.0.0
+geojson==3.0.1
+colormap==1.0.4
+Pillow==9.0.1
+easydev==0.12.1

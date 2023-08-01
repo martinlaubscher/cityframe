@@ -10,13 +10,15 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
 from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.get_results import generate_response, current_busyness
-from .models import WeatherFc, WeatherCurrent
+from .models import WeatherCurrent, Query, Response
 import requests
 import datetime
+import pytz
 from django.core.cache import cache
+from django.utils import timezone
 
 
 def convert_to_datetime_string(timestamp):
@@ -39,7 +41,7 @@ class CurrentWeatherAPIView(APIView):
         """Get request for current weather
 
         Returns:
-            Response(weather_data): JSON data of current Manhattan weather
+            RestResponse(weather_data): JSON data of current Manhattan weather
         """
         # Try to get the data from the cache
         weather_data = cache.get('current_weather')
@@ -49,7 +51,7 @@ class CurrentWeatherAPIView(APIView):
             # for debugging
             print("\nWeather data fetched from Cache")
 
-            return Response(weather_data)
+            return RestResponse(weather_data)
         else:
             # Try to get the data from the database
             weather_data = WeatherCurrent.get_current()
@@ -62,7 +64,7 @@ class CurrentWeatherAPIView(APIView):
                 # Add the data to the cache, with a timeout of 5 minutes
                 cache.set('current_weather', weather_data, 300)
 
-                return Response(weather_data)
+                return RestResponse(weather_data)
             else:
                 # If no data in the database, fetch from the OpenWeather API
                 url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
@@ -75,7 +77,7 @@ class CurrentWeatherAPIView(APIView):
                 # Store the new data in the cache for next time
                 cache.set('current_weather', weather_data, 300)
 
-                return Response(weather_data)
+                return RestResponse(weather_data)
 
 
 class FutureWeatherAPIView(APIView):
@@ -94,7 +96,7 @@ class FutureWeatherAPIView(APIView):
         # Find the closest match to the provided datetime
         closest_match = min(data['list'], key=lambda x: abs(x['dt'] - int(timestamp)))
 
-        return Response(closest_match)
+        return RestResponse(closest_match)
 
 
 class CurrentSuntimesAPIView(APIView):
@@ -130,7 +132,7 @@ class CurrentSuntimesAPIView(APIView):
                 'sunset': sunset_local,
             }
 
-        return Response(processed_data)
+        return RestResponse(processed_data)
 
 
 class FutureSuntimesAPIView(APIView):
@@ -167,7 +169,7 @@ class FutureSuntimesAPIView(APIView):
                 'sunset': sunset_local
             }
 
-        return Response(processed_data)
+        return RestResponse(processed_data)
 
 
 class GoldenHourAPIView(APIView):
@@ -194,7 +196,7 @@ class GoldenHourAPIView(APIView):
             'sunset': sunset
         }
 
-        return Response(filtered_data)
+        return RestResponse(filtered_data)
 
 
 # The below provider had an incorrect offset, meaning local time was one hour off. Potential backup if issue fixed.
@@ -228,7 +230,7 @@ class CurrentManhattanTimeAPIView(APIView):
                 'timestamp': unix_time
             }
 
-        return Response(processed_data)
+        return RestResponse(processed_data)
 
 
 class CurrentManhattanBusyness(APIView):
@@ -239,13 +241,13 @@ class CurrentManhattanBusyness(APIView):
             # If there is data in the cache, return it
             # for debugging
             print("\nBusyness data fetched from Cache")
-            return Response(busyness_data)
+            return RestResponse(busyness_data)
         else:
             busyness_data = current_busyness()
             # adds data to cache, timeout of 5 minutes
             cache.set('current_busyness', busyness_data, 300)
             print("\nBusyness data fetched from DB")
-            return Response(busyness_data)
+            return RestResponse(busyness_data)
 
 
 class ResponseSerializer(serializers.Serializer):
@@ -254,6 +256,7 @@ class ResponseSerializer(serializers.Serializer):
     busyness = serializers.IntegerField()
     trees = serializers.IntegerField()
     style = serializers.CharField()
+    submission_id = serializers.IntegerField()
 
 
 class MainFormSubmissionView(APIView):
@@ -272,11 +275,34 @@ class MainFormSubmissionView(APIView):
     )
     def post(self, request):
         time = request.data.get('time')
-        busyness = request.data.get('busyness')
-        trees = request.data.get('trees')
+        busyness = int(request.data.get('busyness'))
+        trees = int(request.data.get('trees'))
         style = request.data.get('style')
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
         print(f"time: {time}")
-        return Response(generate_response(busyness, trees, style, time))
+
+        ny_tz = pytz.timezone('America/New_York')
+        query_time = timezone.now().astimezone(ny_tz)
+
+        query = Query.objects.create(
+            time=time,
+            busyness=busyness,
+            trees=trees,
+            style=style,
+            query_time=query_time,
+        )
+        results = generate_response(busyness, trees, style, time)
+
+        responses = []
+
+        for zone_id, zone_data in results.items():
+            zone_data['zone_id'] = zone_id
+            zone_data['submission_id'] = query.id
+            responses.append(Response(**zone_data))
+
+        Response.objects.bulk_create(responses)
+
+        print(results)  # for debugging, remove later
+        return RestResponse(results)
