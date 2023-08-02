@@ -1,9 +1,12 @@
 // SearchResult.jsx
 import axios from "@/axiosConfig";
 import "./SearchResultCSS.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import{getIcon} from "../weatherInfo/WeatherHelpers"
+
+
 
 let style;
-
 export default function SearchResult({ results, searchOptions }) {
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
@@ -27,9 +30,12 @@ export default function SearchResult({ results, searchOptions }) {
             className={`carousel-item ${index === 0 ? "active" : ""}`}
           >
             <div className="result-info">
-              <div className="rank-zone">
+              <div className="rank-zone-weathericon">
                 <p className="rank">{result.rank}</p>
                 <p className="zone">{result.zone}</p>
+                <div className="weathericon">
+                <FontAwesomeIcon icon={getIcon(result.weather.weather_icon)} />
+                </div>
               </div>
               <div className="busyness">
                 <div className="busyness-left">
