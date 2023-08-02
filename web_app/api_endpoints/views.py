@@ -449,12 +449,15 @@ class MainFormSubmissionView(APIView):
 
         responses = []
 
-        for zone_id, zone_data in results.items():
-            zone_data['zone_id'] = zone_id
+        for zone_data in results.values():
+            zone_data['zone_id'] = zone_data.pop('id')
             zone_data['submission_id'] = query.id
             responses.append(Response(**zone_data))
 
         Response.objects.bulk_create(responses)
+
+        for zone_data in results.values():
+            zone_data['id'] = zone_data.pop('zone_id')
 
         print(results)  # for debugging, remove later
         return RestResponse(results)

@@ -1,14 +1,16 @@
 .nav-container {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 10px;
-  position: fixed;
-  z-index: 2;
-  right: 3%;
+  align-items: center;
+  height: 100%;
+  width: 15%;
 }
 
+.hamburger-menu{
+  position: relative;
+  height: 80%;
+  width: 80%;
+}
 
 
 .navigation-column {
@@ -26,8 +28,12 @@
 }
 
 .menu-button {
-  width: 40px !important;
-  height: 40px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
   background-color: transparent !important;
   border: 0 !important;
 }
@@ -49,7 +55,8 @@
 }
 
 .offcanvas-header{
-  background-color: black!important;
+  background-color: black !important;
+  color: white;
 }
 
 .offcanvas-body{
@@ -57,4 +64,10 @@
 }
 .btn-close {
   filter: invert(1);
+}
+
+#offcanvasTop{
+  position: fixed;
+  top: 12%;
+  height: 20% !important
 }
