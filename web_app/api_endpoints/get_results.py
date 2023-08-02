@@ -36,7 +36,7 @@ def check_error_type(e):
         return f"Caught an unknown exception.\n{e}"
 
 
-def get_ny_dt(target_dt=datetime.now(tz=tz.gettz('America/New_York'))):
+def get_ny_dt(target_dt=datetime.utcnow().replace(tzinfo=tz.UTC).astimezone(tz=tz.gettz('America/New_York'))):
     """
     Converts the given target date and time to a New York timezone-aware datetime object.
 
@@ -248,6 +248,11 @@ def current_busyness():
 
     # find records where dt_iso = ny_dt
     results = Results.objects.filter(dt_iso=ny_dt)
+
+    # if no results have been found, try the next hour
+    # necessary if request is made just after predictions have been updated
+    if len(results) == 0:
+        results = Results.objects.filter(dt_iso=ny_dt + timedelta(hours=1))
 
     # New dict to store the busyness for each taxi zone
     busyness_dict = {}
