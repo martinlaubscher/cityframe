@@ -10,6 +10,7 @@ import {
 export default function UserSearchBar(props) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [zones, setZones] = useState({});
+  const [selectedZones, setSelectedZones] = useState();
 
   // Get data from API when component mounts
   useEffect(() => {
@@ -17,9 +18,17 @@ export default function UserSearchBar(props) {
   }, []);
 
   useEffect(() => {
-    const selectedZones = filterBusyness(busynessLevel, zones);
-    console.log(selectedZones);
+    if (Object.keys(zones).length !== 0) {
+      // check if zones is not an empty object
+      const filteredZones = filterBusyness(busynessLevel, zones);
+      console.log("filteredZones:", filteredZones);
+      props.setSelectedZones(filteredZones);
+    }
   }, [busynessLevel, zones]);
+
+  useEffect(() => {
+    console.log("selectedZones:", selectedZones);
+  }, [selectedZones]);
 
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
@@ -62,21 +71,19 @@ export default function UserSearchBar(props) {
           <input
             type="range"
             className="form-range range-cust"
-            min="0"
+            min="1"
             max="5"
             id="customRange2"
             onChange={handleBusynessChange}
             value={busynessLevel}
           />
         </div>
+        <UserSearchMenu
+          onSearch={props.onSearch}
+          isSearched={props.isSearched}
+          searchResults={props.searchResults}
+        />
       </div>
-      <UserSearchMenu  onSearch={props.onSearch} isSearched={props.isSearched} searchResults={props.searchResults}/>
-      {/* <div
-        className="offcanvas offcanvas-bottom"
-        tabIndex="-1"
-        id="offcanvasBottom"
-        aria-labelledby="offcanvasBottomLabel"
-      ></div> */}
     </div>
   );
 }
