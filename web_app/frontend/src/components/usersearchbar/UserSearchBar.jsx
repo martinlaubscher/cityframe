@@ -18,13 +18,22 @@ export default function UserSearchBar(props) {
   }, []);
 
   useEffect(() => {
-    if (Object.keys(zones).length !== 0) {
-      // check if zones is not an empty object
-      const filteredZones = filterBusyness(busynessLevel, zones);
-      console.log("filteredZones:", filteredZones);
-      props.setSelectedZones(filteredZones);
-    }
-  }, [busynessLevel, zones]);
+    getAllBusyness()
+      .then((data) => {
+        // Ensure that data is an object before setting zones
+        if (data && typeof data === 'object') {
+          setZones(data);
+        } else {
+          // If data is not an object, set zones as an empty object
+          setZones({});
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching busyness data:', error);
+        // If there's an error, set zones as an empty object
+        setZones({});
+      });
+  }, []);
 
   useEffect(() => {
     console.log("selectedZones:", selectedZones);
