@@ -8,6 +8,7 @@ import { handleSearch } from "../searchresult/SearchResult";
 import "./UserSearchMenuCSS.css";
 import "../searchresult/SearchResultCSS.css";
 import moment from "moment-timezone";
+import WeatherButton from "./WeatherButton";
 
 export default function UserSearchMenu(props) {
   const [searchOptions, setSearchOptions] = useState({
@@ -60,6 +61,7 @@ export default function UserSearchMenu(props) {
             <TreeButton onChange={handleOptionsChange} />
             <BusynessButton onChange={handleOptionsChange} />
             <StyleButton onChange={handleOptionsChange} />
+            <WeatherButton onChange={handleOptionsChange} />
             <button type="button" className="btn btn-dark" onClick={onSearch}>
               Search
             </button>
