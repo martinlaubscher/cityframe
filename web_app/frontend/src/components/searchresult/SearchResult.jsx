@@ -200,3 +200,14 @@ export async function handleSearch(searchOptions) {
     return [];
   }
 }
+
+export function getGoldenOrBlueHour(searchOptions){
+  // try{
+  //   console.log(
+  //     "searchOptions:",
+  //     "time:",
+  //     searchOptions.datetime,
+  //   )
+    
+  // }
+}
