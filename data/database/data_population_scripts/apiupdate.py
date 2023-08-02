@@ -11,6 +11,7 @@ from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
 from datetime import datetime
+from dateutil import tz
 from credentials import pg_conn, openweather_key
 
 
@@ -174,7 +175,7 @@ class WeatherHourlyUpdate(ApiUpdate):
             data(dict): dictionary containing the prepared data for a specific hour of the forecast
         """
 
-        data['dt_iso'] = datetime.fromtimestamp(data['dt'])
+        data['dt_iso'] = datetime.utcfromtimestamp(data['dt']).replace(tzinfo=tz.UTC)
         data['temp'] = data['main']['temp']
         data['feels_like'] = data['main']['feels_like']
         data['temp_min'] = data['main']['temp_min']
@@ -248,7 +249,7 @@ class WeatherDailyUpdate(ApiUpdate):
 
         # loop over each date
         for weather_info in data["list"]:
-            dt = datetime.utcfromtimestamp(weather_info["dt"])
+            dt = datetime.utcfromtimestamp(weather_info["dt"]).replace(tzinfo=tz.UTC)
 
             # loop over each hourly slot
             for time_period, hours in time_slots.items():
@@ -294,7 +295,7 @@ class WeatherDailyUpdate(ApiUpdate):
             data(dict): dictionary containing the prepared data for a specific hour of the forecast
         """
 
-        data['dt_iso'] = datetime.fromtimestamp(data['dt'])
+        data['dt_iso'] = datetime.utcfromtimestamp(data['dt']).replace(tzinfo=tz.UTC)
         data['dt_txt'] = data['dt']
         data['feels_like'] = data['feels_like']
         data['visibility'] = 10000

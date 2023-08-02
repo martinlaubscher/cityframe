@@ -57,5 +57,5 @@ pymcdm==1.1.0
 extcolors==1.0.0
 geojson==3.0.1
 colormap==1.0.4
-Pillow==9.0.1
+Pillow==10.0.0
 easydev==0.12.1
