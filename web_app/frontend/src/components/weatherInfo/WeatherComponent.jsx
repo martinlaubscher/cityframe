@@ -15,8 +15,29 @@ import {
   faSmog,
 } from "@fortawesome/free-solid-svg-icons";
 import "./WeatherInfoCSS.css";
-function WeatherComponent() {
 
+const iconMapping = {
+  "01d": faSun,
+  "01n": faMoon,
+  "02d": faCloudSun,
+  "02n": faCloudMoon,
+  "03d": faCloud,
+  "03n": faCloud,
+  "04d": faCloud,
+  "04n": faCloud,
+  "09d": faCloudShowersHeavy,
+  "09n": faCloudShowersHeavy,
+  "10d": faCloudSunRain,
+  "10n": faCloudMoonRain,
+  "11d": faBolt,
+  "11n": faBolt,
+  "13d": faSnowflake,
+  "13n": faSnowflake,
+  "50d": faSmog,
+  "50n": faSmog
+};
+
+function WeatherComponent() {
     const [weather, setWeather] = useState(null);
     const [weatherDescription, setWeatherDescription] = useState('');
   
@@ -28,79 +49,29 @@ function WeatherComponent() {
       }
     };
  
-  useEffect(() => {
-    axios
-      .get("/api/current-weather/")
+    useEffect(() => {
+      axios
+        .get("/api/current-weather/")
+        .then((response) => {
+          setWeather(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching weather data:", error);
+        });
+    }, []);
 
-      .then((response) => {
-        setWeather(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching weather data:", error);
-      });
-  }, []);
-
-  return weather ? (
-    <div className="weather-icon-container">
-      {weather.weather[0].icon === "01d" && (
-        <FontAwesomeIcon icon={faSun} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "01n" && (
-        <FontAwesomeIcon icon={faMoon} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "02d" && (
-        <FontAwesomeIcon icon={faCloudSun} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "02n" && (
-        <FontAwesomeIcon icon={faCloudMoon} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "03d" && (
-        <FontAwesomeIcon icon={faCloud} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "03n" && (
-        <FontAwesomeIcon icon={faCloud} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "04d" && (
-        <FontAwesomeIcon icon={faCloud} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "04n" && (
-        <FontAwesomeIcon icon={faCloud} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "09d" && (
-        <FontAwesomeIcon icon={faCloudShowersHeavy} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "09n" && (
-        <FontAwesomeIcon icon={faCloudShowersHeavy} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "10d" && (
-        <FontAwesomeIcon icon={faCloudSunRain} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "10n" && (
-        <FontAwesomeIcon icon={faCloudMoonRain} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "11d" && (
-        <FontAwesomeIcon icon={faBolt} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "11n" && (
-        <FontAwesomeIcon icon={faBolt} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "13d" && (
-        <FontAwesomeIcon icon={faSnowflake} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "13n" && (
-        <FontAwesomeIcon icon={faSnowflake} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "50d" && (
-        <FontAwesomeIcon icon={faSmog} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weather.weather[0].icon === "50n" && (
-        <FontAwesomeIcon icon={faSmog} className="weather-icon" onClick={() => handleClick(weather.weather[0].description)} />
-      )}
-      {weatherDescription && <div className="weather-description-popup">{weatherDescription}</div>}
-    </div>
-  ) : (
-    <div>Loading...</div>
-  );
+    return weather ? (
+      <div className="weather-icon-container">
+        <FontAwesomeIcon 
+          icon={iconMapping[weather.weather[0].icon]} 
+          className="weather-icon" 
+          onClick={() => handleClick(weather.weather[0].description)}
+        />
+        {weatherDescription && <div className="weather-description-popup">{weatherDescription}</div>}
+      </div>
+    ) : (
+      <div>Loading...</div>
+    );
 }
 
 export default WeatherComponent;
