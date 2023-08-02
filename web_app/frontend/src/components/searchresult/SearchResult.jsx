@@ -10,8 +10,8 @@ export default function SearchResult({ results, searchOptions }) {
   if (results.length === 0) {
     return (
       <div className="error-inner">
-        <span class="error-alert">Nothing here !</span>
-        <span class="error-alert">More photo spots await ! 📷</span>
+        <span className="error-alert">Nothing here !</span>
+        <span className="error-alert">More photo spots await ! 📷</span>
         {/* <iframe
           src="https://giphy.com/embed/NMBqdKUKQ3aLe"
           width="480"
