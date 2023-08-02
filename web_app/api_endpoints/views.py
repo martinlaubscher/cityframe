@@ -432,7 +432,6 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
-
         # handles the retrieval of optional parameter 'weather'
         weather = request.data.get('weather', None)
         weather_list = ['Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall',
@@ -451,6 +450,7 @@ class MainFormSubmissionView(APIView):
         ny_tz = pytz.timezone('America/New_York')
         query_time = timezone.now().astimezone(ny_tz)
 
+        # consider adding weather column in the Query model
         query = Query.objects.create(
             time=time,
             busyness=busyness,
