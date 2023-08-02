@@ -46,8 +46,9 @@ def get_flickr_image(api_key, lat, lon):
         if data["stat"] == "ok" and "photos" in data and "photo" in data["photos"] and len(data["photos"]["photo"]) > 0:
             # Get the first photo from the response
             photo = data["photos"]["photo"][0]
-            image_url = f"https://live.staticflickr.com/{photo['server']}/{photo['id']}_{photo['secret']}.jpg"
-            return image_url
+            image_url_large = f"https://live.staticflickr.com/{photo['server']}/{photo['id']}_{photo['secret']}.jpg"
+            image_url_small = f"https://live.staticflickr.com/{photo['server']}/{photo['id']}_{photo['secret']}_t.jpg"
+            return [image_url_large, image_url_small]
         else:
             print("Error: No photos found in the search.")
     else:
@@ -65,9 +66,12 @@ def get_images_for_taxi_zones():
         split = point.split()
         lng = split[0]
         lat = split[1]
-        image_url = get_flickr_image(api_key, lat, lng)
-        if image_url is None:
-            image_url = "https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg"
-        gdf.at[index, 'image_url'] = image_url
+        image_url_list = get_flickr_image(api_key, lat, lng)
+        if image_url_list is None:
+            image_url_list = ["https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg", "https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg"]
+        gdf.at[index, 'image_url'] = image_url_list[0]
+        gdf.at[index, 'image_url_small'] = image_url_list[1]
 
     gdf.to_file("../GeoJSON/zones_with_images.geojson", driver='GeoJSON')
+
+get_images_for_taxi_zones()
