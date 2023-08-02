@@ -14,10 +14,6 @@ export default function UserSearchBar(props) {
 
   // Get data from API when component mounts
   useEffect(() => {
-    getAllBusyness().then((data) => setZones(data));
-  }, []);
-
-  useEffect(() => {
     getAllBusyness()
       .then((data) => {
         // Ensure that data is an object before setting zones
@@ -34,6 +30,16 @@ export default function UserSearchBar(props) {
         setZones({});
       });
   }, []);
+
+
+  useEffect(() => {
+    if (Object.keys(zones).length !== 0) {
+      // check if zones is not an empty object
+      const filteredZones = filterBusyness(busynessLevel, zones);
+      console.log("filteredZones:", filteredZones);
+      props.setSelectedZones(filteredZones);
+    }
+  }, [busynessLevel, zones]);
 
   useEffect(() => {
     console.log("selectedZones:", selectedZones);
