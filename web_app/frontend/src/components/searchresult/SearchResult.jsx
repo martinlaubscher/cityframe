@@ -105,6 +105,7 @@ export default function SearchResult({ results, searchOptions }) {
                 </div>
                 <div className="datetime-right">
                   <p>{result.dt_iso}</p>
+              {if(getGoldenOrBlueHour({result.dt_iso})){<div>is golden hour</div>}}
                 </div>
               </div>
               <div className="pictures">
@@ -172,18 +173,6 @@ export async function handleSearch(searchOptions) {
         ? { weather: searchOptions.weather }
         : {}),
     };
-    // if (searchOptions.weather === "All") {
-    //   data.busyness = searchOptions.busyness;
-    //   data.trees = searchOptions.tree;
-    //   data.time = searchOptions.datetime;
-    //   data.style = searchOptions.style;
-    // } else {
-    //   data.busyness = searchOptions.busyness;
-    //   data.trees = searchOptions.tree;
-    //   data.time = searchOptions.datetime;
-    //   data.style = searchOptions.style;
-    //   data.weather = searchOptions.weather;
-    // }
     const response = await axios.post("/api/submit-main", data);
     console.log("submit-main", response);
     if (
@@ -201,13 +190,26 @@ export async function handleSearch(searchOptions) {
   }
 }
 
-export function getGoldenOrBlueHour(searchOptions){
-  // try{
-  //   console.log(
-  //     "searchOptions:",
-  //     "time:",
-  //     searchOptions.datetime,
-  //   )
-    
-  // }
+export function getGoldenOrBlueHour(dateTime_dt_iso) {
+  let dateTime_dt_iso = dt_iso.split(" ");
+  let date_dt_iso = dateTime_dt_iso[0];
+  console.log("Date: " + date);
+
+  const timeOfSun__dt_iso = axios.post("/api/suntime", date_dt_iso);
+  console.log("timeOfSun: " + timeOfSun);
+  const dateTimeDate = new Date(dateTime_dt_iso);
+  const goldenHourMorningDate = new Date(timeOfSun__dt_iso.golden_hour_morning);
+  const goldenHourEveningDate = new Date(timeOfSun__dt_iso.golden_hour_evening);
+  const blueHourMorningDate = new Date(timeOfSun__dt_iso.blue_hour_morning);
+  const blueHourEveningDate = new Date(timeOfSun__dt_iso.blue_hour_evenblue);
+  if (
+    blueHourMorningDate <= dateTimeDate <= goldenHourMorningDate &&
+    goldenHourEveningDate <= dateTimeDate <= blueHourEveningDate
+  ) {
+    console.log("The time is within the golden hour.");
+    return true
+  } else {
+    console.log("The time is not within the golden hour.");
+    return false
+  }
 }
