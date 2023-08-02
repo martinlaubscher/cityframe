@@ -5,7 +5,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getIcon } from "../weatherInfo/WeatherHelpers";
 
 let style;
+
 export default function SearchResult({ results, searchOptions }) {
+  if (results.length === 0) {
+    return (
+      <div className="error-inner">
+        <span class="error-alert">Nothing here !</span>
+        <span class="error-alert">More photo spots await ! 📷</span>
+        {/* <iframe
+          src="https://giphy.com/embed/NMBqdKUKQ3aLe"
+          width="480"
+          height="359"
+          frameBorder="0"
+          class="giphy-embed"
+          allowFullScreen
+        ></iframe> */}
+      </div>
+    );
+  }
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -150,20 +167,23 @@ export async function handleSearch(searchOptions) {
       trees: searchOptions.tree,
       time: searchOptions.datetime,
       style: searchOptions.style,
-      weather: searchOptions.weather,
+
+      ...(searchOptions.weather !== "All"
+        ? { weather: searchOptions.weather }
+        : {}),
     };
-    if (searchOptions.weather === "All") {
-      data.busyness = searchOptions.busyness;
-      data.trees = searchOptions.tree;
-      data.time = searchOptions.datetime;
-      data.style = searchOptions.style;
-    } else {
-      data.busyness = searchOptions.busyness;
-      data.trees = searchOptions.tree;
-      data.time = searchOptions.datetime;
-      data.style = searchOptions.style;
-      data.weather = searchOptions.weather;
-    }
+    // if (searchOptions.weather === "All") {
+    //   data.busyness = searchOptions.busyness;
+    //   data.trees = searchOptions.tree;
+    //   data.time = searchOptions.datetime;
+    //   data.style = searchOptions.style;
+    // } else {
+    //   data.busyness = searchOptions.busyness;
+    //   data.trees = searchOptions.tree;
+    //   data.time = searchOptions.datetime;
+    //   data.style = searchOptions.style;
+    //   data.weather = searchOptions.weather;
+    // }
     const response = await axios.post("/api/submit-main", data);
     console.log("submit-main", response);
     if (
