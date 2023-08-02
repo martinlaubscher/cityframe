@@ -530,16 +530,23 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
             # wait one second to make sure results have had time to load
             time.sleep(1)
 
-            result_patterns = {'rank': r'^\d+.$', 'zone': r'^([\w/\'-]+\s*)+$',
+            result_patterns = {'rank': r'^\d+$', 'zone': r'^([\w/\'-]+\s*)+$',
                                'buildings': rf'^\d+\s{style_dict.get(i)}\sbuildings$',
                                'busyness': r'^BUSYNESS \d$', 'trees': r'^TREES \d$'}
+
+            #div.carousel-item:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > h3:nth-child(1)
+            #div.carousel-item:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4:nth-child(2)
+            #div.carousel-item:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(3)
+            #div.carousel-item:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)
+            #div.carousel-item:nth-child(2) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(2)
+            #div.carousel-item:nth-child(2) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)
 
             # go through all the results in the carousel
             for j in range(1, 11):
                 rank = self.selenium.find_element(By.CSS_SELECTOR,
-                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1)')
+                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > h3:nth-child(1)')
                 zone = self.selenium.find_element(By.CSS_SELECTOR,
-                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(2)')
+                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > h4:nth-child(2)')
                 buildings = self.selenium.find_element(By.CSS_SELECTOR,
                                                        f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(3)')
                 busyness = self.selenium.find_element(By.CSS_SELECTOR,
