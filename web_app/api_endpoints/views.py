@@ -8,7 +8,7 @@ sys.path.append(cityframe_path)
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
@@ -459,6 +459,10 @@ class MainFormSubmissionView(APIView):
             query_time=query_time,
         )
         results = generate_response(busyness, trees, style, time, weather)
+
+        if not results:  # i.e., if results is an empty dict
+            return RestResponse({'error': 'No results found for the given parameters.'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
         responses = []
 
