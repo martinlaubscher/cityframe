@@ -30,12 +30,17 @@ export default function Homepage() {
   const [searchOptions, setSearchOptions] = useState();
 
   function onSearch (results, options){
-    results=results.map(result=>{
-      var resultColour = colours.find(colour => colour.location_id===result.id)
-      return {...result, pallete: resultColour.colors}}
-    )
-
-    setSearchOptions(options)
+    results = results.map(result => {
+      var resultColour = colours.find(colour => colour.location_id === result.id);
+      // var resultImgURL = ImgURL.find(img => img.location_id === result.id);
+      return {
+        ...result,  
+        pallete: resultColour?.colors, // fix undifined situation
+        // imageUrl: resultImgURL?.image_url // fix undifined situation
+      }
+    });
+  
+    setSearchOptions(options);
     setSearchResults(results);
     setIsSearched(true);
   }

@@ -1,11 +1,10 @@
 // SearchResult.jsx
-import axios from '@/axiosConfig';
-import "./SearchResultCSS.css"
+import axios from "@/axiosConfig";
+import "./SearchResultCSS.css";
 
-let style
+let style;
 
 export default function SearchResult({ results, searchOptions }) {
-
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -26,33 +25,70 @@ export default function SearchResult({ results, searchOptions }) {
           <div
             key={result.id}
             className={`carousel-item ${index === 0 ? "active" : ""}`}
-            style={{
-              // backgroundImage: `url(https://picsum.photos/1920/1080?random=${result.id})`,
-            }}
           >
-            <div className="overlay-info">
-              <div className="info-zone-style-buyness-tree">
-                <div className="info-zone-style">
-                  <h3>{result.rank}</h3>
-                  <h4>{result.zone}</h4>
-                  <p>{result.style} {style} buildings</p>
+            <div className="result-info">
+              <div className="rank-zone">
+                <p className="rank">{result.rank}</p>
+                <p className="zone">{result.zone}</p>
+              </div>
+              <div className="busyness">
+                <div className="busyness-left">
+                  <p className="busyness-title">busyness</p>
+                  <p className="level-of-busyness">level of busyness</p>
                 </div>
-                <div className="info-busyness-tree">
-                  <p>BUSYNESS {result.busyness}</p>
-                  <p>TREES {result.trees}</p>
+                <div className="busyness-right">
+                  <p className="level">level: {result.busyness}</p>
                 </div>
               </div>
-              <div className="info-time">
-                <p>{result.dt_iso}</p>
+              <div className="tree">
+                <div className="tree-left">
+                  <p className="tree-title">trees</p>
+                  <p className="level-of-trees">level of trees</p>
+                </div>
+                <div className="tree-right">
+                  <p className="level">level: {result.trees}</p>
+                </div>
               </div>
-              <div className="info-busyness-tree">              
-                <p>Color pallete</p>
-                  <div className='color-pallete'>
-                  {result.pallete.map(hex => <div className='hexdiv' style={{backgroundColor: hex}}></div>
-                  )}
-              </div>
-            </div>
 
+              <div className="style">
+                <div className="style-left">
+                  <p className="style-title">{style}</p>
+                  <p className="architecture">architecture</p>
+                </div>
+                <div className="style-right">
+                  <p className="building-counting">
+                    building counting {result.style}
+                  </p>
+                </div>
+              </div>
+              <div className="color-pallete">
+                <div className="color-pallete-left">
+                  <p className="colors-title">colors</p>
+                </div>
+                <div className="color-pallete-right">
+                  {result.pallete.map((hex) => (
+                    <div
+                      className="hexdiv"
+                      style={{ backgroundColor: hex }}
+                    ></div>
+                  ))}
+                </div>
+              </div>
+              <div className="datetime">
+                <div className="datetime-left">
+                  <p className="datetime-title">date/time</p>
+                </div>
+                <div className="datetime-right">
+                  <p >{result.dt_iso}</p>
+                </div>
+              </div>
+              <div className="pictures">
+                <img
+                  src={`https://picsum.photos/1920/1080?random=${result.id}`}
+                  alt={`Image ${index}`}
+                />
+                {/* <img src={result.imageUrl} alt={`Image ${index}`} /> */}
+              </div>
             </div>
           </div>
         ))}
@@ -79,8 +115,6 @@ export default function SearchResult({ results, searchOptions }) {
   );
 }
 
-
-
 export async function handleSearch(searchOptions) {
   try {
     // Log the response data to the console
@@ -106,8 +140,8 @@ export async function handleSearch(searchOptions) {
 
     // Notice：de-comment in final version
     const response = await axios.post("/api/submit-main", {
-    //Notice：comment before commit
-    // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
+      //Notice：comment before commit
+      // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
 
       busyness: searchOptions.busyness,
       trees: searchOptions.tree,
@@ -120,8 +154,7 @@ export async function handleSearch(searchOptions) {
       typeof response.data === "object" &&
       !Array.isArray(response.data)
     ) {
-        return Object.values(response.data)
-            .sort((a, b) => a.rank - b.rank);
+      return Object.values(response.data).sort((a, b) => a.rank - b.rank);
     }
 
     return [];
