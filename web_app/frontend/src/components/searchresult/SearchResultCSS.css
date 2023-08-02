@@ -22,13 +22,19 @@
 .rank {
   font-size: 25px;
   text-align:center;
-  margin-left: 40px; 
+  margin-left: 20px; 
 }
 
 .zone {
   font-size: 20px;
-  text-align:right; 
+  text-align:center; 
 }
+.weathericon{
+  /* margin: 10px; */
+}
+
+
+
 .busyness, .tree, .style, .datetime, .color-pallete {
   display: flex;
   justify-content: space-between;

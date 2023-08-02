@@ -2,9 +2,7 @@
 import axios from "@/axiosConfig";
 import "./SearchResultCSS.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import{getIcon} from "../weatherInfo/WeatherHelpers"
-
-
+import { getIcon } from "../weatherInfo/WeatherHelpers";
 
 let style;
 export default function SearchResult({ results, searchOptions }) {
@@ -34,7 +32,10 @@ export default function SearchResult({ results, searchOptions }) {
                 <p className="rank">{result.rank}</p>
                 <p className="zone">{result.zone}</p>
                 <div className="weathericon">
-                <FontAwesomeIcon icon={getIcon(result.weather.weather_icon)} />
+                  <FontAwesomeIcon
+                    icon={getIcon(result.weather.weather_icon)}
+                    size="2x"
+                  />
                 </div>
               </div>
               <div className="busyness">
@@ -164,7 +165,7 @@ export async function handleSearch(searchOptions) {
       data.weather = searchOptions.weather;
     }
     const response = await axios.post("/api/submit-main", data);
-console.log("submit-main",response)
+    console.log("submit-main", response);
     if (
       response.data &&
       typeof response.data === "object" &&
