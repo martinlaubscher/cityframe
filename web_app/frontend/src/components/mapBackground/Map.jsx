@@ -134,6 +134,7 @@ export default function Map(props) {
     }
     // ======================homepage heatmap============================
     else {
+    // if(props.busynessZones){
       console.log("map:homepage")
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
