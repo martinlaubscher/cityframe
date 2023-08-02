@@ -287,6 +287,7 @@ class FutureSuntimesAPIView(APIView):
 
         return RestResponse(processed_data)
 
+
 # class FutureSuntimesAPIView(APIView):
 #     def get(self, request, days_in_future, formatting=None):
 #         """Get request for future sunrise and sunset data
@@ -421,6 +422,7 @@ class MainFormSubmissionView(APIView):
                 'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
                 'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
                 'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
+                'weather': openapi.Schema(type=openapi.TYPE_STRING, description='Weather'),
             }
         ),
         responses={200: ResponseSerializer(many=True)}
@@ -430,10 +432,21 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
+
+        # handles the retrieval of optional parameter 'weather'
+        weather = request.data.get('weather', None)
+        weather_list = ['Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall',
+                        'Thunderstorm']
+
+        if weather is not None and weather not in weather_list:
+            weather = None
+
+        # prints data for debugging
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
         print(f"time: {time}")
+        print(f"weather preference: {weather}")
 
         ny_tz = pytz.timezone('America/New_York')
         query_time = timezone.now().astimezone(ny_tz)
@@ -445,7 +458,7 @@ class MainFormSubmissionView(APIView):
             style=style,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, time)
+        results = generate_response(busyness, trees, style, time, weather)
 
         responses = []
 
