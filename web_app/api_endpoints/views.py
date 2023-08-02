@@ -227,8 +227,12 @@ class CurrentSuntimesAPIView(APIView):
 class FutureSuntimesAPIView(APIView):
     def get(self, request, future_date):
         """Get request for future sunrise and sunset data
-        Takes one argument, days_in_future, an int between 1-5 inclusive (representing a number of days into the future)
-        Returns a json listing sunrise and sunset for that day in unix timestamp format (with offset applied)
+
+        Args:
+            future_date (str), a date in format yyyy-mm-dd, acceptable up to today+14 days new york time
+
+        Returns:
+            a json listing sunrise/sunset, golden/blue hours for that day in datetime string format (local time)
         """
         # Get New York timezone and current date with PYTZ / datetime
         ny_tz = pytz.timezone('America/New_York')
