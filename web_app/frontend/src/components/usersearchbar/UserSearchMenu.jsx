@@ -16,6 +16,7 @@ export default function UserSearchMenu(props) {
     busyness: 1,
     style: "neo-Georgian",
     tree: 1,
+    weather:"All"
   });
   //const [searchResults, setSearchResults] = useState([]);
   //const [isSearched, setIsSearched] = useState(false);

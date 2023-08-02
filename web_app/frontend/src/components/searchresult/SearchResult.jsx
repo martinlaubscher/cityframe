@@ -66,8 +66,9 @@ export default function SearchResult({ results, searchOptions }) {
                   <p className="colors-title">colors</p>
                 </div>
                 <div className="color-pallete-right">
-                  {result.pallete.map((hex) => (
+                  {result.pallete.map((hex, index) => (
                     <div
+                      key={index}
                       className="hexdiv"
                       style={{ backgroundColor: hex }}
                     ></div>
@@ -119,6 +120,7 @@ export async function handleSearch(searchOptions) {
   try {
     // Log the response data to the console
     console.log(
+      "searchOptions:",
       "time:",
       searchOptions.datetime,
       "busyness:",
@@ -156,7 +158,7 @@ export async function handleSearch(searchOptions) {
       data.weather = searchOptions.weather;
     }
     const response = await axios.post("/api/submit-main", data);
-
+console.log("submit-main",response)
     if (
       response.data &&
       typeof response.data === "object" &&
