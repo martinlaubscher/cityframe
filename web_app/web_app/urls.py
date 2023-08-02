@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 from core.views import front_page
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
-    FutureSuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
+    SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
     CurrentManhattanBusyness # UpdatedSuntimesAPIView, MainFormSubmissionTestView
 from rest_framework import routers, permissions
 from drf_yasg.views import get_schema_view
@@ -52,9 +52,9 @@ urlpatterns = [
     path('api/current-weather/', CurrentWeatherAPIView.as_view(), name='current_weather_data'),
 
     # sunrise/sunset endpoints
-    path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='current_suntimes'),
+    # path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='current_suntimes'),
     # path('api/current-suntimes/<str:formatting>/', CurrentSuntimesAPIView.as_view(), name='current_suntimes_str'),
-    path('api/future-suntimes/<str:future_date>/', FutureSuntimesAPIView.as_view(), name='future_suntimes'),
+    path('api/suntimes/<str:requested_date>/', SuntimesAPIView.as_view(), name='suntimes'),
     # path('api/future-suntimes/<int:days_in_future>/<str:formatting>', FutureSuntimesAPIView.as_view(),
     #      name='future_suntimes_str'),
 
