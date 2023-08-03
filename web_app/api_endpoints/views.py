@@ -460,6 +460,10 @@ class MainFormSubmissionView(APIView):
         style = request.data.get('style')
         weather = request.data.get('weather', None)
 
+        # If user chooses 'All' option, set weather to None
+        if weather == 'All':
+            weather = None
+
         # Sanitise busyness and trees inputs
         try:
             busyness = int(busyness)
