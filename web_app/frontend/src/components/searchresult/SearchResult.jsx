@@ -1,10 +1,37 @@
-// SearchResult.jsx
+import React, { useState, useEffect } from "react";
 import axios from "@/axiosConfig";
 import "./SearchResultCSS.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getIcon } from "../weatherInfo/WeatherHelpers";
+import goldenIcon from "../../assets/goldenhour.png";
 
 let style;
 
-export default function SearchResult({results, searchOptions}) {
+export default function SearchResult({ results, searchOptions }) {
+  const [goldenHourStatus, setGoldenHourStatus] = useState([]);
+
+  useEffect(() => {
+    Promise.all(
+      results.map((result) => getGoldenOrBlueHour(result.dt_iso))
+    ).then((statuses) => setGoldenHourStatus(statuses));
+  }, [results]);
+
+  if (results.length === 0) {
+    return (
+      <div className="error-inner">
+        <span className="error-alert">Nothing here !</span>
+        <span className="error-alert">More photo spots await ! 📷</span>
+        {/* <iframe
+          src="https://giphy.com/embed/NMBqdKUKQ3aLe"
+          width="480"
+          height="359"
+          frameBorder="0"
+          class="giphy-embed"
+          allowFullScreen
+        ></iframe> */}
+      </div>
+    );
+  }
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -27,9 +54,15 @@ export default function SearchResult({results, searchOptions}) {
             className={`carousel-item ${index === 0 ? "active" : ""}`}
           >
             <div className="result-info">
-              <div className="rank-zone">
+              <div className="rank-zone-weathericon">
                 <p className="rank">{result.rank}</p>
                 <p className="zone">{result.zone}</p>
+                <div className="weathericon">
+                  <FontAwesomeIcon
+                    icon={getIcon(result.weather.weather_icon)}
+                    size="2x"
+                  />
+                </div>
               </div>
               <div className="busyness">
                 <div className="busyness-left">
@@ -79,9 +112,27 @@ export default function SearchResult({results, searchOptions}) {
                 <div className="datetime-left">
                   <p className="datetime-title">date/time</p>
                 </div>
-                <div className="datetime-right">
-                  <p>{result.dt_iso}</p>
-                </div>
+                {goldenHourStatus[index] ? (
+                  <div className="datetime-right-time-golden-blue-hour">
+                    <div className="datetime-icon-container">
+                      <img
+                        src={goldenIcon}
+                        alt="golden icon"
+                        style={{ height: "40px"}}
+                      />
+                    </div>
+                    <div className="datetime-text-container">
+                      <p className="result-date-time">{result.dt_iso}</p>
+                      <p className="golden-blue-hour">
+                        this is golden/blue hour
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="datetime-right-only-time">
+                    <p>{result.dt_iso}</p>
+                  </div>
+                )}
               </div>
               <div className="pictures">
                 <img
@@ -143,22 +194,13 @@ export async function handleSearch(searchOptions) {
       trees: searchOptions.tree,
       time: searchOptions.datetime,
       style: searchOptions.style,
-      weather: searchOptions.weather,
+
+      ...(searchOptions.weather !== "All"
+        ? { weather: searchOptions.weather }
+        : {}),
     };
-    if (searchOptions.weather === "All") {
-      data.busyness = searchOptions.busyness;
-      data.trees = searchOptions.tree;
-      data.time = searchOptions.datetime;
-      data.style = searchOptions.style;
-    } else {
-      data.busyness = searchOptions.busyness;
-      data.trees = searchOptions.tree;
-      data.time = searchOptions.datetime;
-      data.style = searchOptions.style;
-      data.weather = searchOptions.weather;
-    }
     const response = await axios.post("/api/submit-main", data);
-console.log("submit-main",response)
+    console.log("submit-main", response);
     if (
       response.data &&
       typeof response.data === "object" &&
@@ -171,5 +213,41 @@ console.log("submit-main",response)
   } catch (error) {
     console.error("Error:", error);
     return [];
+  }
+}
+
+export async function getGoldenOrBlueHour(dateTime_dt_iso) {
+  let dateTime_dt_iso_split = dateTime_dt_iso.split(" ");
+  let date_dt_iso = dateTime_dt_iso_split[0];
+  console.log("Date: " + date_dt_iso);
+
+  let timeOfSun__dt_iso = await axios.get(`/api/suntimes/${date_dt_iso}`);
+  console.log("timeOfSun: " + JSON.stringify(timeOfSun__dt_iso.data));
+
+  const dateTimeDate = new Date(dateTime_dt_iso);
+  const goldenHourMorningDate = new Date(
+    timeOfSun__dt_iso.data.golden_hour_morning
+  );
+  const goldenHourEveningDate = new Date(
+    timeOfSun__dt_iso.data.golden_hour_evening
+  );
+  const blueHourMorningDate = new Date(
+    timeOfSun__dt_iso.data.blue_hour_morning
+  );
+  const blueHourEveningDate = new Date(
+    timeOfSun__dt_iso.data.blue_hour_evening
+  );
+
+  if (
+    (blueHourMorningDate <= dateTimeDate &&
+      dateTimeDate <= goldenHourMorningDate) ||
+    (goldenHourEveningDate <= dateTimeDate &&
+      dateTimeDate <= blueHourEveningDate)
+  ) {
+    console.log("The time is within the golden hour.");
+    return true;
+  } else {
+    console.log("The time is not within the golden hour.");
+    return false;
   }
 }

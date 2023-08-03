@@ -14,8 +14,23 @@ export default function UserSearchBar(props) {
 
   // Get data from API when component mounts
   useEffect(() => {
-    getAllBusyness().then((data) => setZones(data));
+    getAllBusyness()
+      .then((data) => {
+        // Ensure that data is an object before setting zones
+        if (data && typeof data === 'object') {
+          setZones(data);
+        } else {
+          // If data is not an object, set zones as an empty object
+          setZones({});
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching busyness data:', error);
+        // If there's an error, set zones as an empty object
+        setZones({});
+      });
   }, []);
+
 
   useEffect(() => {
     console.log("Zone change!")
