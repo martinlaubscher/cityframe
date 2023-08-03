@@ -98,7 +98,6 @@ export default function Map({viewMode, ...props}) {
 
     // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
 
-    // if (props.isSearched) {
     if (viewMode === 'results') {
       console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
@@ -161,12 +160,17 @@ export default function Map({viewMode, ...props}) {
           };
         }
 
+        click = () => console.log(feature.properties);
+
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
             <Polygon
               key={`${idx}-${polygonIndex}`}
               positions={polygon[0].map((coord) => [coord[1], coord[0]])}
               pathOptions={path}
+              eventHandlers={{
+                click: click,
+              }}
             >
               {console.log("Polygon properties:", feature.properties, path)}
             </Polygon>

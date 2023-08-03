@@ -49,7 +49,7 @@
     align-items: center;
     justify-content: center;
     border: none;
-    padding: 5px;
+    padding: 5px 10px;
 }
 
 #toggle-view-button:disabled {
