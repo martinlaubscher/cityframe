@@ -15,12 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView, logout_then_login
 from django.urls import include, path
 from core.views import front_page
+from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
     SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
-    CurrentManhattanBusyness # UpdatedSuntimesAPIView, MainFormSubmissionTestView
-from rest_framework import routers, permissions
+    CurrentManhattanBusyness  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
+from rest_framework import routers
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -36,10 +40,9 @@ schema_view = get_schema_view(
         title="CityFrame API Info",
         default_version="v1",
         description=api_description,
-        # other API info here if required
     ),
     public=True,
-    permission_classes=[permissions.AllowAny],
+    permission_classes=[IsAuthenticated],
 )
 
 urlpatterns = [
@@ -74,8 +77,11 @@ urlpatterns = [
     path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
 
     # Generated API documentation (OpenAPI/swagger format)
-    path('api/', include(router.urls)),
-    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/', RedirectView.as_view(pattern_name='schema-swagger-ui'),
+         name='register'),
+    path('api/docs/', login_required(schema_view.with_ui('swagger', cache_timeout=0)), name='schema-swagger-ui'),
+
+    # login path
+    path('accounts/login/', LoginView.as_view(template_name='admin/login.html'), name='login'),
+    path('accounts/logout/', logout_then_login, name='logout'),
 ]
-
-

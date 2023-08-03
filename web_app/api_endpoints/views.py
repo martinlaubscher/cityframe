@@ -238,6 +238,14 @@ class SuntimesAPIView(APIView):
         ny_tz = pytz.timezone('America/New_York')
         ny_datetime = datetime.datetime.now(ny_tz)
 
+        # sanitise input for requested_date
+        if requested_date is not None:
+            try:
+                datetime.datetime.strptime(requested_date, '%Y-%m-%d')
+            except ValueError:
+                return RestResponse({'error': 'Invalid date format. It should be in the format "YYYY-MM-DD".'},
+                                    status=status.HTTP_400_BAD_REQUEST)
+
         # Convert future_date to a datetime.date object, compare to today and calculate difference in days
         requested_date_obj = datetime.datetime.strptime(requested_date, '%Y-%m-%d').date()
         time_difference = requested_date_obj - ny_datetime.date()
@@ -372,6 +380,12 @@ class CurrentManhattanTimeAPIView(APIView):
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
+
+        # sanitise input for 'formatting'
+        if formatting is not None and formatting != 'datetime':
+            return RestResponse({'error': 'Invalid formatting type. "datetime" is the only valid option.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
         url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&' \
               f'lat=40.7831&lng=-73.9712'
         response = requests.get(url)
@@ -395,6 +409,10 @@ class CurrentManhattanTimeAPIView(APIView):
 
 
 class CurrentManhattanBusyness(APIView):
+    """Get request for the current busyness data in Manhattan
+
+    Returns a JSON with each taxi zone and corresponding busyness level
+    """
     def get(self, request):
         busyness_data = cache.get('current_busyness')
 
@@ -440,13 +458,44 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
-        # handles the retrieval of optional parameter 'weather'
         weather = request.data.get('weather', None)
-        weather_list = ['Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall',
-                        'Thunderstorm']
 
-        if weather is not None and weather not in weather_list:
+        # If user chooses 'All' option, set weather to None
+        if weather == 'All':
             weather = None
+
+        # Sanitise busyness and trees inputs
+        try:
+            busyness = int(busyness)
+            trees = int(trees)
+        except ValueError:
+            return RestResponse({'error': 'Busyness and Trees should be integers.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not (1 <= busyness <= 5) or not (1 <= trees <= 5):
+            return RestResponse({'error': 'Busyness and Trees should be in the range 1-5 inclusive.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        # Sanitise style input
+        valid_styles = ['neo-Georgian', 'Greek Revival', 'Romanesque Revival', 'neo-Grec', 'Renaissance Revival',
+                        'Beaux-Arts', 'Queen Anne', 'Italianate', 'Federal', 'neo-Renaissance']
+        if style not in valid_styles:
+            return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Sanitise time input
+        try:
+            datetime.datetime.strptime(time, '%Y-%m-%d %H:%M')
+        except ValueError:
+            return RestResponse({'error': 'Invalid time format. It should be in the format "YYYY-MM-DD HH:MM".'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        # handles the retrieval of optional parameter 'weather', sanitises input
+        try:
+            weather_list = ['Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall',
+                            'Thunderstorm']
+            if weather is not None:
+                assert weather in weather_list
+        except AssertionError:
+            return RestResponse({'error': 'Invalid weather type.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # prints data for debugging
         print(f"busyness: {busyness}")
@@ -468,7 +517,8 @@ class MainFormSubmissionView(APIView):
         )
         results = generate_response(busyness, trees, style, time, weather)
 
-        if not results:  # i.e., if results is an empty dict
+        # handle empty results (e.g., user searches for 'snow' in summer)
+        if not results:
             return RestResponse({'error': 'No results found for the given parameters.'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
