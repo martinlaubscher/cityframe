@@ -80,7 +80,7 @@ export default function SearchResult({results, searchOptions}) {
                   <p className="datetime-title">date/time</p>
                 </div>
                 <div className="datetime-right">
-                  <p >{result.dt_iso}</p>
+                  <p>{result.dt_iso}</p>
                 </div>
               </div>
               <div className="pictures">
@@ -120,6 +120,7 @@ export async function handleSearch(searchOptions) {
   try {
     // Log the response data to the console
     console.log(
+      "searchOptions:",
       "time:",
       searchOptions.datetime,
       "busyness:",
@@ -128,28 +129,36 @@ export async function handleSearch(searchOptions) {
       // searchOptions.tree ? 1 : 0,
       searchOptions.tree,
       "style:",
-      searchOptions.style
+      searchOptions.style,
+      "weather:",
+      searchOptions.weather
     );
-
-    // Frontend: Implemented CORS in the local environment to facilitate real-time visualization
-    // of changes made to the frontend code. This allows the frontend to instantly view the modifications
-    // on the web page while utilizing data obtained from the backend, eliminating the need to run "npm build"
-    // and handle static files every time.
 
     // save style at request time to use for results later
     style = searchOptions.style;
 
-    // Notice：de-comment in final version
-    const response = await axios.post("/api/submit-main", {
-      //Notice：comment before commit
-      // const response = await axios.post("http://127.0.0.1:8000/api/submit-main", {
-
+    // add weather filter
+    let data = {
       busyness: searchOptions.busyness,
       trees: searchOptions.tree,
       time: searchOptions.datetime,
       style: searchOptions.style,
-    });
-
+      weather: searchOptions.weather,
+    };
+    if (searchOptions.weather === "All") {
+      data.busyness = searchOptions.busyness;
+      data.trees = searchOptions.tree;
+      data.time = searchOptions.datetime;
+      data.style = searchOptions.style;
+    } else {
+      data.busyness = searchOptions.busyness;
+      data.trees = searchOptions.tree;
+      data.time = searchOptions.datetime;
+      data.style = searchOptions.style;
+      data.weather = searchOptions.weather;
+    }
+    const response = await axios.post("/api/submit-main", data);
+console.log("submit-main",response)
     if (
       response.data &&
       typeof response.data === "object" &&

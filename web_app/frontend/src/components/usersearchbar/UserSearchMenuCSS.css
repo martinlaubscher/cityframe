@@ -1,5 +1,5 @@
 .offcanvas {
-  height: 60% !important;
+  height: 70% !important;
 }
 
 .button-wrapper-close {
@@ -227,8 +227,8 @@ input[type="radio"]:checked {
 }
 
 
-/* -------------architecture style------------------------- */
-.style-select{
+/* -------------architecture and weather style------------------------- */
+.style-select,.weather-select{
   font-size: 17px;
   margin-left: 20px;
   margin-right: 20px;
