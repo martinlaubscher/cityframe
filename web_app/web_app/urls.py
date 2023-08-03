@@ -16,7 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import never_cache
 from django.contrib.auth.views import LoginView, logout_then_login
 from django.urls import include, path
 from core.views import front_page
