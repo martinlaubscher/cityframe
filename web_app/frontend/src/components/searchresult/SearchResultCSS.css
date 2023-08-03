@@ -1,8 +1,22 @@
 /* SearchResultCSS.css */
+
+.error-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color:white;
+}
+
+.error-alert {
+  font-size: 24px; 
+  margin-bottom:30px
+}
+
 .result-container {
   overflow: visible; 
   background-color: black;
 }
+
 .result-info {
 
   color: white;
@@ -11,7 +25,7 @@
 }
 
 
-.rank-zone {
+.rank-zone-weathericon {
   display: flex; 
   justify-content: space-between; 
   align-items: center;
@@ -22,13 +36,19 @@
 .rank {
   font-size: 25px;
   text-align:center;
-  margin-left: 40px; 
+  margin-left: 20px; 
 }
 
 .zone {
   font-size: 20px;
-  text-align:right; 
+  text-align:center; 
 }
+.weathericon{
+  /* margin: 10px; */
+}
+
+
+
 .busyness, .tree, .style, .datetime, .color-pallete {
   display: flex;
   justify-content: space-between;
@@ -36,26 +56,43 @@
   align-items: center;
 }
 
-.busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left {
-  font-size: 15px;
+/* title and description */
+.busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left{
+ 
 }
-
-.busyness-right, .tree-right, .style-right, .datetime-right, .color-pallete-right {
-/* to be decided */
-}
-
+/* title*/
 .busyness-title, .tree-title, .style-title, .datetime-title, .colors-title {
   font-size: 18px;
   margin-bottom: -1px;
   margin-top: 0px;
   font-weight: bold;
 }
-
-.level-of-busyness, .level-of-trees, .architecture, .datetime-value {
-  font-size: 15px;
+/* description  */
+.level-of-busyness, .level-of-trees, .architecture {
+  font-size: 12px;
   margin-bottom: 10px;
-  
 }
+
+
+/* result details */
+.busyness-right, .tree-right, .style-right, datetime-right-only-time, .color-pallete-right {
+  font-size: 16px;
+}
+
+
+
+
+.result-date-time{
+  font-size: 15px;
+  margin-bottom: -1px;
+
+}
+.golden-blue-hour{
+  font-size: 12px;
+
+}
+
+
 .pictures{
   display: flex;
   align-items: center;
@@ -64,8 +101,33 @@
 }
 
 
+.datetime-right-time-golden-blue-hour {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
 
+.golden-blue-hour-container {
+  display: flex;
+  align-items: center;
+}
 
+.goldenicon {
+  margin-right: 10px; /* space between the icon and the text */
+}
+.datetime-icon-container {
+  display: flex;
+  /* flex-direction: row-reverse; */
+  align-items: center;
+}
+
+.datetime-text-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically center the text */
+  margin-left: 10px; /* space between the text and the icon */
+}
 
 
 
