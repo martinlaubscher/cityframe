@@ -94,9 +94,7 @@ export default function Homepage() {
   function buildlist(feature, rank) {
     //const items=junkdynamic.filter(item => item.id===results.properties.location_id)
     //setListResults({items: items, name: results.properties.zone, score: placeScore})
-    console.log("No feature?", feature.properties.location_id)
     var resultColour = colours.find(colour => colour.location_id === feature.properties.location_id);
-    console.log("Color?", resultColour.colors)
     setListResults({ place: feature, rank: rank, pallete: resultColour.colors });
     setListShow(true);
   }

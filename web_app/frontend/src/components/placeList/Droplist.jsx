@@ -3,7 +3,6 @@ import "../searchresult/SearchResultCSS.css"
 import "./DroplistCSS.css"
 
 export default function Droplist ({results, searchOptions, hideList}){
-  console.log("Pallete:", results.pallete)
         return(
         <div className="droplist">
           <div className="div-button">

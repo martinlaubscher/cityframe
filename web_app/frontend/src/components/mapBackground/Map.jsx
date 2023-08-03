@@ -1,7 +1,7 @@
 import {
   MapContainer,
   TileLayer,
-  Polygon,
+  Polygon
 } from "react-leaflet";
 import "./MapBackground.css";
 import React from "react";
@@ -34,10 +34,15 @@ export default function Map(props) {
   }, []);
 
 
-  function setCenter(feature){
-    const center = L.latLngBounds(feature.geometry.coordinates).getCenter();
+  function setCenter(feature){ //set the map to focus on the clicked polygon
+    const center = L.latLngBounds(feature.geometry.coordinates).getCenter(); //get center of polygon
+
     if (mapRef.current) {
-      mapRef.current.setView([center.lng, center.lat]);
+      const map = mapRef.current;
+      const mapHeight = map.getSize().y;
+      const zoom = map.getZoom();
+      const lat = center.lng - (mapHeight / (2 ** zoom)) * 0.2; //make the actual centre slightly below the coordinates 
+      mapRef.current.setView([lat, center.lat]); //no idea whose idea it was to swap lat and lng for setting the view but this sets the view correctly
     }
   }
 
