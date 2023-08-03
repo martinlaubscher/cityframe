@@ -16,7 +16,11 @@ export default function Map(props) {
     fillOpacity: 0,
   };
 
+
   const [geojsonData, setGeojsonData] = React.useState(null);
+
+  const mapRef = React.useRef(null);
+
 
   React.useEffect(() => {
     axios
@@ -29,8 +33,22 @@ export default function Map(props) {
       });
   }, []);
 
-  function handleClick() {
+
+  function setCenter(feature){
+    const center = L.latLngBounds(feature.geometry.coordinates).getCenter();
+    if (mapRef.current) {
+      mapRef.current.setView([center.lng, center.lat]);
+    }
+  }
+
+  function handleClick(feature) {
     console.log("She doesn't even go here");
+    setCenter(feature)
+  }
+
+  function listBuild(feature, rank){
+    props.buildlist(feature, rank)
+    setCenter(feature)
   }
 
   function rankColour(rank) {
@@ -38,7 +56,7 @@ export default function Map(props) {
     const colourVar = 10 - rank;
     //const hue = colourVar + 230; // PURPLE!!!
     const hue = 110 + rank * 10;
-    console.log(rank, hue);
+    //console.log(rank, hue);
 
     const lightness = 90 - colourVar * 5;
     return `hsl(${hue}, ${100}%, ${50}%)`;
@@ -57,7 +75,7 @@ export default function Map(props) {
   }
 
   // ======================homepage heatmap============================
-  console.log("busynessZones-Map recieve the prop:", props.busynessZones);
+  //console.log("busynessZones-Map recieve the prop:", props.busynessZones);
 
   const getBusynessColor = (busynessLevel) => {
     const busynessColors = {
@@ -99,7 +117,7 @@ export default function Map(props) {
     // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
     
     if (props.isSearched) {
-   console.log("map:result")
+   //console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
         var placeRank = props.searchResults.find(
           (place) => place.id === feature.properties.location_id
@@ -112,10 +130,10 @@ export default function Map(props) {
             fillColor: rankColour(placeRank.rank),
             fillOpacity: 1,
           };
-          click = () => props.buildlist(feature, placeRank);
+          click = () => listBuild(feature, placeRank);
         } else {
           path = defaultOptions;
-          click = handleClick;
+          click = () => handleClick(feature);
         }
 
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
@@ -134,7 +152,7 @@ export default function Map(props) {
     }
     // ======================homepage heatmap============================
     else {
-      console.log("map:homepage")
+      //console.log("map:homepage")
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
@@ -166,17 +184,20 @@ export default function Map(props) {
               positions={polygon[0].map((coord) => [coord[1], coord[0]])}
               pathOptions={path}
             >
-              {console.log("Polygon properties:", feature.properties, path)}
+              {//console.log("Polygon properties:", feature.properties, path)
+              }
             </Polygon>
           );
         });
       });
     }
   }
+    
 
   return (
     <div className="Map--div">
       <MapContainer
+        ref={mapRef}
         center={[40.7831, -73.9712]}
         zoom={12}
         scrollWheelZoom={true}

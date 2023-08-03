@@ -10,29 +10,28 @@
 
 }
 
-
 .rank-zone {
   display: flex; 
-  justify-content: space-between; 
+  justify-content: left; 
   align-items: center;
   font-weight: bold;
 }
 
-
 .rank {
-  font-size: 25px;
-  text-align:center;
-  margin-left: 40px; 
+  font-size: 40px;
+  margin-right: 25px;
+  margin-bottom: 0;
 }
 
 .zone {
-  font-size: 20px;
-  text-align:right; 
+  font-size: 22px;
+  margin-top: 8px;
+  margin-bottom: 0;
 }
 .busyness, .tree, .style, .datetime, .color-pallete {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 0.5em;
   align-items: center;
 }
 
@@ -40,13 +39,17 @@
   font-size: 15px;
 }
 
-.busyness-right, .tree-right, .style-right, .datetime-right, .color-pallete-right {
-/* to be decided */
+/*.busyness-right, .tree-right, .style-right, .datetime-right, .color-pallete-right {
+to be decided
+}*/
+
+.level{
+  margin-bottom: 0px;
 }
 
 .busyness-title, .tree-title, .style-title, .datetime-title, .colors-title {
   font-size: 18px;
-  margin-bottom: -1px;
+  margin-bottom: 0px;
   margin-top: 0px;
   font-weight: bold;
 }
@@ -62,13 +65,6 @@
   justify-content: center;
   
 }
-
-
-
-
-
-
-
 
 .carousel-inner {
   display: flex;
@@ -112,12 +108,26 @@
 
 .color-pallete-right {
   display: flex;
+  justify-content: right;
+  margin-left: 20px;
+  width:100%;
+
+  max-height: 1.5em;
+  min-height: 0.5em;
 }
+
+.search-pallete{
+  height: calc(10vw - 10.333px);
+}
+
 .hexdiv{
-  width: 1.5em;
-  height: 1.5em;
+  width: 10%;
+  max-width: 1.5em;
+  height: 100%;
   margin: 0em;
   /* border-style: solid; */
   border-width: 0em;
   /* border-color: white; */
 }
+
+

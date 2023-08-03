@@ -1,13 +1,32 @@
 .droplist{
-    position: absolute;
+    position: fixed;
     z-index: 3;
     bottom: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;;
     align-items: center;
-    height: 60%;
-    width: 100%;
+    min-height: 300px;
+    margin: 10px;
+    width: calc(100% - 20px);
     background-color: black;
+    color: white;
     /*border: 15px solid black; */
 }
 
+.overlay-info{
+  width: 100%;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.div-button{
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    padding-right: 10px;
+}
+
+.place-pallete{
+    height: calc(10vw - 15.4px);
+}

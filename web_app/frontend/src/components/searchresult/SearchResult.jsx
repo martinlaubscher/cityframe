@@ -4,7 +4,7 @@ import "./SearchResultCSS.css";
 
 let style;
 
-export default function SearchResult({ results, searchOptions }) {
+export default function SearchResult({results, searchOptions}) {
   return (
     <div id="carouselExampleIndicators" className="carousel slide">
       <div className="carousel-indicators">
@@ -57,7 +57,7 @@ export default function SearchResult({ results, searchOptions }) {
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
-                    building counting {result.style}
+                    building count {result.style}
                   </p>
                 </div>
               </div>
@@ -65,9 +65,10 @@ export default function SearchResult({ results, searchOptions }) {
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
                 </div>
-                <div className="color-pallete-right">
-                  {result.pallete.map((hex) => (
+                <div className="color-pallete-right search-pallete">
+                  {result.pallete.map((hex, index) => (
                     <div
+                      key={index}
                       className="hexdiv"
                       style={{ backgroundColor: hex }}
                     ></div>

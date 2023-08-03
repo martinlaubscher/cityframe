@@ -18,6 +18,7 @@ export default function UserSearchBar(props) {
   }, []);
 
   useEffect(() => {
+    console.log("Zone change!")
     if (Object.keys(zones).length !== 0) {
       // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);
