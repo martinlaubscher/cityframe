@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, logout_then_login
 from django.urls import include, path
 from core.views import front_page
+from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
     SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
     CurrentManhattanBusyness  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
@@ -76,7 +77,8 @@ urlpatterns = [
     path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
 
     # Generated API documentation (OpenAPI/swagger format)
-    path('api/', include(router.urls)),
+    path('api/', RedirectView.as_view(pattern_name='schema-swagger-ui'),
+         name='register'),
     path('api/docs/', login_required(schema_view.with_ui('swagger', cache_timeout=0)), name='schema-swagger-ui'),
 
     # login path
