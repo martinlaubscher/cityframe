@@ -12,8 +12,9 @@
 }
 .weather-description-popup {
   position: absolute;
-  top: -20px;
-  right: 15px;
+  font-size: 1.5vh;
+  /*top: -20px;*/
+  right: 25px;
   background-color: rgba(128, 128, 128, 0.5);
   color: white;
   padding: 3px;

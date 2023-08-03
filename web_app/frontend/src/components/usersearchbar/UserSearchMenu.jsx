@@ -50,6 +50,7 @@ export default function UserSearchMenu(props) {
         <button
           type="button"
           className="btn-close"
+          id="search-menu-close-button"
           data-bs-dismiss="offcanvas"
           aria-label="Close"
         />
@@ -63,7 +64,7 @@ export default function UserSearchMenu(props) {
             <BusynessButton onChange={handleOptionsChange} />
             <StyleButton onChange={handleOptionsChange} />
             <WeatherButton onChange={handleOptionsChange} />
-            <button type="button" className="btn btn-dark" onClick={onSearch}>
+            <button type="button" className="btn btn-dark" id="search-button" onClick={onSearch}>
               Search
             </button>
           </div>

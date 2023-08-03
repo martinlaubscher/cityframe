@@ -6,9 +6,9 @@ import {
 import "./MapBackground.css";
 import React from "react";
 import axios from "@/axiosConfig";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
-export default function Map(props) {
+export default function Map({viewMode, ...props}) {
   const defaultOptions = {
     color: "#808080",
     weight: 1,
@@ -97,9 +97,10 @@ export default function Map(props) {
     var click;
 
     // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
-    
-    if (props.isSearched) {
-   console.log("map:result")
+
+    // if (props.isSearched) {
+    if (viewMode === 'results') {
+      console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
         var placeRank = props.searchResults.find(
           (place) => place.id === feature.properties.location_id
@@ -134,7 +135,7 @@ export default function Map(props) {
     }
     // ======================homepage heatmap============================
     else {
-    // if(props.busynessZones){
+      // if(props.busynessZones){
       console.log("map:homepage")
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
