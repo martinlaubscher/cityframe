@@ -22,7 +22,7 @@ from core.views import front_page
 from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
     SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
-    CurrentManhattanBusyness, TaxiZoneView  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
+    CurrentManhattanBusyness, TaxiZoneDataView  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
 from rest_framework import routers
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.views import get_schema_view
@@ -77,7 +77,7 @@ urlpatterns = [
     path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
 
     # get taxi zone data for all zones (id, number of trees, most prominent arch. style, zone name (str))
-    path('api/get-zonedata', TaxiZoneView.as_view(), name='taxi-zone-data'),
+    path('api/zonedata/', TaxiZoneDataView.as_view(), name='taxi-zone-data'),
 
     # Generated API documentation (OpenAPI/swagger format)
     path('api/', RedirectView.as_view(pattern_name='schema-swagger-ui'),

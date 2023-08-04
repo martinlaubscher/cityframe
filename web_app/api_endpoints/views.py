@@ -441,7 +441,7 @@ class ResponseSerializer(serializers.Serializer):
     submission_id = serializers.IntegerField()
 
 
-class TaxiZoneView(APIView):
+class TaxiZoneDataView(APIView):
     """Get request for general data for each taxi zone
 
     Returns:
