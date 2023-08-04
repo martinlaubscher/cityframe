@@ -47,7 +47,7 @@
 
 // export default StyleButton;
 import "./UserSearchMenuCSS.css";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 
 const styleOptions = {
   1: 'neo-Georgian',
@@ -62,18 +62,37 @@ const styleOptions = {
   10: 'neo-Renaissance'
 };
 
-const StyleButton = ({ onChange }) => {
+const StyleButton = ({onChange, clear}) => {
+
+  const [selectedStyleKey, setSelectedStyleKey] = useState("1");
+
   const handleOptionChange = (event) => {
-    const selectedStyle = styleOptions[event.target.value];
+    const selectedKey = event.target.value;
+    setSelectedStyleKey(selectedKey);
+    const selectedStyle = styleOptions[selectedKey];
     onChange("style", selectedStyle);
   };
+
+  useEffect(() => {
+    if (clear) {
+      // reset to default key
+      setSelectedStyleKey("1");
+      // notify parent of change
+      onChange("style", styleOptions["1"]);
+    }
+  }, [clear, onChange]);
 
   return (
     <div>
       <div className="option-container">
-        <div className="option-label">Style</div>
-        <div className="option-list">
-          <select className="style-select" onChange={handleOptionChange}>
+        <div className="label-explanation-container">
+          <div className="option-label">Style</div>
+          <div className="option-explanation">
+            architecture
+          </div>
+        </div>
+        <div className="option-list" id="style-selection">
+          <select className="style-select" onChange={handleOptionChange} value={selectedStyleKey}>
             {Object.keys(styleOptions).map((key) => (
               <option key={key} value={key}>
                 {styleOptions[key]}

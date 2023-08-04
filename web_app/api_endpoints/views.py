@@ -413,10 +413,11 @@ class CurrentManhattanBusyness(APIView):
 
     Returns a JSON with each taxi zone and corresponding busyness level
     """
+
     def get(self, request):
         busyness_data = cache.get('current_busyness')
 
-        if busyness_data is not None:
+        if busyness_data is not None and len(busyness_data) > 0:
             # If there is data in the cache, return it
             # for debugging
             print("\nBusyness data fetched from Cache")

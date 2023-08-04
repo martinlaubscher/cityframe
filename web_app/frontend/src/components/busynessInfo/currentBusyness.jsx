@@ -2,7 +2,7 @@ import axios from "@/axiosConfig";
 
 export async function getAllBusyness() {
   try {
-    const response = await axios.get(`/api/current-busyness`);
+    const response = await axios.get(`/api/current-busyness/`);
 
     console.log(response.data); // Add this line to debug API response
     return response.data;
