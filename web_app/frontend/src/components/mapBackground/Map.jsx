@@ -30,7 +30,7 @@ export default function Map({viewMode, ...props}) {
   }, []);
 
   function handleClick() {
-    console.log("She doesn't even go here");
+    // console.log("She doesn't even go here");
   }
 
   function rankColour(rank) {
@@ -38,7 +38,7 @@ export default function Map({viewMode, ...props}) {
     const colourVar = 10 - rank;
     //const hue = colourVar + 230; // PURPLE!!!
     const hue = 110 + rank * 10;
-    console.log(rank, hue);
+    // console.log(rank, hue);
 
     const lightness = 90 - colourVar * 5;
     return `hsl(${hue}, ${100}%, ${50}%)`;
@@ -57,7 +57,7 @@ export default function Map({viewMode, ...props}) {
   }
 
   // ======================homepage heatmap============================
-  console.log("busynessZones-Map recieve the prop:", props.busynessZones);
+  // console.log("busynessZones-Map recieve the prop:", props.busynessZones);
 
   const getBusynessColor = (busynessLevel) => {
     const busynessColors = {
@@ -99,7 +99,7 @@ export default function Map({viewMode, ...props}) {
     // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
 
     if (viewMode === 'results') {
-      console.log("map:result")
+      // console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
         var placeRank = props.searchResults.find(
           (place) => place.id === feature.properties.location_id
@@ -135,7 +135,7 @@ export default function Map({viewMode, ...props}) {
     // ======================homepage heatmap============================
     else {
       // if(props.busynessZones){
-      console.log("map:homepage")
+      // console.log("map:homepage")
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
@@ -172,7 +172,7 @@ export default function Map({viewMode, ...props}) {
                 click: click,
               }}
             >
-              {console.log("Polygon properties:", feature.properties, path)}
+              {/*{console.log("Polygon properties:", feature.properties, path)}*/}
             </Polygon>
           );
         });

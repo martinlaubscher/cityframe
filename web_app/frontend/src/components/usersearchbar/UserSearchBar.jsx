@@ -8,7 +8,7 @@ import {
 } from "../busynessInfo/currentBusyness";
 import ToggleViewButton from './ToggleViewButton'
 
-export default function UserSearchBar({toggleViewMode, viewMode, ...props}) {
+export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChange, ...props}) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [zones, setZones] = useState({});
   const [selectedZones, setSelectedZones] = useState();
@@ -37,18 +37,19 @@ export default function UserSearchBar({toggleViewMode, viewMode, ...props}) {
     if (Object.keys(zones).length !== 0) {
       // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);
-      console.log("filteredZones:", filteredZones);
+      // console.log("filteredZones:", filteredZones);
       props.setSelectedZones(filteredZones);
     }
   }, [busynessLevel, zones]);
 
   useEffect(() => {
-    console.log("selectedZones:", selectedZones);
+    // console.log("selectedZones:", selectedZones);
   }, [selectedZones]);
 
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
-    console.log(`User selected busyness level: ${event.target.value}`);
+    onBusynessChange('heatmap');
+    // console.log(`User selected busyness level: ${event.target.value}`);
   };
 
   return (

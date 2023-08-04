@@ -1,5 +1,5 @@
 import Navigation from "../components/navigation/Navigation.jsx";
-import { Logo } from "../components/logo/Logo";
+import {Logo} from "../components/logo/Logo";
 //import MapBackground from '../components/mapBackground/MapBackground.jsx';
 import UserSearchBar from "../components/usersearchbar/UserSearchBar.jsx";
 import "./homePageCSS.css";
@@ -8,7 +8,7 @@ import Map from "../components/mapBackground/Map.jsx";
 import junkdynamic from "../components/dummydata/geojunk.js";
 import dynamic from "../components/dummydata/dynamicdata.js";
 import data from "../components/dummydata/locationjunk.js";
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import Droplist from "../components/placeList/Droplist.jsx";
 import SearchResult from "../components/searchresult/SearchResult.jsx";
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
@@ -17,7 +17,7 @@ import colours from '../components/dummydata/colours.js';
 export default function Homepage() {
   //console.log(dynamic)
   const [selectedZones, setSelectedZones] = useState();
-  
+
   const [listResults, setListResults] = useState({
     results: junkdynamic,
     name: "All Zones",
@@ -32,12 +32,17 @@ export default function Homepage() {
   // state variable to keep track of what is shown on map
   const [viewMode, setViewMode] = useState('heatmap');
 
-  function onSearch (results, options){
+  const handleBusynessChange = (value) => {
+    // Your logic here
+    setViewMode('heatmap');
+  };
+
+  function onSearch(results, options) {
     results = results.map(result => {
       var resultColour = colours.find(colour => colour.location_id === result.id);
       // var resultImgURL = ImgURL.find(img => img.location_id === result.id);
       return {
-        ...result,  
+        ...result,
         pallete: resultColour?.colors, // fix undifined situation
         // imageUrl: resultImgURL?.image_url // fix undifined situation
       }
@@ -101,7 +106,7 @@ export default function Homepage() {
     //const items=junkdynamic.filter(item => item.id===results.properties.location_id)
     //setListResults({items: items, name: results.properties.zone, score: placeScore})
 
-    setListResults({ place: feature, rank: rank });
+    setListResults({place: feature, rank: rank});
     setListShow(true);
   }
 
@@ -140,9 +145,10 @@ export default function Homepage() {
             onSearch={onSearch}
             isSearched={isSearched}
             searchResults={searchResults}
-            setSelectedZones={setSelectedZones} 
+            setSelectedZones={setSelectedZones}
             selectedZones={selectedZones}
             toggleViewMode={toggleViewMode}
+            onBusynessChange={handleBusynessChange}
             viewMode={viewMode}
           />
         </div>
@@ -156,8 +162,8 @@ export default function Homepage() {
         {
           //listShow && <div className="result-container">
           //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
-        //</div>
-      }
+          //</div>
+        }
 
 
       </div>
