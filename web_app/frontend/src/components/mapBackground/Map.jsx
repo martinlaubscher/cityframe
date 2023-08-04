@@ -18,6 +18,7 @@ export default function Map({viewMode, zones, ...props}) {
   };
 
   const [geojsonData, setGeojsonData] = React.useState(null);
+  const [zoneData, setZoneData] = React.useState(null);
 
   React.useEffect(() => {
     axios
@@ -27,6 +28,17 @@ export default function Map({viewMode, zones, ...props}) {
       })
       .catch((error) => {
         console.error("Error fetching geojson data: ", error);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    axios
+      .get("/api/zonedata/")
+      .then((response) => {
+        setZoneData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching zone data: ", error);
       });
   }, []);
 
@@ -93,7 +105,7 @@ export default function Map({viewMode, zones, ...props}) {
   // ================================================================================
 
   var polygons;
-  if (geojsonData) {
+  if (geojsonData && zoneData) {
     var path;
     var click;
 
@@ -136,7 +148,7 @@ export default function Map({viewMode, zones, ...props}) {
     // ======================homepage heatmap============================
     else {
       // if(props.busynessZones){
-      // console.log("map:homepage")
+      console.log(zoneData)
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
@@ -162,6 +174,14 @@ export default function Map({viewMode, zones, ...props}) {
           };
         }
 
+        const locationId = feature.properties.location_id;
+        const zoneDetails = zoneData[locationId];
+
+        // Make sure zoneDetails exists before accessing properties
+        const zoneName = zoneDetails ? zoneDetails.zone : "Unknown Zone";
+        const architectureStyle = zoneDetails ? zoneDetails.main_style : "Unknown Style";
+        const treeCount = zoneDetails ? zoneDetails.trees : "Unknown";
+
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
             <Polygon
@@ -174,15 +194,15 @@ export default function Map({viewMode, zones, ...props}) {
             >
               <Popup>
                 <div>
-                  <p className="popup-title">{feature.properties.zone}</p>
-                  <p className="popup-level">level {zones[feature.properties.location_id]}/5</p>
+                  <p className="popup-title">{zoneName}</p>
+                  <p className="popup-level">level {zones[locationId]}/5</p>
                   <div className="popup-details">
                     <p>architecture style:</p>
-                    <p>Federal</p>
+                    <p className="popup-details-value">{architectureStyle}</p>
                   </div>
                   <div className="popup-details">
                     <p>trees:</p>
-                    <p>325</p>
+                    <p className="popup-details-value">{treeCount}</p>
                   </div>
                 </div>
               </Popup>

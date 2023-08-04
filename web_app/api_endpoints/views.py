@@ -419,8 +419,6 @@ class CurrentManhattanBusyness(APIView):
 
     def get(self, request):
 
-        view_time = datetime.datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0,microsecond=0)
-
         busyness_data = cache.get('current_busyness')
 
         if busyness_data is not None and len(busyness_data) > 0:
@@ -452,50 +450,61 @@ class TaxiZoneDataView(APIView):
         JSON with each taxi zone as a key, with corresponding name (str), number of trees (int) and
         main architectural style (string) as values
     """
+
     def get(self, request):
-        styles = [
-            'neo_georgian', 'greek_revival', 'romanesque_revival',
-            'neo_grec', 'renaissance_revival', 'beaux_arts',
-            'queen_anne', 'italianate', 'federal', 'neo_renaissance'
-        ]
-        style_columns = {
-            'neo_georgian': 'neo-Georgian',
-            'greek_revival': 'Greek Revival',
-            'romanesque_revival': 'Romanesque Revival',
-            'neo_grec': 'neo-Grec',
-            'renaissance_revival': 'Renaissance Revival',
-            'beaux_arts': 'Beaux-Arts',
-            'queen_anne': 'Queen Anne',
-            'italianate': 'Italianate',
-            'federal': 'Federal',
-            'neo_renaissance': 'neo-Renaissance'
-        }
 
-        queryset = TaxiZones.objects.annotate(
-            max_style_value=Greatest(*styles),
-        )
+        zone_data = cache.get('zone_data')
 
-        for style, column in style_columns.items():
-            queryset = queryset.annotate(
-                **{f'{style}_is_max': Case(When(max_style_value=F(style), then=Value(True)), default=Value(False),
-                                           output_field=CharField())}
-            )
-
-        results = {}
-        for obj in queryset:
-            result = {
-                'zone': obj.zone,
-                'trees': obj.trees,
+        if zone_data is not None:
+            print('zone data fetched from cache')
+            return RestResponse(zone_data)
+        else:
+            styles = [
+                'neo_georgian', 'greek_revival', 'romanesque_revival',
+                'neo_grec', 'renaissance_revival', 'beaux_arts',
+                'queen_anne', 'italianate', 'federal', 'neo_renaissance'
+            ]
+            style_columns = {
+                'neo_georgian': 'neo-Georgian',
+                'greek_revival': 'Greek Revival',
+                'romanesque_revival': 'Romanesque Revival',
+                'neo_grec': 'neo-Grec',
+                'renaissance_revival': 'Renaissance Revival',
+                'beaux_arts': 'Beaux-Arts',
+                'queen_anne': 'Queen Anne',
+                'italianate': 'Italianate',
+                'federal': 'Federal',
+                'neo_renaissance': 'neo-Renaissance'
             }
 
+            queryset = TaxiZones.objects.annotate(
+                max_style_value=Greatest(*styles),
+            )
+
             for style, column in style_columns.items():
-                if getattr(obj, f'{style}_is_max'):
-                    result['main_style'] = column
-                    break
+                queryset = queryset.annotate(
+                    **{f'{style}_is_max': Case(When(max_style_value=F(style), then=Value(True)), default=Value(False),
+                                               output_field=CharField())}
+                )
 
-            results[str(obj.id)] = result
+            results = {}
+            for obj in queryset:
+                result = {
+                    'zone': obj.zone,
+                    'trees': obj.trees,
+                }
 
-        return RestResponse(results)
+                for style, column in style_columns.items():
+                    if getattr(obj, f'{style}_is_max'):
+                        result['main_style'] = column
+                        break
+
+                results[str(obj.id)] = result
+
+            # Add the data to the cache, with a timeout of 90 days (in seconds)
+            cache.set('zone_data', results, 7776000)
+
+            return RestResponse(results)
 
 
 class MainFormSubmissionView(APIView):
