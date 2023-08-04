@@ -1,11 +1,16 @@
-import { NavLink, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes,useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Contact from "../../pages/Contact";
 import "./NavigationCSS.css";
 import MostUniqueAreas from "../../pages/MostUniqueAreas";
+import AboutThisWeb from "../../pages/AboutThisWeb";
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/");
+  }; 
   return (
     <div className="nav-container">
       <button
@@ -14,6 +19,7 @@ export default function Navigation_offcanvas() {
         data-bs-toggle="offcanvas"
         data-bs-target="#offcanvasTop"
         aria-controls="offcanvasTop"
+        onClick={handleClick}
       >
         <svg
           className="hamburger-menu"
@@ -80,10 +86,13 @@ export default function Navigation_offcanvas() {
                   <span>feedback and questions</span>
               </NavLink>
             </li>
-            {/* <li className="nav-item ">
-              <NavLink to="/listview" className={location.pathname === "/listview" ? "active-link" : ""}>List View</NavLink>
+            <li className="nav-item ">
+              <NavLink to="/about" className={location.pathname === "/listview" ? "active-link" : ""}>
+                <span>about  this web</span>
+                <span>user help information</span>
+                </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
              <NavLink to="/advancedsearch" className={location.pathname === "/advancedsearch" ? "active-link" : ""}>Advanced Search</NavLink>
             </li> */}
           </ul>
@@ -92,7 +101,7 @@ export default function Navigation_offcanvas() {
         <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
             {/* <Route path="/listview" element={<ListView />} /> */} 
             <Route path="/contact" element={<Contact />} />
-            {/* <Route path="/login" element={<Login />} /> */}
+            <Route path="/about" element={<AboutThisWeb />} />
           </Routes>
         </div>
       </div>
