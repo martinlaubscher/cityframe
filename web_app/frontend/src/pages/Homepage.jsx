@@ -13,6 +13,7 @@ import Droplist from "../components/placeList/Droplist.jsx";
 import SearchResult from "../components/searchresult/SearchResult.jsx";
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
 import colours from '../components/dummydata/colours.js';
+import {getAllBusyness} from "@/components/busynessInfo/currentBusyness.jsx";
 
 export default function Homepage() {
   //console.log(dynamic)
@@ -119,6 +120,28 @@ export default function Homepage() {
     console.log(viewMode)
   }
 
+  const [zones, setZones] = useState({});
+
+  // Get data from API when component mounts
+  useEffect(() => {
+    getAllBusyness()
+      .then((data) => {
+        // Ensure that data is an object before setting zones
+        if (data && typeof data === 'object') {
+          setZones(data);
+        } else {
+          // If data is not an object, set zones as an empty object
+          setZones({});
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching busyness data:', error);
+        // If there's an error, set zones as an empty object
+        setZones({});
+      });
+  }, []);
+
+
   return (
     <div className='app-container'>
       <div className='header-container'>
@@ -137,6 +160,7 @@ export default function Homepage() {
             searchResults={searchResults}
             busynessZones={selectedZones}
             viewMode={viewMode}
+            zones={zones}
           />
         </div>
 
@@ -150,6 +174,7 @@ export default function Homepage() {
             toggleViewMode={toggleViewMode}
             onBusynessChange={handleBusynessChange}
             viewMode={viewMode}
+            zones={zones}
           />
         </div>
         {listShow && (

@@ -8,29 +8,29 @@ import {
 } from "../busynessInfo/currentBusyness";
 import ToggleViewButton from './ToggleViewButton'
 
-export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChange, ...props}) {
+export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChange, zones, ...props}) {
   const [busynessLevel, setBusynessLevel] = useState(3);
-  const [zones, setZones] = useState({});
   const [selectedZones, setSelectedZones] = useState();
-
-  // Get data from API when component mounts
-  useEffect(() => {
-    getAllBusyness()
-      .then((data) => {
-        // Ensure that data is an object before setting zones
-        if (data && typeof data === 'object') {
-          setZones(data);
-        } else {
-          // If data is not an object, set zones as an empty object
-          setZones({});
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching busyness data:', error);
-        // If there's an error, set zones as an empty object
-        setZones({});
-      });
-  }, []);
+  // const [zones, setZones] = useState({});
+  //
+  // // Get data from API when component mounts
+  // useEffect(() => {
+  //   getAllBusyness()
+  //     .then((data) => {
+  //       // Ensure that data is an object before setting zones
+  //       if (data && typeof data === 'object') {
+  //         setZones(data);
+  //       } else {
+  //         // If data is not an object, set zones as an empty object
+  //         setZones({});
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching busyness data:', error);
+  //       // If there's an error, set zones as an empty object
+  //       setZones({});
+  //     });
+  // }, []);
 
 
   useEffect(() => {
@@ -46,9 +46,13 @@ export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChang
     // console.log("selectedZones:", selectedZones);
   }, [selectedZones]);
 
+  // change to current busyness on map if busyness changes
+  useEffect(() => {
+    onBusynessChange('heatmap');
+  }, [busynessLevel]);
+
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
-    onBusynessChange('heatmap');
     // console.log(`User selected busyness level: ${event.target.value}`);
   };
 

@@ -2,13 +2,14 @@ import {
   MapContainer,
   TileLayer,
   Polygon,
+  Popup
 } from "react-leaflet";
 import "./MapBackground.css";
 import React from "react";
 import axios from "@/axiosConfig";
 import {useEffect, useState} from "react";
 
-export default function Map({viewMode, ...props}) {
+export default function Map({viewMode, zones, ...props}) {
   const defaultOptions = {
     color: "#808080",
     weight: 1,
@@ -139,7 +140,8 @@ export default function Map({viewMode, ...props}) {
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
-        let busynessLevel;
+        let busynessLevel
+
         if (busynessZonesObj) {
           busynessLevel = busynessZonesObj[feature.properties.location_id];
         }
@@ -160,8 +162,6 @@ export default function Map({viewMode, ...props}) {
           };
         }
 
-        click = () => console.log(feature.properties);
-
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
             <Polygon
@@ -172,6 +172,20 @@ export default function Map({viewMode, ...props}) {
                 click: click,
               }}
             >
+              <Popup>
+                <div>
+                  <p className="popup-title">{feature.properties.zone}</p>
+                  <p className="popup-level">level {zones[feature.properties.location_id]}/5</p>
+                  <div className="popup-details">
+                    <p>architecture style:</p>
+                    <p>Federal</p>
+                  </div>
+                  <div className="popup-details">
+                    <p>trees:</p>
+                    <p>325</p>
+                  </div>
+                </div>
+              </Popup>
               {/*{console.log("Polygon properties:", feature.properties, path)}*/}
             </Polygon>
           );
