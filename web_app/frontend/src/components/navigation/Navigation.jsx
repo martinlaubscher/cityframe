@@ -4,6 +4,8 @@ import Contact from "../../pages/Contact";
 import "./NavigationCSS.css";
 import MostUniqueAreas from "../../pages/MostUniqueAreas";
 import AboutThisWeb from "../../pages/AboutThisWeb";
+import Homepage from '../../pages/Homepage';
+
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
@@ -97,12 +99,14 @@ export default function Navigation_offcanvas() {
             </li> */}
           </ul>
 
-          <Routes>
-        <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
-            {/* <Route path="/listview" element={<ListView />} /> */} 
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<AboutThisWeb />} />
-          </Routes>
+          {/* <Route path="*"> */}
+            <Routes>
+              <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/about" element={<AboutThisWeb />} />
+              {/* <Route path="/" element={<Homepage />} /> */}
+            </Routes>
+          {/* </Route> */}
         </div>
       </div>
     </div>
