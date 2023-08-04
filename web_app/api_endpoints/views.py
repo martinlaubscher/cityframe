@@ -17,6 +17,7 @@ from .models import WeatherCurrent, Query, Response
 import requests
 import datetime
 import pytz
+from dateutil import tz
 from django.core.cache import cache
 from django.utils import timezone
 
@@ -415,6 +416,9 @@ class CurrentManhattanBusyness(APIView):
     """
 
     def get(self, request):
+
+        view_time = datetime.datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0,microsecond=0)
+
         busyness_data = cache.get('current_busyness')
 
         if busyness_data is not None and len(busyness_data) > 0:
