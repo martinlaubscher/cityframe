@@ -65,6 +65,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# the below set session cookies to expire at browser close, and after 8 hours
+# this is reasonable as currently only site admin may use the login functionality
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 28800
+
 ROOT_URLCONF = 'web_app.urls'
 
 TEMPLATES = [
