@@ -6,8 +6,9 @@ import {
   getAllBusyness,
   filterBusyness,
 } from "../busynessInfo/currentBusyness";
+import ToggleViewButton from './ToggleViewButton'
 
-export default function UserSearchBar(props) {
+export default function UserSearchBar({toggleViewMode, viewMode, ...props}) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [zones, setZones] = useState({});
   const [selectedZones, setSelectedZones] = useState();
@@ -53,11 +54,18 @@ export default function UserSearchBar(props) {
   return (
     <div className="usersearch-container">
       <div className="offcanvas-content">
-        <div className="weather-time-container">
-          <div className="weather-icon">
-            <WeatherComponent/>
+        <div className="weather-time-reset-container">
+          <ToggleViewButton
+            isSearched={props.isSearched}
+            viewMode={viewMode}
+            toggleViewMode={toggleViewMode}
+          />
+          <div className="weather-time-container">
+            <div className="weather-icon">
+              <WeatherComponent/>
+            </div>
+            <div className="current-time">{getCurrentTime()}</div>
           </div>
-          <div className="current-time">{getCurrentTime()}</div>
         </div>
         <div className="label-container">
           <label htmlFor="busyness-slider" className="form-label" id="busyness-slider-label">
@@ -88,14 +96,14 @@ export default function UserSearchBar(props) {
       <div className="button-wrapper">
         <button
           className="btn btn-primary offcanvas-button"
-          id="search-menu-button"
+          id="search-menu-open-button"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#offcanvasBottom"
           aria-controls="offcanvasBottom"
         >
           <svg
-            id="search-menu-icon"
+            id="search-menu-open-icon"
             viewBox="0 0 24 24"
             fill="#FFFFFF"
             xmlns="http://www.w3.org/2000/svg"

@@ -29,6 +29,9 @@ export default function Homepage() {
   const [isSearched, setIsSearched] = useState(false);
   const [searchOptions, setSearchOptions] = useState();
 
+  // state variable to keep track of what is shown on map
+  const [viewMode, setViewMode] = useState('heatmap');
+
   function onSearch (results, options){
     results = results.map(result => {
       var resultColour = colours.find(colour => colour.location_id === result.id);
@@ -39,10 +42,13 @@ export default function Homepage() {
         // imageUrl: resultImgURL?.image_url // fix undifined situation
       }
     });
-  
+
     setSearchOptions(options);
     setSearchResults(results);
     setIsSearched(true);
+
+    // set view mode to 'results' after a search
+    setViewMode('results');
   }
 
   /*
@@ -103,8 +109,10 @@ export default function Homepage() {
     setListShow(false);
   }
 
-
-
+  function toggleViewMode() {
+    setViewMode(viewMode === 'heatmap' ? 'results' : 'heatmap');
+    console.log(viewMode)
+  }
 
   return (
     <div className='app-container'>
@@ -123,6 +131,7 @@ export default function Homepage() {
             isSearched={isSearched}
             searchResults={searchResults}
             busynessZones={selectedZones}
+            viewMode={viewMode}
           />
         </div>
 
@@ -133,6 +142,8 @@ export default function Homepage() {
             searchResults={searchResults}
             setSelectedZones={setSelectedZones} 
             selectedZones={selectedZones}
+            toggleViewMode={toggleViewMode}
+            viewMode={viewMode}
           />
         </div>
         {listShow && (
