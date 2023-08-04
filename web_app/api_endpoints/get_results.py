@@ -246,18 +246,24 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
 def current_busyness():
     ny_dt = get_ny_dt()
 
+    print(f'current time: {ny_dt}')
+
     # find records where dt_iso = ny_dt
-    results = Results.objects.filter(dt_iso=ny_dt)
+    results = Busyness.objects.filter(dt_iso_id=ny_dt).values('taxi_zone_id', 'bucket')
 
     # if no results have been found, try the next hour
     # necessary if request is made just after predictions have been updated
     if len(results) == 0:
-        results = Results.objects.filter(dt_iso=ny_dt + timedelta(hours=1))
+        results = Busyness.objects.filter(dt_iso_id=ny_dt + timedelta(hours=1)).values('taxi_zone_id', 'bucket')
+
+    print(f'results: {results}')
 
     # New dict to store the busyness for each taxi zone
     busyness_dict = {}
 
     for result in results:
-        busyness_dict[result.taxi_zone] = result.bucket
+        busyness_dict[result['taxi_zone_id']] = result['bucket']
+
+    print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict
