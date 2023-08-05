@@ -246,7 +246,7 @@ class Response(models.Model):
 
 
 class Zoning(models.Model):
-    location_id = models.OneToOneField(TaxiZones, on_delete=models.CASCADE, primary_key=True)
+    location_id = models.OneToOneField(TaxiZones, on_delete=models.CASCADE, primary_key=True, db_column='location_id')
     commercial = models.FloatField()
     manufacturing = models.FloatField()
     park = models.FloatField()

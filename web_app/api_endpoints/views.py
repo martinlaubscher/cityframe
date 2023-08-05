@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.get_results import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response, TaxiZones
+from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning
 import requests
 import datetime
 import pytz
@@ -448,6 +448,7 @@ class TaxiZoneDataView(APIView):
         JSON with each taxi zone as a key, with corresponding name (str), number of trees (int) and
         main architectural style (string) as values
     """
+
     def get(self, request):
         styles = [
             'neo_georgian', 'greek_revival', 'romanesque_revival',
@@ -469,6 +470,7 @@ class TaxiZoneDataView(APIView):
 
         queryset = TaxiZones.objects.annotate(
             max_style_value=Greatest(*styles),
+            zone_type=F('zoning__zone_type')
         )
 
         for style, column in style_columns.items():
@@ -482,6 +484,7 @@ class TaxiZoneDataView(APIView):
             result = {
                 'zone': obj.zone,
                 'trees': obj.trees,
+                'zone_type': obj.zone_type
             }
 
             for style, column in style_columns.items():
