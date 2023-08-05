@@ -1,12 +1,13 @@
 /* Common styles for about and contact sections */
 .about-this-web-container {
-
-    /* flex-direction: column; */
-    overflow-y: scroll; /* Allows scrolling when content overflows */
-    top: 60px; /* Adjust to your actual nav height */
     color:white;
     background-color: #302D2D;
-
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    bottom: 0;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
 }
 
 /* Padding for the about section */

@@ -4,7 +4,6 @@ import Contact from "../../pages/Contact";
 import "./NavigationCSS.css";
 import MostUniqueAreas from "../../pages/MostUniqueAreas";
 import AboutThisWeb from "../../pages/AboutThisWeb";
-import Homepage from '../../pages/Homepage';
 import { useState } from "react";
 
 
