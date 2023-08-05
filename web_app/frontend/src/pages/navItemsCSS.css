@@ -1,27 +1,38 @@
-/* navItemsCSS.css */
-
+/* Common styles for about and contact sections */
 .about-this-web-container {
-    position: relative;
-    justify-content: flex-start; 
-    align-items: flex-start;
-    color: white; 
+
+    /* flex-direction: column; */
+    overflow-y: scroll; /* Allows scrolling when content overflows */
+    top: 60px; /* Adjust to your actual nav height */
+    color:white;
     background-color: #302D2D;
-    bottom: 0;
-    width: 100%;
-    height: 100vh;
-    line-height: 1.7;
-    display: flex; 
-    flex-direction: column; 
+
+}
+
+/* Padding for the about section */
+.about-this-web-container {
     padding: 1rem;
-    overflow: auto;
-    font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
+/* Padding for the contact section */
+.contact-container {
+    padding: 30px;
+}
+contact-container {
+
+    flex-direction: column;
+    overflow-y: scroll; /* Allows scrolling when content overflows */
+    top: 60px; /* Adjust to your actual nav height */
+
+
+}
+
+/* Additional styles for the how-to-use section */
 .how-to-use {
-    /* ... other styles ... */
-    margin-bottom: 2rem;  /* Add this line */
+    margin-bottom: 2rem;  /* Additional margin */
 }
 
+/* Title and subtitle styles */
 .title {
     font-size: 25px;
     font-weight: bold;
@@ -30,12 +41,48 @@
 
 .subtitle {
     font-size: 20px;
-    /* font-weight: bold; */
     margin-bottom: 0rem;
 }
 
+/* Paragraph styles */
 p {
     text-align: justify;
     font-size: 16px;
     margin-bottom: 1rem;
+}
+
+/* Contact section styles */
+.contact-info {
+    padding: 5px;
+}
+
+.form-control::placeholder {
+    background-color: #302D2D;
+}
+
+.contact-user-input .input-group.small-input .form-control {
+    height: 30px;
+    margin-bottom: 20px;
+}
+
+.contact-user-input .input-group.large-input .form-control {
+    height: 150px;
+}
+
+/* Placeholder styles */
+.contact-user-input {
+    background-color: #f0f0f0;
+}
+
+.contact-user-input .form-control::placeholder,
+.contact-user-input .form-control:-ms-input-placeholder, /* IE 10-11 */
+.contact-user-input .form-control::-ms-input-placeholder { /* Edge 18- */
+    color: white;
+    opacity: 1;
+}
+
+/* Specific placeholder styles for "Your email (optional)" and "Leave your message here" */
+.contact-user-input .input-group.email-input .form-control::placeholder,
+.contact-user-input .input-group.message-input .form-control::placeholder {
+    color: white;
 }

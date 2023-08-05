@@ -1,6 +1,7 @@
+import"./navItemsCSS.css"
 export default function AboutThisWeb() {
   return (
-    <div className="about-this-web-container">
+    <div className="about-this-web-container" >
         <div className="section">
             <span className="title">About</span>
             <p>
@@ -35,6 +36,7 @@ export default function AboutThisWeb() {
                     results at more suitable times which match your other search
                     parameters.
                 </p>
+                <h1></h1>
             </div>
         </div>
     </div>

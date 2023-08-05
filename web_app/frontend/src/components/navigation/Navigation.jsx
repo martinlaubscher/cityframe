@@ -123,7 +123,6 @@ export default function Navigation_offcanvas() {
               <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<AboutThisWeb />} />
-              {/* <Route path="/" element={<Homepage />} /> */}
             </Routes>
           )}
         </div>
