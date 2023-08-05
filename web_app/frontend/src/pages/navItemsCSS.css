@@ -1,0 +1,84 @@
+/* Common styles for about and contact sections */
+.about-this-web-container {
+    color:white;
+    background-color: #302D2D;
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+}
+
+
+.contact-container {
+    color:white;
+    background-color: #302D2D;
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+}
+
+/* Additional styles for the how-to-use section */
+.how-to-use {
+    margin-bottom: 2rem;  /* Additional margin */
+}
+
+/* Title and subtitle styles */
+.title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 20px;
+    margin-bottom: 0rem;
+}
+
+/* Paragraph styles */
+p {
+    text-align: justify;
+    font-size: 16px;
+    margin-bottom: 1rem;
+}
+
+/* Contact section styles */
+.contact-info {
+    padding: 5px;
+}
+
+/* .form-control::placeholder {
+    background-color: #302D2D;
+} */
+
+
+
+
+.contact-user-input .form-control::placeholder,
+.contact-user-input .form-control:-ms-input-placeholder, /* IE 10-11 */
+.contact-user-input .form-control::-ms-input-placeholder { /* Edge 18- */
+    color: white;
+    opacity: 1;
+}
+.email-input{
+    margin-bottom:20px;
+    height: 30px;
+}
+
+.message-input{
+    height: 80px;
+    margin-bottom:20px;
+}
+
+/* Specific placeholder styles for "Your email (optional)" and "Leave your message here" */
+.contact-user-input .input-group.email-input .form-control::placeholder,
+.contact-user-input .input-group.message-input .form-control::placeholder {
+    color: white;
+
+}

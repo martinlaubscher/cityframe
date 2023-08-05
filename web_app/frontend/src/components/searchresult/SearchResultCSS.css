@@ -43,9 +43,6 @@
   font-size: 20px;
   text-align:center; 
 }
-.weathericon{
-  /* margin: 10px; */
-}
 
 
 
@@ -128,8 +125,6 @@
   justify-content: center; /* Vertically center the text */
   margin-left: 10px; /* space between the text and the icon */
 }
-
-
 
 
 .carousel-inner {

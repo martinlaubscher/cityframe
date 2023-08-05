@@ -25,10 +25,21 @@
     height: 100%;
 }
 
+
 .main-footer-container{
     position: fixed; /* fix the position to the bottom of the screen */
     bottom: 0; /* set it to the bottom */
     width: 100%; /* have it span the full width of the viewport */
-    height: 15%; /* set the height to 20% of the viewport height z-index: 1;*/
+    height: 20%; /* set the height to 20% of the viewport height z-index: 1;*/
  
 }
+
+
+/* @media (min-width: 768px) {
+    .main-footer-container {
+        position: fixed;
+        left: 0;
+        width: 35% !important;
+        height: 100vh;
+    }
+} */

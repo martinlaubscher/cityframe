@@ -118,7 +118,7 @@ export default function SearchResult({ results, searchOptions }) {
                       <img
                         src={goldenIcon}
                         alt="golden icon"
-                        style={{ height: "40px"}}
+                        style={{ height: "25px"}}
                       />
                     </div>
                     <div className="datetime-text-container">
