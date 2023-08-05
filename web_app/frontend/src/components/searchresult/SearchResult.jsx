@@ -135,7 +135,7 @@ export default function SearchResult({ results, searchOptions }) {
                 )}
               </div>
               <div className="pictures">
-                <img
+                <img className="sample-image"
                   src={`https://picsum.photos/1920/1080?random=${result.id}`}
                   alt={`Image ${index}`}
                 />

@@ -9,7 +9,7 @@
     min-height: 300px;
     margin: 10px;
     width: calc(100% - 20px);
-    background-color: black;
+    background-color: #232323;
     color: white;
     /*border: 15px solid black; */
 }
@@ -18,6 +18,7 @@
   width: 100%;
   padding-left: 30px;
   padding-right: 30px;
+  padding-bottom: 15px;
 }
 
 .div-button{
@@ -30,3 +31,20 @@
 .place-pallete{
     height: calc(10vw - 15.4px);
 }
+
+.info-button{
+    width: 100%;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color: transparent;
+    color: white;
+    font-weight: bold;
+}
+
+.list-info{ 
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  
+  }

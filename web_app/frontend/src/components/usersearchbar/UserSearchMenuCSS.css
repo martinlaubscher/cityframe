@@ -1,12 +1,12 @@
 .offcanvas {
-  height: 70% !important;
+  height: 60vh !important;
 }
 
 .button-wrapper-close {
   display: flex;
   justify-content: center;
   width: 100%;
-  background-color: black;
+  background-color: #232323;
 }
 
 .btn-close {
@@ -36,7 +36,7 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  color: black !important;
+  color: #232323 !important;
   justify-content: flex-start;
   align-items: flex-start;
   overflow: hidden; /* Change this */
@@ -64,11 +64,6 @@
   justify-content: space-between;
   width: 100%;
   overflow: visible; /* Add this if the content might overflow */
-}
-
-
-.button-container > * {
-  width: 100%;
   text-align: left; 
 }
 
@@ -79,7 +74,7 @@
 
 .btn-block {
   width: 100% !important;
-  background-color: black !important;
+  background-color: #232323 !important;
   border: none !important;
 }
 
@@ -103,6 +98,10 @@
   font-size: 20px;
 }
 
+.radio-list{
+  margin-right: 6px;
+}
+
 
 
 
@@ -110,7 +109,7 @@
 /* Set all optional date text to black */
 .rdtPicker table tbody tr td {
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 
 /* Set non-selectable date text to grey */
@@ -121,63 +120,65 @@
 /* Set the background colour of the selected date to black and the text colour to white */
 .rdtPicker table tbody tr td.rdtActive {
   background-color: white;
-  color: black;
+  color: #232323;
 }
 
 /* Set the time picker icon and text to black */
 .rdtPicker table thead tr th,
 .rdtPicker table thead tr th span {
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 
 .rdtPicker .rdtTimeToggle {
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 
 .rdtSwitch {
-  background-color: black;
+  background-color: #232323;
   color: white;
 }
 
 .dateTimePicker {
   width: 135px;
   font-size: 12px;
-  margin-right: 50px;
+  margin-right: 20px;
+  margin-left: 20px;
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 
 .form-control {
   padding: 3px !important; /* date time picker */
+  border-width: 2px !important;
 }
 .form-control:after {
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 .form-control:active {
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 
 .rdtOpen .rdtPicker {
-  left: -50px; /* date time picker */
-  background-color: black;
-  border: 1px white solid;
+  left: -96px; /* date time picker */
+  background-color: #232323;
+  border: 2px white solid;
 }
 .rdtDays table {
   color: white;
-  background-color: black;
+  background-color: #232323;
   border: transparent;
 }
 .rdtPicker {
   color: white;
-  background-color: black;
+  background-color: #232323;
 }
 input[type="text"] {
   color: white;
-  background-color: black;
+  background-color: #232323;
   padding: 5px;
 }
 .rdtBtn:active {
@@ -187,13 +188,14 @@ input[type="text"] {
 
 /*----------- radio button styling ----------- */
 input[type="radio"] {
+  margin: 0 !important;
   appearance: none;
   background-color: transparent;
   margin: 0;
   font: inherit;
   color: currentColor;
-  width: 1.15em;
-  height: 1.15em;
+  width: min(1.15em, calc(20vw - 48px));
+  height: min(1.15em, calc(20vw - 48px));
   border: 0.10em solid currentColor;
   border-radius: 50%;
 }
@@ -226,6 +228,20 @@ input[type="radio"]:checked {
   margin-right: 5px;
 }
 
+.option-list{
+  margin-left: 20px;
+}
+
+.form-check-label {
+  margin-left: 2px;
+}
+
+.form-check {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 0px !important;
+}
 
 /* -------------architecture and weather style------------------------- */
 .style-select,.weather-select{
@@ -233,10 +249,10 @@ input[type="radio"]:checked {
   margin-left: 20px;
   margin-right: 20px;
   color: white;
-  background-color: black;
-  border-width: 1px;
+  background-color: #232323;
+  border-width: 2px;
   border-color: #FFFFFF;
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 4px;
 }
 

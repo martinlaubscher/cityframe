@@ -13,8 +13,8 @@ export default function Droplist ({results, searchOptions, hideList}){
           </button> 
         </div>
           <div className="overlay-info">   
-            <div className="result-info">
-              <div className="rank-zone">
+            <div className="list-info">
+              <div className="rank-zone-weathericon">
                 <p className="rank">{results.rank.rank}</p>
                 <p className="zone">{results.rank.zone}</p>
               </div>
@@ -41,7 +41,7 @@ export default function Droplist ({results, searchOptions, hideList}){
                 </div>
                 <div className="style-right">
                   <p className="level">
-                    building count {results.rank.style}
+                    count: {results.rank.style}
                   </p>
                 </div>
                 
@@ -67,6 +67,9 @@ export default function Droplist ({results, searchOptions, hideList}){
                 <div className="datetime-right">
                   <p className="level">{results.rank.dt_iso}</p>
                 </div>
+              </div>
+              <div className="more-info">
+                <button className="info-button">more info</button>
               </div>
             </div>
           </div>          

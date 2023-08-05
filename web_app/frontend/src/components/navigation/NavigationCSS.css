@@ -55,12 +55,12 @@
 }
 
 .offcanvas-header{
-  background-color: black !important;
+  background-color: #232323  !important;
   color: white;
 }
 
 .offcanvas-body{
-  background-color: black!important;
+  background-color: #232323 !important;
 }
 .btn-close {
   filter: invert(1);

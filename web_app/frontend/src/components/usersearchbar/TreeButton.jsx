@@ -35,7 +35,7 @@ const TreeButton = ({ onChange }) => {
     <div>
       <div className="option-container">
         <div className="option-label">Tree</div>
-        <div className="option-list">
+        <div className="option-list radio-list">
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"

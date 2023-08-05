@@ -14,11 +14,13 @@
 
 .result-container {
   overflow: visible; 
-  background-color: black;
+  background-color: #232323;
 }
 
 .result-info {
-
+  display: flex;
+  flex-direction: column;
+  height: calc(90vh - 75px);
   color: white;
   font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 
@@ -33,24 +35,22 @@
 }
 
 .rank {
-  font-size: 25px;
+
   text-align:center;
-  margin-left: 20px;
-  /*
+
   font-size: 40px;
   margin-right: 25px;
-  margin-bottom: 0;*/
+  margin-bottom: 0;
 }
 
 .zone {
-  font-size: 20px;
   text-align:center; 
-  /*font-size: 22px;
+  font-size: 22px;
   margin-top: 8px;
-  margin-bottom: 0;*/
+  margin-bottom: 0;
 }
 .weathericon{
-  /* margin: 10px; */
+  /*margin: 10px;*/
 }
 
 
@@ -64,11 +64,23 @@
 
 .busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left {
   font-size: 15px;
+  margin-right: 20px;
 }
 
 .busyness-right, .tree-right, .style-right, .datetime-right, .color-pallete-right {
 /* to be decided */
 }
+
+/* result details */
+.busyness-right, .tree-right, .style-right, datetime-right-only-time, .color-pallete-right {
+  font-size: 16px;
+}
+
+.level{
+  margin-bottom: 0px;
+}
+
+
 /* title*/
 .busyness-title, .tree-title, .style-title, .datetime-title, .colors-title {
   font-size: 18px;
@@ -82,15 +94,6 @@
   margin-bottom: 10px;
 }
 
-
-/* result details */
-.busyness-right, .tree-right, .style-right, datetime-right-only-time, .color-pallete-right {
-  font-size: 16px;
-}
-
-
-
-
 .result-date-time{
   font-size: 15px;
   margin-bottom: -1px;
@@ -103,12 +106,18 @@
 
 
 .pictures{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 0; /*I don't know why it works but it does*/
 }
-/* .datetime-right-time-golden-blue-hour {
+
+.sample-image{
+  position: relative;
+  max-height: 100%;
+}
+
+.datetime-right-time-golden-blue-hour {
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -121,31 +130,26 @@
 }
 
 .goldenicon {
-  margin-right: 10px; /* space between the icon and the text
+  margin-right: 10px; /* space between the icon and the text*/
 }
 .datetime-icon-container {
   display: flex;
-  /* flex-direction: row-reverse; 
+  /* flex-direction: row-reverse;*/ 
   align-items: center;
 }
 
 .datetime-text-container{
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Vertically center the text 
-  margin-left: 10px; /* space between the text and the icon 
-}*/
-
-
-
-
-
+  justify-content: center; /* Vertically center the text */
+  margin-left: 10px; /* space between the text and the icon */
+}
 
 
 .carousel-inner {
   display: flex;
   height: 90vh;  
-  /* notice,when result list finishe need to be adjust */
+  /* notice, when result list finished need to be adjusted */
 }
 
 .carousel-item {
@@ -155,14 +159,14 @@
   align-items: center;
   height: 300px; 
   width: 500px; 
-  border: 15px solid black; 
+  border: 15px solid #232323; 
   margin-top: 10px; 
   background-position: center; 
   background-size: cover;
 }
 
 .carousel-item img {
-  object-fit: cover; 
+  object-fit: contain; 
   height: 100%; 
   width: 100%; 
 }
@@ -185,9 +189,7 @@
 .color-pallete-right {
   display: flex;
   justify-content: right;
-  margin-left: 20px;
   width:100%;
-
   max-height: 1.5em;
   min-height: 0.5em;
 }
@@ -205,5 +207,6 @@
   border-width: 0em;
   /* border-color: white; */
 }
+
 
 
