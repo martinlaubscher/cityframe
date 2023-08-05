@@ -5,14 +5,21 @@ import "./NavigationCSS.css";
 import MostUniqueAreas from "../../pages/MostUniqueAreas";
 import AboutThisWeb from "../../pages/AboutThisWeb";
 import Homepage from '../../pages/Homepage';
+import { useState } from "react";
 
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [selectedNavItem, setSelectedNavItem] = useState(null); // add this line
+
   const handleClick = () => {
     navigate("/");
+    setSelectedNavItem(null); // reset selected nav item when home button is clicked
   }; 
+
+
+  
   return (
     <div className="nav-container">
       <button
@@ -54,59 +61,71 @@ export default function Navigation_offcanvas() {
         id="offcanvasTop"
         aria-labelledby="offcanvasTopLabel"
       >
-        {/* <div className="offcanvas-header">
-          <h5 className="offcanvas-title" id="offcanvasTopLabel">
-          </h5>
-          <button
-            type="button"
-            className="btn-close"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div> */}
-        <div className="offcanvas-body">
-          <ul className="nav flex-column pe-5">
-            <li className="nav-item ">
-              <NavLink
-                to="/mostuniqueareas"
-                className={
-                  location.pathname === "/mostuniqueareas" ? "active-link" : ""
-                }
-              >
-                  <span>explore hidden gems</span>
-                  <span>rarely found locations</span>
-              </NavLink>
-            </li>
-            <li className="nav-item ">
-              <NavLink
-                to="/contact"
-                className={
-                  location.pathname === "/contact" ? "active-link" : ""
-                }
-              >
-                  <span>contact</span>
-                  <span>feedback and questions</span>
-              </NavLink>
-            </li>
-            <li className="nav-item ">
-              <NavLink to="/about" className={location.pathname === "/listview" ? "active-link" : ""}>
-                <span>about  this web</span>
-                <span>user help information</span>
-                </NavLink>
-            </li>
-            {/* <li className="nav-item">
-             <NavLink to="/advancedsearch" className={location.pathname === "/advancedsearch" ? "active-link" : ""}>Advanced Search</NavLink>
-            </li> */}
-          </ul>
-
-          {/* <Route path="*"> */}
+        <div className="offcanvas-body-top">
+        <ul className="nav flex-column pe-5">
+      {selectedNavItem === null || selectedNavItem === '/mostuniqueareas' ? (
+        <li className="nav-item ">
+          <NavLink
+            to="/mostuniqueareas"
+            className={location.pathname === "/mostuniqueareas" ? "active-link" : ""}
+            onClick={() => {
+              if (selectedNavItem === '/mostuniqueareas') {
+                setSelectedNavItem(null);
+              } else {
+                setSelectedNavItem('/mostuniqueareas');
+              }
+            }}
+          >
+            <span>explore hidden gems</span>
+            <span>rarely found locations</span>
+          </NavLink>
+        </li>
+      ) : null}
+      {selectedNavItem === null || selectedNavItem === '/contact' ? (
+        <li className="nav-item ">
+          <NavLink
+            to="/contact"
+            className={location.pathname === "/contact" ? "active-link" : ""}
+            onClick={() => {
+              if (selectedNavItem === '/contact') {
+                setSelectedNavItem(null);
+              } else {
+                setSelectedNavItem('/contact');
+              }
+            }}
+          >
+            <span>contact</span>
+            <span>feedback and questions</span>
+          </NavLink>
+        </li>
+      ) : null}
+      {selectedNavItem === null || selectedNavItem === '/about' ? (
+        <li className="nav-item ">
+          <NavLink
+            to="/about"
+            className={location.pathname === "/about" ? "active-link" : ""}
+            onClick={() => {
+              if (selectedNavItem === '/about') {
+                setSelectedNavItem(null);
+              } else {
+                setSelectedNavItem('/about');
+              }
+            }}
+          >
+            <span>about this web</span>
+            <span>user help information</span>
+          </NavLink>
+        </li>
+      ) : null}
+    </ul>
+    {selectedNavItem === null ? null : (
             <Routes>
               <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<AboutThisWeb />} />
               {/* <Route path="/" element={<Homepage />} /> */}
             </Routes>
-          {/* </Route> */}
+          )}
         </div>
       </div>
     </div>

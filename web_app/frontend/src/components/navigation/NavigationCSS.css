@@ -43,9 +43,11 @@
   border: 0 !important;
 }
 /* Offcanvas body content alignment */
-.offcanvas-body {
+.offcanvas-body-top {
   text-align: left; /* Aligns the content to the left horizontally */
   vertical-align: top; /* Aligns the content to the top vertically */
+  background-color: black!important;
+
 }
 
 
@@ -64,17 +66,16 @@
 
 /* Nav item - active state */
 .nav-item a.active-link {
-  color: #efefef3f; 
   font-weight: bold;
 }
 
 /* Nav item - span font sizes */
 .nav-item span:nth-child(1) {
-  font-size: 20px; /* Bigger font size for the first span */
+  font-size: 18px; /* Bigger font size for the first span */
   
 }
 .nav-item span:nth-child(2) {
-  font-size: 15px; /* Smaller font size for the second span */
+  font-size: 11px; /* Smaller font size for the second span */
 }
 
 /* Nav item - span display */
@@ -88,10 +89,7 @@
   color: white;
 }
 
-/* Offcanvas body */
-.offcanvas-body{
-  background-color: black!important;
-}
+
 
 /* Button close */
 .btn-close {
@@ -102,5 +100,10 @@
 #offcanvasTop{
   position: fixed;
   top: 12%;
-  height: 60% !important;
+  height: 23% !important;
+  background-color: black;
+}
+
+.nav{
+  margin-left: 20px;
 }

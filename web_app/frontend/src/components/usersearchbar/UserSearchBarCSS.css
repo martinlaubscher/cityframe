@@ -1,5 +1,5 @@
 .usersearch-container {
-    position: fixed;
+    position: absolute;
     bottom: 0;
     width: 100%;
     background-color: black;
@@ -10,7 +10,10 @@
     padding-right: 4vw;
     padding-bottom: 2vh;
     padding-top: 1vh;
+    height: 100%;
 }
+
+
 
 .button-wrapper {
     display: flex;
