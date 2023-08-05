@@ -48,3 +48,9 @@
    - Endpoint: /api/current-busyness/
    - Method: GET
    - Response: Returns a dictionary with each taxi zone as a key and a randomly selected busyness level (range 1-6) as the corresponding value.
+
+8. TaxiZoneDataView:
+   - Description: Retrieve static data (zone name, number of trees, main architectural style) for each taxi zone in Manhattan
+   - Endpoint: api/zonedata
+   - Method: GET
+   - Response: JSON object with each taxi zone as a key, with corresponding name (str), number of trees (int) and main architectural style (string) as values

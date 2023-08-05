@@ -36,7 +36,7 @@ def check_error_type(e):
         return f"Caught an unknown exception.\n{e}"
 
 
-def get_ny_dt(target_dt=datetime.utcnow().replace(tzinfo=tz.UTC).astimezone(tz=tz.gettz('America/New_York'))):
+def check_ny_dt(target_dt):
     """
     Converts the given target date and time to a New York timezone-aware datetime object.
 
@@ -60,14 +60,16 @@ def get_ny_dt(target_dt=datetime.utcnow().replace(tzinfo=tz.UTC).astimezone(tz=t
     else:
         raise ValueError("Invalid date input. Expected a string or datetime object.")
 
+    # print(f'check_ny_dt time: {ny_dt}')
+
     # setting timezone to ny. if the supplied value/object is tz aware, convert it. if it is naive, assume it's ny time.
     if is_aware(ny_dt):
-        return ny_dt.astimezone(tz.gettz('America/New_York'))
+        return ny_dt.astimezone(tz=tz.gettz('America/New_York'))
     else:
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
 
-def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyness_range=(1, 5)):
+def get_results(style, weather, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
     """
     Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time.
 
@@ -169,7 +171,7 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
             f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
 
     # validate supplied time
-    ny_dt = get_ny_dt(target_dt)
+    ny_dt = check_ny_dt(target_dt)
 
     # if the time supplied is earlier than the earliest available time, take that one
     # if the time supplied is later than the latest available time, take that one
@@ -244,20 +246,27 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
 
 
 def current_busyness():
-    ny_dt = get_ny_dt()
+
+    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0,microsecond=0)
+
+    # print(f'current time: {ny_dt}')
 
     # find records where dt_iso = ny_dt
-    results = Results.objects.filter(dt_iso=ny_dt)
+    results = Busyness.objects.filter(dt_iso_id=ny_dt).values('taxi_zone_id', 'bucket')
 
     # if no results have been found, try the next hour
     # necessary if request is made just after predictions have been updated
     if len(results) == 0:
-        results = Results.objects.filter(dt_iso=ny_dt + timedelta(hours=1))
+        results = Busyness.objects.filter(dt_iso_id=ny_dt + timedelta(hours=1)).values('taxi_zone_id', 'bucket')
+
+    # print(f'results: {results}')
 
     # New dict to store the busyness for each taxi zone
     busyness_dict = {}
 
     for result in results:
-        busyness_dict[result.taxi_zone] = result.bucket
+        busyness_dict[result['taxi_zone_id']] = result['bucket']
+
+    # print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict
