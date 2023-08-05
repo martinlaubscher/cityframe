@@ -528,6 +528,7 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
+        zone_type = str.lower(request.data.get('zone_type'))
         weather = request.data.get('weather', None)
 
         # If user chooses 'All' option, set weather to None
@@ -551,6 +552,11 @@ class MainFormSubmissionView(APIView):
         if style not in valid_styles:
             return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Sanitise zone type input
+        valid_types = ['commercial', 'manufacturing', 'park', 'residential']
+        if zone_type not in valid_types:
+            return RestResponse({'error': 'Invalid zone type.'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Sanitise time input
         try:
             datetime.datetime.strptime(time, '%Y-%m-%d %H:%M')
@@ -571,6 +577,7 @@ class MainFormSubmissionView(APIView):
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
+        print(f"zone type: {zone_type}")
         print(f"time: {time}")
         print(f"weather preference: {weather}")
 
@@ -583,9 +590,10 @@ class MainFormSubmissionView(APIView):
             busyness=busyness,
             trees=trees,
             style=style,
+            zone_type=zone_type,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, time, weather)
+        results = generate_response(busyness, trees, style, zone_type, time, weather)
 
         # handle empty results (e.g., user searches for 'snow' in summer)
         if not results:

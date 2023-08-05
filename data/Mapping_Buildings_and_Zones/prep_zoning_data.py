@@ -17,16 +17,14 @@ from credentials import pg_conn
 
 # remap the zone values to sth more meaningful
 def remap_zonedist(value):
-    if value.startswith('R'):
-        return 'residential'
-    elif value.startswith('C'):
+    if value.startswith('C'):
         return 'commercial'
     elif value.startswith('M'):
         return 'manufacturing'
     elif value == 'PARK':
         return 'park'
     else:
-        return 'special'
+        return 'residential'
 
 
 # EPSG for NYC

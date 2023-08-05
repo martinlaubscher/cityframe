@@ -223,6 +223,7 @@ class Query(models.Model):
     trees = models.IntegerField()
     time = models.CharField(max_length=255)
     style = models.CharField(max_length=255)
+    zone_type = models.CharField(max_length=32, null=True)
     query_time = models.DateTimeField()
 
     class Meta:
@@ -237,6 +238,7 @@ class Response(models.Model):
     busyness = models.IntegerField()
     trees = models.IntegerField()
     style = models.IntegerField()
+    zone_type = models.CharField(max_length=64, null=True)
     weather = models.JSONField()
     rank = models.IntegerField()
     submission = models.ForeignKey(Query, related_name='responses', on_delete=models.CASCADE)

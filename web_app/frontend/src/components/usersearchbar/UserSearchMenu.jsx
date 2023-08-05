@@ -3,6 +3,7 @@ import TimeButton from "./TimeButton";
 import TreeButton from "./TreeButton";
 import BusynessButton from "./BusynessButton";
 import StyleButton from "./StyleButton";
+import TypeButton from "./TypeButton";
 import SearchResult from "../searchresult/SearchResult";
 import {handleSearch} from "../searchresult/SearchResult";
 import "./UserSearchMenuCSS.css";
@@ -16,6 +17,7 @@ export default function UserSearchMenu(props) {
     datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
     busyness: 1,
     style: "neo-Georgian",
+    zone_type: "Commercial",
     tree: 1,
     weather: "All"
   });
@@ -90,6 +92,7 @@ export default function UserSearchMenu(props) {
             <TreeButton onChange={handleOptionsChange} clear={clear}/>
             <BusynessButton onChange={handleOptionsChange} clear={clear}/>
             <StyleButton onChange={handleOptionsChange} clear={clear}/>
+            <TypeButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>
             <button type="button" className="btn btn-dark" id="search-button" onClick={onSearch}>
               Search

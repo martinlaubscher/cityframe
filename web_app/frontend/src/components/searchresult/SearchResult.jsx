@@ -82,7 +82,6 @@ export default function SearchResult({ results, searchOptions }) {
                   <p className="level">level: {result.trees}</p>
                 </div>
               </div>
-
               <div className="style">
                 <div className="style-left">
                   <p className="style-title">{style}</p>
@@ -91,6 +90,17 @@ export default function SearchResult({ results, searchOptions }) {
                 <div className="style-right">
                   <p className="building-counting">
                     {result.style}{result.style === 1 ? " building" : " buildings"}
+                  </p>
+                </div>
+              </div>
+              <div className="style">
+                <div className="style-left">
+                  <p className="style-title">zone type</p>
+                  {/*<p className="zone type description if needed"></p>*/}
+                </div>
+                <div className="style-right">
+                  <p className="building-counting">
+                    {result.zone_type}
                   </p>
                 </div>
               </div>
@@ -194,6 +204,7 @@ export async function handleSearch(searchOptions) {
       trees: searchOptions.tree,
       time: searchOptions.datetime,
       style: searchOptions.style,
+      zone_type: searchOptions.zone_type,
 
       ...(searchOptions.weather !== "All"
         ? { weather: searchOptions.weather }
