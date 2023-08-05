@@ -1,11 +1,11 @@
 // TimeButton.jsx
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./UserSearchMenuCSS.css";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import moment from "moment-timezone";
 
-const TimeButton = ({ onChange }) => {
+const TimeButton = ({onChange, clear}) => {
   const [datetime, setDatetime] = useState(moment().tz("America/New_York"));
 
   const handleDateTimeChange = (newDateTime) => {
@@ -21,24 +21,38 @@ const TimeButton = ({ onChange }) => {
     const inFiveteenDays = moment().tz("America/New_York").add(15, "days");
     return current.isAfter(yesterday) && current.isBefore(inFiveteenDays);
   };
+  
+  // watch for the clear flag and reset the state
+  useEffect(() => {
+    if (clear) {
+      const newDatetime = moment().tz("America/New_York");
+      setDatetime(newDatetime);
+      onChange("datetime", newDatetime.format("YYYY-MM-DD HH:mm"));
+    }
+  }, [clear, onChange]);
 
   return (
     <div>
-        <div className="option-container">
+      <div className="option-container">
+        <div className="label-explanation-container">
           <div className="option-label">Time</div>
-          <div className="option-list">
-            <Datetime
-              className="dateTimePicker"
-              value={datetime}
-              onChange={handleDateTimeChange}
-              closeOnSelect
-              timeFormat="HH:00"
-              dateFormat="DD/MM/YYYY"
-              isValidDate={isValidDate}
-              inputProps={{ readOnly: true }}
-            />
+          <div className="option-explanation">
+            {/*fill in if needed*/}
           </div>
         </div>
+        <div id="time-selection">
+          <Datetime
+            className="dateTimePicker"
+            value={datetime}
+            onChange={handleDateTimeChange}
+            closeOnSelect
+            timeFormat="HH:00"
+            dateFormat="DD/MM/YYYY"
+            isValidDate={isValidDate}
+            inputProps={{readOnly: true}}
+          />
+        </div>
+      </div>
     </div>
   );
 };

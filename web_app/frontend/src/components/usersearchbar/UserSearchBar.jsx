@@ -6,30 +6,31 @@ import {
   getAllBusyness,
   filterBusyness,
 } from "../busynessInfo/currentBusyness";
+import ToggleViewButton from './ToggleViewButton'
 
-export default function UserSearchBar(props) {
+export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChange, zones, ...props}) {
   const [busynessLevel, setBusynessLevel] = useState(3);
-  const [zones, setZones] = useState({});
   const [selectedZones, setSelectedZones] = useState();
-
-  // Get data from API when component mounts
-  useEffect(() => {
-    getAllBusyness()
-      .then((data) => {
-        // Ensure that data is an object before setting zones
-        if (data && typeof data === 'object') {
-          setZones(data);
-        } else {
-          // If data is not an object, set zones as an empty object
-          setZones({});
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching busyness data:', error);
-        // If there's an error, set zones as an empty object
-        setZones({});
-      });
-  }, []);
+  // const [zones, setZones] = useState({});
+  //
+  // // Get data from API when component mounts
+  // useEffect(() => {
+  //   getAllBusyness()
+  //     .then((data) => {
+  //       // Ensure that data is an object before setting zones
+  //       if (data && typeof data === 'object') {
+  //         setZones(data);
+  //       } else {
+  //         // If data is not an object, set zones as an empty object
+  //         setZones({});
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching busyness data:', error);
+  //       // If there's an error, set zones as an empty object
+  //       setZones({});
+  //     });
+  // }, []);
 
 
   useEffect(() => {
@@ -37,28 +38,40 @@ export default function UserSearchBar(props) {
     if (Object.keys(zones).length !== 0) {
       // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);
-      console.log("filteredZones:", filteredZones);
+      // console.log("filteredZones:", filteredZones);
       props.setSelectedZones(filteredZones);
     }
   }, [busynessLevel, zones]);
 
   useEffect(() => {
-    console.log("selectedZones:", selectedZones);
+    // console.log("selectedZones:", selectedZones);
   }, [selectedZones]);
+
+  // change to current busyness on map if busyness changes
+  useEffect(() => {
+    onBusynessChange('heatmap');
+  }, [busynessLevel]);
 
   const handleBusynessChange = (event) => {
     setBusynessLevel(Number(event.target.value)); // Convert value to number
-    console.log(`User selected busyness level: ${event.target.value}`);
+    // console.log(`User selected busyness level: ${event.target.value}`);
   };
 
   return (
     <div className="usersearch-container">
       <div className="offcanvas-content">
-        <div className="weather-time-container">
-          <div className="weather-icon">
-            <WeatherComponent/>
+        <div className="weather-time-reset-container">
+          <ToggleViewButton
+            isSearched={props.isSearched}
+            viewMode={viewMode}
+            toggleViewMode={toggleViewMode}
+          />
+          <div className="weather-time-container">
+            <div className="weather-icon">
+              <WeatherComponent/>
+            </div>
+            <div className="current-time">{getCurrentTime()}</div>
           </div>
-          <div className="current-time">{getCurrentTime()}</div>
         </div>
         <div className="label-container">
           <label htmlFor="busyness-slider" className="form-label" id="busyness-slider-label">
@@ -89,14 +102,14 @@ export default function UserSearchBar(props) {
       <div className="button-wrapper">
         <button
           className="btn btn-primary offcanvas-button"
-          id="search-menu-button"
+          id="search-menu-open-button"
           type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#offcanvasBottom"
           aria-controls="offcanvasBottom"
         >
           <svg
-            id="search-menu-icon"
+            id="search-menu-open-icon"
             viewBox="0 0 24 24"
             fill="#FFFFFF"
             xmlns="http://www.w3.org/2000/svg"

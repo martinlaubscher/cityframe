@@ -19,8 +19,8 @@ export default function SearchResult({ results, searchOptions }) {
   if (results.length === 0) {
     return (
       <div className="error-inner">
-        <span className="error-alert">Nothing here !</span>
-        <span className="error-alert">More photo spots await ! 📷</span>
+        <span className="error-alert">Nothing here!</span>
+        <span className="error-alert">More photo spots await! 📷</span>
         {/* <iframe
           src="https://giphy.com/embed/NMBqdKUKQ3aLe"
           width="480"
@@ -90,7 +90,7 @@ export default function SearchResult({ results, searchOptions }) {
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
-                    building count {result.style}
+                    {result.style}{result.style === 1 ? " building" : " buildings"}
                   </p>
                 </div>
               </div>

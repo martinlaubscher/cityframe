@@ -1,14 +1,15 @@
 import {
   MapContainer,
   TileLayer,
-  Polygon
+  Polygon,
+  Popup
 } from "react-leaflet";
 import "./MapBackground.css";
 import React from "react";
 import axios from "@/axiosConfig";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
-export default function Map(props) {
+export default function Map({viewMode, zones, ...props}) {
   const defaultOptions = {
     color: "#808080",
     weight: 1,
@@ -18,7 +19,7 @@ export default function Map(props) {
 
 
   const [geojsonData, setGeojsonData] = React.useState(null);
-
+  const [zoneData, setZoneData] = React.useState(null);
   const mapRef = React.useRef(null);
 
 
@@ -30,6 +31,17 @@ export default function Map(props) {
       })
       .catch((error) => {
         console.error("Error fetching geojson data: ", error);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    axios
+      .get("/api/zonedata/")
+      .then((response) => {
+        setZoneData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching zone data: ", error);
       });
   }, []);
 
@@ -47,7 +59,7 @@ export default function Map(props) {
   }
 
   function handleClick(feature) {
-    console.log("She doesn't even go here");
+    //console.log("She doesn't even go here");
     setCenter(feature)
   }
 
@@ -61,7 +73,7 @@ export default function Map(props) {
     const colourVar = 10 - rank;
     //const hue = colourVar + 230; // PURPLE!!!
     const hue = 110 + rank * 10;
-    //console.log(rank, hue);
+    // console.log(rank, hue);
 
     const lightness = 90 - colourVar * 5;
     return `hsl(${hue}, ${100}%, ${50}%)`;
@@ -80,7 +92,7 @@ export default function Map(props) {
   }
 
   // ======================homepage heatmap============================
-  //console.log("busynessZones-Map recieve the prop:", props.busynessZones);
+  // console.log("busynessZones-Map recieve the prop:", props.busynessZones);
 
   const getBusynessColor = (busynessLevel) => {
     const busynessColors = {
@@ -115,14 +127,14 @@ export default function Map(props) {
   // ================================================================================
 
   var polygons;
-  if (geojsonData) {
+  if (geojsonData && zoneData) {
     var path;
     var click;
 
     // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
-    
-    if (props.isSearched) {
-   //console.log("map:result")
+
+    if (viewMode === 'results') {
+      // console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
         var placeRank = props.searchResults.find(
           (place) => place.id === feature.properties.location_id
@@ -157,12 +169,13 @@ export default function Map(props) {
     }
     // ======================homepage heatmap============================
     else {
-    // if(props.busynessZones){
-      console.log("map:homepage")
+      // if(props.busynessZones){
+      console.log(zoneData)
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
-        let busynessLevel;
+        let busynessLevel
+
         if (busynessZonesObj) {
           busynessLevel = busynessZonesObj[feature.properties.location_id];
         }
@@ -183,15 +196,39 @@ export default function Map(props) {
           };
         }
 
+        const locationId = feature.properties.location_id;
+        const zoneDetails = zoneData[locationId];
+
+        // Make sure zoneDetails exists before accessing properties
+        const zoneName = zoneDetails ? zoneDetails.zone : "Unknown Zone";
+        const architectureStyle = zoneDetails ? zoneDetails.main_style : "Unknown Style";
+        const treeCount = zoneDetails ? zoneDetails.trees : "Unknown";
+
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
             <Polygon
               key={`${idx}-${polygonIndex}`}
               positions={polygon[0].map((coord) => [coord[1], coord[0]])}
               pathOptions={path}
+              eventHandlers={{
+                click: click,
+              }}
             >
-              {//console.log("Polygon properties:", feature.properties, path)
-              }
+              <Popup>
+                <div>
+                  <p className="popup-title">{zoneName}</p>
+                  <p className="popup-level">level {zones[locationId]}/5</p>
+                  <div className="popup-details">
+                    <p>architecture style:</p>
+                    <p className="popup-details-value">{architectureStyle}</p>
+                  </div>
+                  <div className="popup-details">
+                    <p>trees:</p>
+                    <p className="popup-details-value">{treeCount}</p>
+                  </div>
+                </div>
+              </Popup>
+              {/*{console.log("Polygon properties:", feature.properties, path)}*/}
             </Polygon>
           );
         });

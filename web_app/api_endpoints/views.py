@@ -7,16 +7,19 @@ cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
 sys.path.append(cityframe_path)
 
 from drf_yasg import openapi
+from django.db.models import Case, CharField, Value, When, F
+from django.db.models.functions import Greatest
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.get_results import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response
+from .models import WeatherCurrent, Query, Response, TaxiZones
 import requests
 import datetime
 import pytz
+from dateutil import tz
 from django.core.cache import cache
 from django.utils import timezone
 
@@ -413,10 +416,12 @@ class CurrentManhattanBusyness(APIView):
 
     Returns a JSON with each taxi zone and corresponding busyness level
     """
+
     def get(self, request):
+
         busyness_data = cache.get('current_busyness')
 
-        if busyness_data is not None:
+        if busyness_data is not None and len(busyness_data) > 0:
             # If there is data in the cache, return it
             # for debugging
             print("\nBusyness data fetched from Cache")
@@ -436,6 +441,70 @@ class ResponseSerializer(serializers.Serializer):
     trees = serializers.IntegerField()
     style = serializers.CharField()
     submission_id = serializers.IntegerField()
+
+
+class TaxiZoneDataView(APIView):
+    """Get request for general data for each taxi zone
+
+    Returns:
+        JSON with each taxi zone as a key, with corresponding name (str), number of trees (int) and
+        main architectural style (string) as values
+    """
+
+    def get(self, request):
+
+        zone_data = cache.get('zone_data')
+
+        if zone_data is not None:
+            print('zone data fetched from cache')
+            return RestResponse(zone_data)
+        else:
+            styles = [
+                'neo_georgian', 'greek_revival', 'romanesque_revival',
+                'neo_grec', 'renaissance_revival', 'beaux_arts',
+                'queen_anne', 'italianate', 'federal', 'neo_renaissance'
+            ]
+            style_columns = {
+                'neo_georgian': 'neo-Georgian',
+                'greek_revival': 'Greek Revival',
+                'romanesque_revival': 'Romanesque Revival',
+                'neo_grec': 'neo-Grec',
+                'renaissance_revival': 'Renaissance Revival',
+                'beaux_arts': 'Beaux-Arts',
+                'queen_anne': 'Queen Anne',
+                'italianate': 'Italianate',
+                'federal': 'Federal',
+                'neo_renaissance': 'neo-Renaissance'
+            }
+
+            queryset = TaxiZones.objects.annotate(
+                max_style_value=Greatest(*styles),
+            )
+
+            for style, column in style_columns.items():
+                queryset = queryset.annotate(
+                    **{f'{style}_is_max': Case(When(max_style_value=F(style), then=Value(True)), default=Value(False),
+                                               output_field=CharField())}
+                )
+
+            results = {}
+            for obj in queryset:
+                result = {
+                    'zone': obj.zone,
+                    'trees': obj.trees,
+                }
+
+                for style, column in style_columns.items():
+                    if getattr(obj, f'{style}_is_max'):
+                        result['main_style'] = column
+                        break
+
+                results[str(obj.id)] = result
+
+            # Add the data to the cache, with a timeout of 90 days (in seconds)
+            cache.set('zone_data', results, 7776000)
+
+            return RestResponse(results)
 
 
 class MainFormSubmissionView(APIView):

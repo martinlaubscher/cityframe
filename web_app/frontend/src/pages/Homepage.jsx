@@ -1,5 +1,5 @@
 import Navigation from "../components/navigation/Navigation.jsx";
-import { Logo } from "../components/logo/Logo";
+import {Logo} from "../components/logo/Logo";
 //import MapBackground from '../components/mapBackground/MapBackground.jsx';
 import UserSearchBar from "../components/usersearchbar/UserSearchBar.jsx";
 import "./homePageCSS.css";
@@ -8,16 +8,17 @@ import Map from "../components/mapBackground/Map.jsx";
 import junkdynamic from "../components/dummydata/geojunk.js";
 import dynamic from "../components/dummydata/dynamicdata.js";
 import data from "../components/dummydata/locationjunk.js";
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
 import Droplist from "../components/placeList/Droplist.jsx";
 import SearchResult from "../components/searchresult/SearchResult.jsx";
 //import mandata from '../components/data/manhattan_taxi_zones.geojson';
 import colours from '../components/dummydata/colours.js';
+import {getAllBusyness} from "@/components/busynessInfo/currentBusyness.jsx";
 
 export default function Homepage() {
   //console.log(dynamic)
   const [selectedZones, setSelectedZones] = useState();
-  
+
   const [listResults, setListResults] = useState({
     results: junkdynamic,
     name: "All Zones",
@@ -29,20 +30,31 @@ export default function Homepage() {
   const [isSearched, setIsSearched] = useState(false);
   const [searchOptions, setSearchOptions] = useState();
 
-  function onSearch (results, options){
+  // state variable to keep track of what is shown on map
+  const [viewMode, setViewMode] = useState('heatmap');
+
+  const handleBusynessChange = (value) => {
+    // Your logic here
+    setViewMode('heatmap');
+  };
+
+  function onSearch(results, options) {
     results = results.map(result => {
       var resultColour = colours.find(colour => colour.location_id === result.id);
       // var resultImgURL = ImgURL.find(img => img.location_id === result.id);
       return {
-        ...result,  
+        ...result,
         pallete: resultColour?.colors, // fix undifined situation
         // imageUrl: resultImgURL?.image_url // fix undifined situation
       }
     });
-  
+
     setSearchOptions(options);
     setSearchResults(results);
     setIsSearched(true);
+
+    // set view mode to 'results' after a search
+    setViewMode('results');
   }
 
   /*
@@ -94,8 +106,8 @@ export default function Homepage() {
   function buildlist(feature, rank) {
     //const items=junkdynamic.filter(item => item.id===results.properties.location_id)
     //setListResults({items: items, name: results.properties.zone, score: placeScore})
-    var resultColour = colours.find(colour => colour.location_id === feature.properties.location_id);
-    setListResults({ place: feature, rank: rank, pallete: resultColour.colors });
+
+    setListResults({place: feature, rank: rank});
     setListShow(true);
   }
 
@@ -103,7 +115,31 @@ export default function Homepage() {
     setListShow(false);
   }
 
+  function toggleViewMode() {
+    setViewMode(viewMode === 'heatmap' ? 'results' : 'heatmap');
+    console.log(viewMode)
+  }
 
+  const [zones, setZones] = useState({});
+
+  // Get data from API when component mounts
+  useEffect(() => {
+    getAllBusyness()
+      .then((data) => {
+        // Ensure that data is an object before setting zones
+        if (data && typeof data === 'object') {
+          setZones(data);
+        } else {
+          // If data is not an object, set zones as an empty object
+          setZones({});
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching busyness data:', error);
+        // If there's an error, set zones as an empty object
+        setZones({});
+      });
+  }, []);
 
 
   return (
@@ -123,6 +159,8 @@ export default function Homepage() {
             isSearched={isSearched}
             searchResults={searchResults}
             busynessZones={selectedZones}
+            viewMode={viewMode}
+            zones={zones}
           />
         </div>
 
@@ -131,8 +169,12 @@ export default function Homepage() {
             onSearch={onSearch}
             isSearched={isSearched}
             searchResults={searchResults}
-            setSelectedZones={setSelectedZones} 
+            setSelectedZones={setSelectedZones}
             selectedZones={selectedZones}
+            toggleViewMode={toggleViewMode}
+            onBusynessChange={handleBusynessChange}
+            viewMode={viewMode}
+            zones={zones}
           />
         </div>
         {listShow && (
@@ -145,8 +187,8 @@ export default function Homepage() {
         {
           //listShow && <div className="result-container">
           //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
-        //</div>
-      }
+          //</div>
+        }
 
 
       </div>
