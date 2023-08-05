@@ -20,7 +20,7 @@ export default function Contact() {
           <input
             type="text"
             className="form-control"
-            placeholder="Leave your message here"
+            placeholder=" Your message..."
             aria-label="Message"
             aria-describedby="addon-wrapping"
           />

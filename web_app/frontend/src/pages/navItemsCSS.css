@@ -7,25 +7,21 @@
     padding: 1rem;
     bottom: 0;
     overflow-y: auto;
+    padding: 1rem;
     height: calc(100vh - 60px);
 }
 
-/* Padding for the about section */
-.about-this-web-container {
-    padding: 1rem;
-}
 
-/* Padding for the contact section */
 .contact-container {
-    padding: 30px;
-}
-contact-container {
-
-    flex-direction: column;
-    overflow-y: scroll; /* Allows scrolling when content overflows */
-    top: 60px; /* Adjust to your actual nav height */
-
-
+    color:white;
+    background-color: #302D2D;
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    height: calc(100vh - 60px);
 }
 
 /* Additional styles for the how-to-use section */
@@ -57,23 +53,12 @@ p {
     padding: 5px;
 }
 
-.form-control::placeholder {
+/* .form-control::placeholder {
     background-color: #302D2D;
-}
+} */
 
-.contact-user-input .input-group.small-input .form-control {
-    height: 30px;
-    margin-bottom: 20px;
-}
 
-.contact-user-input .input-group.large-input .form-control {
-    height: 150px;
-}
 
-/* Placeholder styles */
-.contact-user-input {
-    background-color: #f0f0f0;
-}
 
 .contact-user-input .form-control::placeholder,
 .contact-user-input .form-control:-ms-input-placeholder, /* IE 10-11 */
@@ -81,9 +66,19 @@ p {
     color: white;
     opacity: 1;
 }
+.email-input{
+    margin-bottom:20px;
+    height: 30px;
+}
+
+.message-input{
+    height: 80px;
+    margin-bottom:20px;
+}
 
 /* Specific placeholder styles for "Your email (optional)" and "Leave your message here" */
 .contact-user-input .input-group.email-input .form-control::placeholder,
 .contact-user-input .input-group.message-input .form-control::placeholder {
     color: white;
+
 }
