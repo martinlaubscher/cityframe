@@ -1,0 +1,41 @@
+/* navItemsCSS.css */
+
+.about-this-web-container {
+    position: relative;
+    justify-content: flex-start; 
+    align-items: flex-start;
+    color: white; 
+    background-color: #302D2D;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    line-height: 1.7;
+    display: flex; 
+    flex-direction: column; 
+    padding: 1rem;
+    overflow: auto;
+    font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+.how-to-use {
+    /* ... other styles ... */
+    margin-bottom: 2rem;  /* Add this line */
+}
+
+.title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 20px;
+    /* font-weight: bold; */
+    margin-bottom: 0rem;
+}
+
+p {
+    text-align: justify;
+    font-size: 16px;
+    margin-bottom: 1rem;
+}

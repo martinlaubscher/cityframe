@@ -5,6 +5,7 @@
   align-items: center;
   height: 100%;
   width: 15%;
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
 /* Hamburger menu */
@@ -52,6 +53,9 @@
 
 
 /* Nav item - font settings */
+.nav-item{
+margin-bottom: 10px;
+}
 .nav-item a {
   color: white;
   text-decoration: none; /* removes underline */
