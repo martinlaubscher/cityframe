@@ -85,6 +85,9 @@ result_df['location_id'] = result_df['location_id'].astype(int)
 final_df = pd.pivot_table(result_df, values='percent', index=['location_id'], columns=['zonedist'], aggfunc='sum',
                           fill_value=0).sort_index()
 
+# add the name of the zone type with the highest value
+final_df['zone_type'] = final_df.iloc[:].idxmax(axis=1)
+
 engine = create_engine(URL.create("postgresql+psycopg", **pg_conn))
 
 final_df.to_sql('zoning', engine, schema='cityframe', if_exists='replace')

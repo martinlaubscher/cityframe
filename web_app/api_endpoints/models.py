@@ -243,3 +243,17 @@ class Response(models.Model):
 
     class Meta:
         db_table = 'cityframe\".\"user_query_response'
+
+
+class Zoning(models.Model):
+    location_id = models.OneToOneField(TaxiZones, on_delete=models.CASCADE, primary_key=True)
+    commercial = models.FloatField()
+    manufacturing = models.FloatField()
+    park = models.FloatField()
+    residential = models.FloatField()
+    special = models.FloatField()
+    zone_type = models.CharField(max_length=32)
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"zoning'
