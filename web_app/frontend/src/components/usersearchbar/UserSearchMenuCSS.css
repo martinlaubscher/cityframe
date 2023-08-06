@@ -62,13 +62,8 @@
     justify-content: space-between;
     width: 100%;
     overflow: visible; /* Add this if the content might overflow */
-}
-
-
-.button-container > * {
-    width: 100%;
     text-align: left;
-}
+  }
 
 .option-button {
     width: 100%;
@@ -283,23 +278,14 @@ input[type="text"] {
 input[type="radio"] {
     appearance: none;
     background-color: transparent;
-    margin: 0;
+    margin: 0 !important;
     font: inherit;
     color: currentColor;
-    width: 1.15em;
-    height: 1.15em;
+    width: min(1.15em, calc(20vw - 48px));
+    height: min(1.15em, calc(20vw - 48px));
     border: 0.10em solid currentColor;
     border-radius: 50%;
-    /* margin: 0 !important;
-  appearance: none;
-  background-color: transparent;
-  margin: 0;
-  font: inherit;
-  color: currentColor;
-  width: min(1.15em, calc(20vw - 48px));
-  height: min(1.15em, calc(20vw - 48px));
-  border: 0.10em solid currentColor;
-  border-radius: 50%;*/
+
     
 }
 
@@ -325,7 +311,6 @@ input[type="radio"]:checked {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: -3px;
     margin-top: -5px;
     margin-right: 2px;
 }
@@ -363,9 +348,16 @@ input[type="radio"]:checked {
 }
 
 /* -------------search button------------------------- */
-.btn-dark {
-    color: white;
+.search-button {
+    color: white !important;
     font-weight: bold !important;
+    background-color: #464646 !important;
+}
+
+.clear-button {
+  color: white !important;
+  background-color: #464646 !important;
+
 }
 
 .scroll-container {
@@ -390,3 +382,4 @@ input[type="radio"]:checked {
     border-top: var(--bs-offcanvas-border-width) solid var(--bs-offcanvas-border-color);
     transform: translateY(100%);
 }
+

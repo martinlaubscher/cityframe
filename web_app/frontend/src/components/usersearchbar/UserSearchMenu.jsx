@@ -91,7 +91,7 @@ export default function UserSearchMenu(props) {
             <BusynessButton onChange={handleOptionsChange} clear={clear}/>
             <StyleButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>
-            <button type="button" className="btn btn-dark" id="search-button" onClick={onSearch}>
+            <button type="button" className="btn search-button" id="search-button" onClick={onSearch}>
               Search
             </button>
           </div>
