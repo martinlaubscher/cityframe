@@ -22,7 +22,7 @@ from core.views import front_page
 from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
     SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
-    CurrentManhattanBusyness, TaxiZoneDataView  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
+    CurrentManhattanBusyness, TaxiZoneDataView, HiddenGemsDataView  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
 from rest_framework import routers
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.views import get_schema_view
@@ -83,6 +83,9 @@ urlpatterns = [
     path('api/', RedirectView.as_view(pattern_name='schema-swagger-ui'),
          name='register'),
     path('api/docs/', login_required(schema_view.with_ui('swagger', cache_timeout=0)), name='schema-swagger-ui'),
+
+    # get hidden gem location data
+    path('api/hidden-gems/', HiddenGemsDataView.as_view(), name='hidden-gems'),
 
     # login path
     path('accounts/login/', LoginView.as_view(template_name='admin/login.html'), name='login'),

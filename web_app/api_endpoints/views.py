@@ -7,7 +7,7 @@ cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
 sys.path.append(cityframe_path)
 
 from drf_yasg import openapi
-from django.db.models import Case, CharField, Value, When, F
+from django.db.models import Case, CharField, Value, When, F, Count
 from django.db.models.functions import Greatest
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
@@ -134,6 +134,61 @@ class FutureWeatherAPIView(APIView):
 
         return RestResponse(closest_match)
 
+
+class HiddenGemsDataView(APIView):
+    def get(self, request):
+        least_recommended_zones_ids = (
+            Response.objects.values("zone_id")
+            .annotate(count=Count("zone_id"))
+            .order_by("count")[:10]
+        )
+        # get zone_ids from the results
+        zone_ids = [zone["zone_id"] for zone in least_recommended_zones_ids]
+
+        # Get the relevant TaxiZone objects
+        zones = TaxiZones.objects.filter(id__in=zone_ids)
+
+        response_data = {}
+        for zone in zones:
+            # list of style fields
+            # style_fields = {
+            #     "neo_Georgian": zone.neo_georgian,
+            #     "Greek_Revival": zone.greek_revival,
+            #     "Romanesque_Revival": zone.romanesque_revival,
+            #     "neo_Grec": zone.neo_grec,
+            #     "Renaissance_Revival": zone.renaissance_revival,
+            #     "Beaux_Arts": zone.beaux_arts,
+            #     "Queen_Anne": zone.queen_anne,
+            #     "Italianate": zone.italianate,
+            #     "Federal": zone.federal,
+            #     "neo_Renaissance": zone.neo_renaissance,
+            # }
+
+            style_fields = {
+                "neo-Georgian": zone.neo_georgian,
+                "Greek Revival": zone.greek_revival,
+                "Romanesque Revival": zone.romanesque_revival,
+                "neo-Grec": zone.neo_grec,
+                "Renaissance Revival": zone.renaissance_revival,
+                "Beaux-Arts": zone.beaux_arts,
+                "Queen Anne": zone.queen_anne,
+                "Italianate": zone.italianate,
+                "Federal": zone.federal,
+                "neo-Renaissance": zone.neo_renaissance,
+            }
+
+            # Find the style with the max value
+            max_style = max(style_fields, key=style_fields.get)
+
+            response_data[zone.id] = {
+                "zone_id": zone.id,
+                "name": zone.zone,
+                "trees": zone.trees,
+                "main_style_amount": style_fields[max_style],
+                "main_style": max_style,
+            }
+
+        return RestResponse(response_data)
 
 # class CurrentSuntimesAPIView(APIView):
 #     def get(self, request, formatting=None):

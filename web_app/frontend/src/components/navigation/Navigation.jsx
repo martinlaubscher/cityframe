@@ -4,21 +4,63 @@ import Contact from "../../pages/Contact";
 import "./NavigationCSS.css";
 import MostUniqueAreas from "../../pages/MostUniqueAreas";
 import AboutThisWeb from "../../pages/AboutThisWeb";
-import { useState } from "react";
+import React, {useEffect, useState} from 'react';
+import axios from "@/axiosConfig.js";
+import colours from '../dummydata/colours.js';
 
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedNavItem, setSelectedNavItem] = useState(null); // add this line
+  const [gemResults, setGemResults] = useState([]);
+  const [zoneIDs, setZoneIDs] = useState([]);
+  const [showExtraSpan, setShowExtraSpan] = useState(false);
 
   const handleClick = () => {
     navigate("/");
     setSelectedNavItem(null); // reset selected nav item when home button is clicked
   }; 
 
+  const fetchHiddenGems = async () => {
+    try {
+      const getResponse = await axios.get("/api/hidden-gems");
+      console.log("hidden-gems", getResponse); // Save the results in state, log for debugging
+      setGemResults(getResponse.data);
+      console.log("gem results", gemResults); //log for debugging
+      if (
+        getResponse.data &&
+        typeof getResponse.data === "object" &&
+        !Array.isArray(getResponse.data)
+      ) {
+        setGemResults(getResponse.data);  // Save the results in state
+        // console.log("gem results1", gemResults); //log for debugging
+        const ids = Object.values(getResponse.data).map(item => item.zone_id);
+        setZoneIDs(ids);
+        console.log("zoneIDs1", zoneIDs); //log for debugging
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
-  
+  useEffect(() => {
+  fetchHiddenGems();
+  }, []);
+
+  useEffect(() => {
+  console.log('gemResults2:', gemResults); //log for debugging
+  // console.log('id', Object.values(gemResults)[1].zone_id)
+  }, [gemResults]);
+
+  useEffect(() => {
+  console.log('zoneIDs2:', zoneIDs); // log for debugging
+  // console.log('id', Object.values(gemResults)[1].zone_id)
+  }, [zoneIDs]);
+
+  // const zoneID = gemResults[0].zone_id
+  const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
+
   return (
     <div className="nav-container">
       <button
@@ -65,7 +107,7 @@ export default function Navigation_offcanvas() {
       {selectedNavItem === null || selectedNavItem === '/mostuniqueareas' ? (
         <li className="nav-item ">
           <NavLink
-            to="/mostuniqueareas"
+
             className={location.pathname === "/mostuniqueareas" ? "active-link" : ""}
             onClick={() => {
               if (selectedNavItem === '/mostuniqueareas') {
@@ -75,8 +117,57 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span>explore hidden gems</span>
-            <span>rarely found locations</span>
+            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>explore hidden gems</span>
+            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>rarely found locations</span>
+            {showExtraSpan && (
+                    <div className="result-info">
+                        <div className="rank-zone-weathericon">
+                            {/*<p className="zone">{result.zone}</p>*/}
+                            <p className="zone">{Object.values(gemResults)[0].name}</p>
+                        </div>
+              <div className="tree">
+                <div className="tree-left">
+                  <p className="tree-title">trees</p>
+                  <p className="level-of-trees">number of trees</p>
+                </div>
+                <div className="tree-right">
+                  {/*<p className="level">level: {result.trees}</p>*/}
+                  <p className="level">{Object.values(gemResults)[0].trees}</p>
+                </div>
+              </div>
+
+              <div className="style">
+                <div className="style-left">
+                  {/*<p className="style-title">{style}</p>*/}
+                  <p className="style-title">{Object.values(gemResults)[0].main_style}</p>
+                  <p className="architecture">architecture</p>
+                </div>
+                <div className="style-right">
+                  <p className="building-counting">
+                    {/*{result.style}{result.style === 1 ? " building" : " buildings"}*/}
+                    {Object.values(gemResults)[0].main_style_amount}
+                  </p>
+                </div>
+              </div>
+              <div className="color-pallete">
+                <div className="color-pallete-left">
+                  <p className="colors-title">colors</p>
+                </div>
+
+                {/*  below works*/}
+                <div className="color-pallete-right">
+                  {gemColour && gemColour.colors.map((hex, index) => (
+                    <div
+                        key={index}
+                        className="hexdiv"
+                        style={{ backgroundColor: hex }}
+                        ></div>
+                    ))}
+                </div>
+
+              </div>
+
+              </div>)}
           </NavLink>
         </li>
       ) : null}
@@ -119,7 +210,7 @@ export default function Navigation_offcanvas() {
     </ul>
     {selectedNavItem === null ? null : (
             <Routes>
-              <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
+              {/*<Route path="/mostuniqueareas" element={<MostUniqueAreas />} />*/}
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<AboutThisWeb />} />
             </Routes>
