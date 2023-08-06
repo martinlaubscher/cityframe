@@ -107,7 +107,7 @@ export default function Navigation_offcanvas() {
       {selectedNavItem === null || selectedNavItem === '/mostuniqueareas' ? (
         <li className="nav-item ">
           <NavLink
-
+            to="/"
             className={location.pathname === "/mostuniqueareas" ? "active-link" : ""}
             onClick={() => {
               if (selectedNavItem === '/mostuniqueareas') {
@@ -118,11 +118,13 @@ export default function Navigation_offcanvas() {
             }}
           >
             <span onClick={() => setShowExtraSpan(!showExtraSpan)}>explore hidden gems</span>
-            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>rarely found locations</span>
-            {showExtraSpan && (
+            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>the most rarely found location this month</span>
+            {showExtraSpan && selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info">
+
+                      <div className="rank-zone-weathericon"></div>
+
                         <div className="rank-zone-weathericon">
-                            {/*<p className="zone">{result.zone}</p>*/}
                             <p className="zone">{Object.values(gemResults)[0].name}</p>
                         </div>
               <div className="tree">
