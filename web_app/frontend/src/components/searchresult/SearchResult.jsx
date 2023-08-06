@@ -99,7 +99,7 @@ export default function SearchResult({results, searchOptions}) {
                   <p className="type-desc">zone type</p>
                 </div>
                 <div className="type-right">
-                  <p className="building-counting">
+                  <p className="type-percent">
                     {result.zone_type}
                   </p>
                 </div>

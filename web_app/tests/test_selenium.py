@@ -13,6 +13,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import Select
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
@@ -217,7 +218,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         Opens the navigation/top menu. Requires the page to be loaded.
         """
 
-        self.selenium.find_element(By.CSS_SELECTOR, 'button.btn.btn-dark.menu-button').click()
+        self.selenium.find_element(By.CSS_SELECTOR, '#SVGRepo_iconCarrier > path:nth-child(1)').click()
         return self.wait.until(
             ElementHasClass((By.XPATH, '//*[@id="offcanvasTop"]'), 'offcanvas offcanvas-top show'))
 
@@ -226,8 +227,15 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         Closes the navigation/top menu. Requires the menu to be visible.
         """
 
-        self.wait.until(EC.element_to_be_clickable(
-            self.selenium.find_element(By.CSS_SELECTOR, 'button.btn-close'))).click()
+        # calculate point at bottom of window - needed to make nav menu disappear
+        window_size = self.selenium.get_window_size()
+        x_coordinate = window_size["width"] / 2
+        y_coordinate = window_size["height"] - (window_size["height"] / 5)
+
+        self.action.reset_actions()
+
+        # click on previously defined point to close bottom offcanvas menu and wait for it to disappear
+        self.action.move_by_offset(x_coordinate, y_coordinate).click().perform()
         return self.wait.until(
             ElementHasClass((By.XPATH, '//*[@id="offcanvasTop"]'), 'offcanvas offcanvas-top'))
 
@@ -336,9 +344,61 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
             style (int): The style to be selected as an integer representing the index of the option.
         """
 
-        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.style-select'))).click()
-        self.selenium.find_element(By.CSS_SELECTOR, f'.style-select > option:nth-child({style})').click()
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#style-selection > select:nth-child(1)'))).click()
+        self.selenium.find_element(By.CSS_SELECTOR,
+                                   f'#style-selection > select:nth-child(1) > option:nth-child({style})').click()
 
+    def _select_zone_type(self, zone_type):
+        """
+        Selects a specific zone type option from the dropdown menu
+
+        Args:
+            zone_type (int): The zone type to be selected as an integer representing the index of the option.
+        """
+
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#type-selection > select:nth-child(1)'))).click()
+        self.selenium.find_element(By.CSS_SELECTOR,
+                                   f'#type-selection > select:nth-child(1) > option:nth-child({zone_type})').click()
+
+    def _select_weather(self, weather):
+        """
+        Selects a specific weather option from the dropdown menu
+
+        Args:
+            weather (int): The weather to be selected as an integer representing the index of the option.
+        """
+
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.weather-select'))).click()
+        self.selenium.find_element(By.CSS_SELECTOR, f'.weather-select > option:nth-child({weather})').click()
+
+    def _get_selections(self, level):
+        """
+        Gets the selected values from the search menu. For the radio buttons, returns whether the button with the selected level is checked.
+
+        Args:
+            level (int): The radio button level (both trees and busyness).
+
+        Returns:
+            dict: A dictionary with the values for each of the selections.
+        """
+
+        busyness_selection = self.selenium.find_element(By.CSS_SELECTOR,
+                                                        f'#busyness-selection > div:nth-child({level}) > input:nth-child(1)').get_attribute(
+            'checked')
+        tree_selection = self.selenium.find_element(By.CSS_SELECTOR,
+                                                    f'#tree-selection > div:nth-child({level}) > input:nth-child(1)').get_attribute(
+            'checked')
+        style_selection = Select(self.selenium.find_element(By.CSS_SELECTOR,
+                                                            '#style-selection > select:nth-child(1)')).first_selected_option.text
+        zone_type_selection = Select(self.selenium.find_element(By.CSS_SELECTOR,
+                                                                '#type-selection > select:nth-child(1)')).first_selected_option.text
+        weather_selection = Select(
+            self.selenium.find_element(By.CSS_SELECTOR, '.weather-select')).first_selected_option.text
+
+        return {'busyness': busyness_selection, 'trees': tree_selection, 'style': style_selection,
+                'zone_type': zone_type_selection, 'weather': weather_selection}
+
+    @tag('open_nav')
     def test_nav_menu_opens(self):
         """
         Tests if the navigation menu opens successfully.
@@ -347,6 +407,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._navigate_to_site()
         self.assertTrue(self._open_nav_menu())
 
+    @tag('close_nav')
     def test_nav_menu_closes(self):
         """
         Tests if the navigation menu closes successfully.
@@ -356,6 +417,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._open_nav_menu()
         self.assertTrue(self._close_nav_menu())
 
+    @tag('open_search')
     def test_search_menu_opens(self):
         """
         Tests if the search menu opens successfully.
@@ -364,6 +426,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._navigate_to_site()
         self.assertTrue(self._open_search_menu())
 
+    @tag('close_search')
     def test_search_menu_closes(self):
         """
         Tests if the search menu closes successfully.
@@ -373,6 +436,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._open_search_menu()
         self.assertTrue(self._close_search_menu())
 
+    @tag('date_lower')
     def test_lower_bound(self):
         """
         Tests if the date selector correctly disables dates below a certain bound.
@@ -389,6 +453,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                                          f'//td[@data-value="{self.lower_exceeding_time.day}" and @data-month="{self.lower_exceeding_time.month - 1}" and @data-year="{self.lower_exceeding_time.year}"]'),
                                         'rdtDay rdtDisabled')(self.selenium))
 
+    @tag('date_upper')
     def test_upper_bound(self):
         """
         Tests if the date selector correctly disables dates above a certain bound.
@@ -409,6 +474,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                                          f'//td[@data-value="{self.upper_exceeding_time.day}" and @data-month="{self.upper_exceeding_time.month - 1}" and @data-year="{self.upper_exceeding_time.year}"]'),
                                         'rdtDay rdtDisabled')(self.selenium))
 
+    @tag('hour_up')
     def test_hour_rollover_upwards(self):
         """
         Tests if the hour selector rolls over correctly from 23 to 0.
@@ -431,6 +497,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self.assertEqual(self.dt_selection.get_attribute("value"), self.current_time.replace(hour=0, minute=0).strftime(
             '%d/%m/%Y %H:%M'))
 
+    @tag('hour_down')
     def test_hour_rollover_downwards(self):
         """
         Tests if the hour selector rolls over correctly from 0 to 23.
@@ -496,24 +563,30 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self._navigate_to_site()
         self._open_search_menu()
 
-        for i in range(1, 11):
+        for i in range(0, 10):
 
             tree_levels = (5, 4, 3, 2, 1, 2, 4, 5, 1, 3)
             busyness_levels = (1, 2, 3, 4, 5, 1, 2, 3, 4, 5)
+            zone_types = (1, 2, 3, 4, 1, 2, 3, 4, 2, 3)
+            weather_options = (1, 2, 3, 8, 1, 2, 3, 8, 2, 3)
 
             # select tree level - change second to last div:nth-child -> div:nth-child(tree level)
             self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
-                                                        f'.button-container > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child({tree_levels[i - 1]}) > input:nth-child(1)'))).click()
+                                                        f'.button-container > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child({tree_levels[i]}) > input:nth-child(1)'))).click()
 
             # select busyness level - change second to last div:nth-child -> div:nth-child(busyness level)
             self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
-                                                        f'.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child({busyness_levels[i - 1]}) > input:nth-child(1)'))).click()
+                                                        f'.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child({busyness_levels[i]}) > input:nth-child(1)'))).click()
 
             # select the style (by its int value)
-            self._select_style(i)
+            self._select_style(i + 1)
+
+            self._select_zone_type(zone_types[i])
+
+            self._select_weather(weather_options[i])
 
             # click the search button
-            self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button.btn:nth-child(5)'))).click()
+            self.wait.until(EC.element_to_be_clickable((By.ID, 'search-button'))).click()
 
             # scroll the container to the bottom so the results are visible
             scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
@@ -522,32 +595,97 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
             # wait one second to make sure results have had time to load
             time.sleep(1)
 
-            result_patterns = {'rank': r'^\d+.$', 'zone': r'^([\w/\'-]+\s*)+$',
-                               'buildings': rf'^\d+\s{style_dict.get(i)}\sbuildings$',
-                               'busyness': r'^BUSYNESS \d$', 'trees': r'^TREES \d$'}
+            result_patterns = {'rank': r'^\d+$',
+                               'zone': r'^([\w/\'-]+\s*)+$',
+                               'buildings': rf'^\d+\sbuilding[s]*$',
+                               'busyness': r'^level:\s\d$',
+                               'trees': r'^level:\s\d$',
+                               'zone_type': r'^\d+%\s\w+$'}
 
             # go through all the results in the carousel
-            for j in range(1, 11):
-                rank = self.selenium.find_element(By.CSS_SELECTOR,
-                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(1)')
-                zone = self.selenium.find_element(By.CSS_SELECTOR,
-                                                  f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(2)')
-                buildings = self.selenium.find_element(By.CSS_SELECTOR,
-                                                       f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > p:nth-child(3)')
-                busyness = self.selenium.find_element(By.CSS_SELECTOR,
-                                                      f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(1)')
-                trees = self.selenium.find_element(By.CSS_SELECTOR,
-                                                   f'div.carousel-item:nth-child({j}) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > p:nth-child(2)')
+            for j in range(0, 10):
+                rank = self.selenium.find_element(By.XPATH,
+                                                  "//*[@class='rank'][ancestor::*[@class='carousel-item active']]")
+                zone = self.selenium.find_element(By.XPATH,
+                                                  "//*[@class='zone'][ancestor::*[@class='carousel-item active']]")
+                busyness = self.selenium.find_elements(By.XPATH,
+                                                       "//*[@class='level'][ancestor::*[@class='carousel-item active']]")[
+                    0]
+                trees = self.selenium.find_elements(By.XPATH,
+                                                    "//*[@class='level'][ancestor::*[@class='carousel-item active']]")[
+                    1]
+                buildings = self.selenium.find_element(By.XPATH,
+                                                       "//*[@class='building-counting'][ancestor::*[@class='carousel-item active']]")
+                zone_type = self.selenium.find_element(By.XPATH,
+                                                       "//*[@class='type-percent'][ancestor::*[@class='carousel-item active']]")
 
                 result_values = {'rank': rank.text, 'zone': zone.text, 'buildings': buildings.text,
-                                 'busyness': busyness.text, 'trees': trees.text}
+                                 'busyness': busyness.text, 'trees': trees.text, 'zone_type': zone_type.text}
 
                 # assert that the result values match the expected patterns
                 for key in result_values.keys():
                     self.assertTrue(bool(re.match(result_patterns.get(key), result_values.get(key))),
-                                    f'In result {j}: {result_values.get(key)} is not an expected pattern for {key}')
+                                    f'In result {j + 1}: {result_values.get(key)} is not an expected pattern for {key}')
 
                 # click on the next result button
                 self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.carousel-control-next-icon'))).click()
                 # wait for the carousel to transition to the next result
                 time.sleep(1)
+
+    @tag('failed_search')
+    def test_failed_search(self):
+        """
+        Tests that a search with no results is handled correctly. Assumes it's not snowing in the next 16 days.
+        """
+
+        self._navigate_to_site()
+        self._open_search_menu()
+
+        self._select_weather(10)
+
+        # click the search button
+        self.wait.until(EC.element_to_be_clickable((By.ID, 'search-button'))).click()
+
+        # scroll the container to the bottom so the results are visible
+        scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
+        self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
+
+        error_msg = self.selenium.find_element(By.CSS_SELECTOR, 'span.error-alert:nth-child(1)')
+
+        self.assertEqual(error_msg.text, 'Nothing here!')
+
+    @tag('clear_search')
+    def test_clear_search(self):
+        """
+        Tests that the clear search button resets the values as expected.
+        """
+
+        self._navigate_to_site()
+        self._open_search_menu()
+
+        # make some selections
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                    f'.button-container > div:nth-child(2) > div:nth-child(1) > div:nth-child(2) > div:nth-child({3}) > input:nth-child(1)'))).click()
+        self.wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR,
+                                                    f'.button-container > div:nth-child(3) > div:nth-child(1) > div:nth-child(2) > div:nth-child({3}) > input:nth-child(1)'))).click()
+        self._select_style(7)
+        self._select_zone_type(3)
+        self._select_weather(3)
+
+        # get the selected values
+        selections = self._get_selections(3)
+        checks = {'busyness': 'true', 'trees': 'true', 'style': 'Queen Anne', 'zone_type': 'Park', 'weather': 'Clouds'}
+        # check the selected values have been stored
+        for key in selections.keys():
+            self.assertEqual(selections.get(key), checks.get(key))
+
+        # click the clear search button
+        self.wait.until(EC.element_to_be_clickable((By.ID, 'clear-search-button'))).click()
+
+        # get the selected values
+        selections = self._get_selections(1)
+        checks = {'busyness': 'true', 'trees': 'true', 'style': 'neo-Georgian', 'zone_type': 'Commercial',
+                  'weather': 'All'}
+        # check the values have been reset
+        for key in selections.keys():
+            self.assertEqual(selections.get(key), checks.get(key))
