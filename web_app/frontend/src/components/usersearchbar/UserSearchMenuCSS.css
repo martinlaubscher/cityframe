@@ -350,7 +350,7 @@ input[type="radio"]:checked {
     right: 0;
     left: 0;
     height: var(--bs-offcanvas-height);
-    max-height: 60% !important; /* change selections and results window size */
+    max-height: 65% !important; /* change selections and results window size */
     border-top: var(--bs-offcanvas-border-width) solid var(--bs-offcanvas-border-color);
     transform: translateY(100%);
 }
