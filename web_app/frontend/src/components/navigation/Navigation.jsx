@@ -13,9 +13,9 @@ export default function Navigation_offcanvas() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedNavItem, setSelectedNavItem] = useState(null); // add this line
-  const [gemResults, setGemResults] = useState([]);
-  const [zoneIDs, setZoneIDs] = useState([]);
-  const [showExtraSpan, setShowExtraSpan] = useState(false);
+  const [gemResults, setGemResults] = useState([null]);
+  const [zoneIDs, setZoneIDs] = useState([null]);
+  const [showExtraSpan, setShowExtraSpan] = useState(null);
 
   const handleClick = () => {
     navigate("/");
@@ -107,7 +107,7 @@ export default function Navigation_offcanvas() {
       {selectedNavItem === null || selectedNavItem === '/mostuniqueareas' ? (
         <li className="nav-item ">
           <NavLink
-            to="/"
+            to=""
             className={location.pathname === "/mostuniqueareas" ? "active-link" : ""}
             onClick={() => {
               if (selectedNavItem === '/mostuniqueareas') {
@@ -119,7 +119,7 @@ export default function Navigation_offcanvas() {
           >
             <span onClick={() => setShowExtraSpan(!showExtraSpan)}>explore hidden gems</span>
             <span onClick={() => setShowExtraSpan(!showExtraSpan)}>the most rarely found location this month</span>
-            {showExtraSpan && selectedNavItem === '/mostuniqueareas' && (
+            {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info">
 
                       <div className="rank-zone-weathericon"></div>
@@ -204,7 +204,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span>about this web</span>
+            <span>about this web app</span>
             <span>user help information</span>
           </NavLink>
         </li>
@@ -212,7 +212,7 @@ export default function Navigation_offcanvas() {
     </ul>
     {selectedNavItem === null ? null : (
             <Routes>
-              {/*<Route path="/mostuniqueareas" element={<MostUniqueAreas />} />*/}
+              <Route path="/mostuniqueareas" element={<MostUniqueAreas />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<AboutThisWeb />} />
             </Routes>
