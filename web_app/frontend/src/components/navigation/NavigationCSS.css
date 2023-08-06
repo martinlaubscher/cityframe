@@ -1,32 +1,38 @@
+/* Nav container */
 .nav-container {
   position: relative;
   display: flex;
   align-items: center;
   height: 100%;
   width: 15%;
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
+/* Hamburger menu */
 .hamburger-menu{
   position: relative;
   height: 80%;
   width: 80%;
 }
 
-
+/* Navigation column */
 .navigation-column {
   display: flex;
   flex-direction: column;
 }
 
+/* Menu container */
 .menu-container {
   display: flex;
   flex-direction: column;
 }
 
+/* Menu header */
 .menu-header {
   cursor: pointer;
 }
 
+/* Menu button */
 .menu-button {
   display: flex;
   align-items: center;
@@ -37,37 +43,71 @@
   background-color: transparent !important;
   border: 0 !important;
 }
+/* Offcanvas body content alignment */
+.offcanvas-body-top {
+  text-align: left; /* Aligns the content to the left horizontally */
+  vertical-align: top; /* Aligns the content to the top vertically */
+  background-color: black!important;
 
+}
+
+
+/* Nav item - font settings */
+.nav-item{
+margin-bottom: 10px;
+}
 .nav-item a {
   color: white;
   text-decoration: none; /* removes underline */
-  font-weight: bold; /* makes font bold */
   font-size: 1.2em; /* makes font bigger, adjust as necessary */
   font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif !important;
 }
 
+/* Nav item - hover state */
 .nav-item a:hover {
-  color: grey; /* link color changes to grey on hover */
+  font-weight: bold; 
 }
 
+/* Nav item - active state */
 .nav-item a.active-link {
-  color: #efefef3f; /* link color changes to purple when active */
+  font-weight: bold;
 }
 
+/* Nav item - span font sizes */
+.nav-item span:nth-child(1) {
+  font-size: 18px; /* Bigger font size for the first span */
+  
+}
+.nav-item span:nth-child(2) {
+  font-size: 11px; /* Smaller font size for the second span */
+}
+
+/* Nav item - span display */
+.nav-item span {
+  display: block;
+}
+
+/* Offcanvas header */
 .offcanvas-header{
   background-color: black !important;
   color: white;
 }
 
-.offcanvas-body{
-  background-color: black!important;
-}
+
+
+/* Button close */
 .btn-close {
   filter: invert(1);
 }
 
+/* Offcanvas top */
 #offcanvasTop{
   position: fixed;
   top: 12%;
-  height: 60% !important
+  height: 23% !important;
+  background-color: black;
+}
+
+.nav{
+  margin-left: 20px;
 }

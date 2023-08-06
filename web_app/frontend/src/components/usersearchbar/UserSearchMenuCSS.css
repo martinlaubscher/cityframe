@@ -335,6 +335,7 @@ input[type="radio"]:checked {
 .scroll-container {
     overflow: auto;
     height: 100vh;
+    background-color: black;
 }
 
 .offcanvas-body, .result-container {
