@@ -11,25 +11,15 @@
    - Parameters: timestamp (Unix timestamp in UTC)
    - Response: Returns the JSON data for the closest match to the provided timestamp.
 
-3. CurrentSuntimesAPIView:
-   - Description: Retrieve the sunrise and sunset times for the current day.
-   - Endpoints: 
-	/api/current-suntimes/	(without optional parameter)
-	/api/current-suntimes/<str:formatting>/      (with optional parameter)
+3. SuntimesAPIView:
+   - Description: Retrieve the sunrise/sunset and golden/blue hour times for a given day.
+   - Endpoint:
+	/api/suntimes/<str:requested_date>/
    - Method: GET
-   - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the sunrise and sunset times will be returned as datetime strings.
-   - Response: Returns the sunrise and sunset times in Unix timestamp format (with offset applied). If formatting='datetime', the response will contain datetime strings.
+   - Parameters: requested_date (a date in format yyyy-mm-dd)
+   - Response: Returns a JSON with the sunrise/sunset and golden/blue hour times for the specified day in datetime string format (local time).
 
-4. FutureSuntimesAPIView:
-   - Description: Retrieve the sunrise and sunset times for a future day.
-   - Endpoints: 
-	/api/future-suntimes/<int:days_in_future>/ (without optional parameter)
-	/api/future-suntimes/<int:days_in_future>/<str:formatting>/      (with optional parameter)
-   - Method: GET
-   - Parameters: days_in_future (an int between 1-5 representing the number of days into the future), formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the sunrise and sunset times will be returned as datetime strings.
-   - Response: Returns the sunrise and sunset times for the specified future day in Unix timestamp format (with offset applied). If formatting='datetime', the response will contain datetime string.
-
-5. CurrentManhattanTimeAPIView:
+4. CurrentManhattanTimeAPIView:
    - Description: Retrieve the current time in Manhattan.
    - Endpoints: 
 	/api/current-manhattan-time/      (without optional parameter)
@@ -38,7 +28,7 @@
    - Parameters: formatting (optional) - Specify the format of the response. If formatting is set to 'datetime', the current time will be returned as a datetime string.
    - Response: Returns the current Unix timestamp (with offset applied) for Manhattan. If formatting='datetime', the response will contain a datetime string.
 
-6. GoldenHourAPIView:
+5. GoldenHourAPIView:
    - Description: Retrieve predicted golden hour and sunset times for a specific date
    - Endpoint:
 	/api/golden-hour/str:chosen_date/
@@ -46,15 +36,21 @@
    - Parameters: chosen_date (str): A string for the date of which golden hour and sunset data is requested. In format "yyyy-mm-dd."
    - Response: A JSON object containing the golden hour and sunset times (in format "H:MM:SS PM") for the specified date.
 
-7. MainFormSubmissionView:
-   - Description: Submit form data with time, busyness, trees and (architectural) style parameters.
+6. MainFormSubmissionView:
+   - Description: Submit form data with time, busyness, trees, (architectural) style, and (optional) weather parameters.
    - Endpoint: /api/submit-main/
    - Method: POST
-   - Parameters: JSON data containing 'time' (a datetime string), 'busyness' (an int from 1-5 inclusive), 'trees' (an int from 1-5 inclusive), and 'style' (a string mathing pre-defined styles).
+   - Parameters: JSON data containing 'time' (a datetime string), 'busyness' (an int from 1-5 inclusive), 'trees' (an int from 1-5 inclusive), 'style' (a string mathing pre-defined styles), and weather (a string matching pre-defined weather categories).
    - Response: Returns a JSON object containing predictions for the specified parameters.
 
-8. CurrentManhattanBusyness:
+7. CurrentManhattanBusyness:
    - Description: Retrieve the current busyness levels for each taxi zone in Manhattan.
    - Endpoint: /api/current-busyness/
    - Method: GET
    - Response: Returns a dictionary with each taxi zone as a key and a randomly selected busyness level (range 1-6) as the corresponding value.
+
+8. TaxiZoneDataView:
+   - Description: Retrieve static data (zone name, number of trees, main architectural style) for each taxi zone in Manhattan
+   - Endpoint: api/zonedata
+   - Method: GET
+   - Response: JSON object with each taxi zone as a key, with corresponding name (str), number of trees (int) and main architectural style (string) as values

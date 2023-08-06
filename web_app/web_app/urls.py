@@ -15,12 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView, logout_then_login
 from django.urls import include, path
 from core.views import front_page
+from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
-    FutureSuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
-    CurrentManhattanBusyness  # MainFormSubmissionTestView
-from rest_framework import routers, permissions
+    SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
+    CurrentManhattanBusyness, TaxiZoneDataView  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
+from rest_framework import routers
+from rest_framework.permissions import IsAuthenticated
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
@@ -36,10 +40,9 @@ schema_view = get_schema_view(
         title="CityFrame API Info",
         default_version="v1",
         description=api_description,
-        # other API info here if required
     ),
     public=True,
-    permission_classes=[permissions.AllowAny],
+    permission_classes=[IsAuthenticated],
 )
 
 urlpatterns = [
@@ -52,11 +55,11 @@ urlpatterns = [
     path('api/current-weather/', CurrentWeatherAPIView.as_view(), name='current_weather_data'),
 
     # sunrise/sunset endpoints
-    path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='current_suntimes'),
-    path('api/current-suntimes/<str:formatting>/', CurrentSuntimesAPIView.as_view(), name='current_suntimes_str'),
-    path('api/future-suntimes/<int:days_in_future>/', FutureSuntimesAPIView.as_view(), name='future_suntimes'),
-    path('api/future-suntimes/<int:days_in_future>/<str:formatting>', FutureSuntimesAPIView.as_view(),
-         name='future_suntimes_str'),
+    # path('api/current-suntimes/', CurrentSuntimesAPIView.as_view(), name='current_suntimes'),
+    # path('api/current-suntimes/<str:formatting>/', CurrentSuntimesAPIView.as_view(), name='current_suntimes_str'),
+    path('api/suntimes/<str:requested_date>/', SuntimesAPIView.as_view(), name='suntimes'),
+    # path('api/future-suntimes/<int:days_in_future>/<str:formatting>', FutureSuntimesAPIView.as_view(),
+    #      name='future_suntimes_str'),
 
     # time endpoint
     path('api/current-time/', CurrentManhattanTimeAPIView.as_view(), name='current_manhattan_time'),
@@ -73,9 +76,15 @@ urlpatterns = [
     # POST request using real database predictions
     path('api/submit-main', MainFormSubmissionView.as_view(), name='main-form-submission'),
 
+    # get taxi zone data for all zones (id, number of trees, most prominent arch. style, zone name (str))
+    path('api/zonedata/', TaxiZoneDataView.as_view(), name='taxi-zone-data'),
+
     # Generated API documentation (OpenAPI/swagger format)
-    path('api/', include(router.urls)),
-    path('api/docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/', RedirectView.as_view(pattern_name='schema-swagger-ui'),
+         name='register'),
+    path('api/docs/', login_required(schema_view.with_ui('swagger', cache_timeout=0)), name='schema-swagger-ui'),
+
+    # login path
+    path('accounts/login/', LoginView.as_view(template_name='admin/login.html'), name='login'),
+    path('accounts/logout/', logout_then_login, name='logout'),
 ]
-
-

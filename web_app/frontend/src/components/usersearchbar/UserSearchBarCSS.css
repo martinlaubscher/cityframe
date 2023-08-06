@@ -1,91 +1,237 @@
-.usersearch-container{
-    position: fixed;
+.usersearch-container {
+    position: absolute;
     bottom: 0;
     width: 100%;
-    height: 15%;
     background-color: black;
-    /*color: white;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-left: 4vw;
+    padding-right: 4vw;
+    padding-bottom: 2vh;
+    padding-top: 1vh;
 }
+
+
 
 .button-wrapper {
     display: flex;
     justify-content: center;
+    align-items: flex-end;
     width: 100%;
-  }
-  
+    padding-bottom: 1vh;
+}
+
 .offcanvas-button {
-    display: flex!important;
-    align-items: center!important;
-    justify-content: center!important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     background-color: transparent !important;
     border: none !important;
-    cursor: pointer!important;
+    cursor: pointer !important;
     padding: 0;
-  }  
-  
-.offcanvas-button svg {
-width: 24px;
-height: 24px;
 }
-  
+
+#search-menu-open-button {
+    padding: 0;
+    margin: 0;
+}
+
+#search-menu-open-icon {
+    width: 5vh;
+    height: 5vh;
+}
+
+#toggle-view-button {
+    height: 2.5vh;
+    font-size: 1.5vh;
+    color: #ffffff;
+    background-color: #383e3d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    padding: 5px 10px;
+}
+
+#toggle-view-button:disabled {
+    opacity: 0.5;
+}
+
+.weather-time-reset-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.weather-time-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
 
 .weather-icon-container {
     display: flex;
-    align-items: center; 
-    justify-content: flex-end;
-  }
+    align-items: center;
+    justify-content: flex-start;
+}
 
 .current-time {
-  color:white;
-  font-size: 16px;
-  text-align: right;
-  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-  margin-right: 10px;
+    color: white;
+    font-size: 1.5vh;
+    text-align: right;
+    font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    margin-left: 20px;
 }
 
 .weather-icon {
-    margin-right: 5px;
+    /* adjust as necessary */
 }
 
 .label-container {
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-start;
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 1vh;
 }
 
-.form-label {
-  text-align: left !important;
-  color:white;
-  font-size: 20px;
-  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif; ;
-  margin-left: 10px;
-  font-weight: bold;
+#busyness-slider-label {
+    text-align: left !important;
+    color: white;
+    font-size: 2.5vh;
+    font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    margin-bottom: 0.1vh;
 }
 
-  
 .offcanvas-content {
- height: 100%; 
+    /*height: 100%; */
 }
 
+/*SLIDER STYLING START*/
+/*adapted from Bootstrap's form-range class*/
+.busyness-level {
+    width: 100%;
+    padding: 0;
+    margin-top: 0.5vh;
+}
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5vh;
+    color: white;
+    margin-top: -1vh;
+}
+
+.range-cust {
+    width: 100%;
+    height: 1.5rem;
+    padding: 0;
+    background-color: transparent;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.range-cust:focus {
+    outline: 0;
+}
+
+.range-cust:focus::-webkit-slider-thumb {
+    /*box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(13, 110, 253, 0.25);*/
+    box-shadow: inset 0 0 0 2px black, 0 0 0 2px white;
+}
+
+.range-cust:focus::-moz-range-thumb {
+    /*box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(13, 110, 253, 0.25);*/
+    box-shadow: inset 0 0 0 2px black, 0 0 0 2px white;
+}
+
+.range-cust::-moz-focus-outer {
+    border: 0;
+}
 
 .range-cust::-webkit-slider-thumb {
-  appearance: none!important;
-  background: white !important;
+    width: 1rem;
+    height: 1rem;
+    margin-top: -0.25rem;
+    background-color: white;
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: inset 0 0 0 2px black, 0 0 0 2px white;
+    -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .range-cust::-webkit-slider-thumb {
+        -webkit-transition: none;
+        transition: none;
+    }
+}
+
+.range-cust::-webkit-slider-thumb:active {
+    background-color: #ffffff;
+    box-shadow: inset 0 0 0 2px black, 0 0 0 2px white;
+}
+
+.range-cust::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 0.5rem;
+    color: transparent;
+    cursor: pointer;
+    background-color: #808080;
+    border-color: transparent;
+    border-radius: 1rem;
 }
 
 .range-cust::-moz-range-thumb {
-  appearance: none!important;
-  background: white !important;
+    width: 1rem;
+    height: 1rem;
+    background-color: #ffffff;
+    border: 0;
+    border-radius: 1rem;
+    box-shadow: inset 0 0 0 2px black, 0 0 0 2px white;
+    -moz-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.range-cust::-ms-thumb { 
-  appearance: none!important;
-  background: white !important;
+@media (prefers-reduced-motion: reduce) {
+    .range-cust::-moz-range-thumb {
+        -moz-transition: none;
+        transition: none;
+    }
 }
 
-.busyness-level {
+.range-cust::-moz-range-thumb:active {
+    background-color: #ffffff;
+    box-shadow: inset 0 0 0 2px black, 0 0 0 2px white;
+}
+
+.range-cust::-moz-range-track {
     width: 100%;
-    padding: 0 20px;
+    height: 0.5rem;
+    color: transparent;
+    cursor: pointer;
+    background-color: #808080;
+    border-color: transparent;
+    border-radius: 1rem;
 }
 
+.range-cust:disabled {
+    pointer-events: none;
+}
 
+.range-cust:disabled::-webkit-slider-thumb {
+    background-color: #d3d3d3;
+}
+
+.range-cust:disabled::-moz-range-thumb {
+    background-color: #d3d3d3;
+}
+
+/*SLIDER STYLING END*/

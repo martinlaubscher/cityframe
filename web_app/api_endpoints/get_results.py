@@ -7,7 +7,7 @@ django.setup()
 
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
-from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Results
+from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Zoning
 from dateutil import tz
 from datetime import datetime, timedelta
 from pymcdm.weights import critic_weights
@@ -36,7 +36,7 @@ def check_error_type(e):
         return f"Caught an unknown exception.\n{e}"
 
 
-def get_ny_dt(target_dt=datetime.now(tz=tz.gettz('America/New_York'))):
+def check_ny_dt(target_dt):
     """
     Converts the given target date and time to a New York timezone-aware datetime object.
 
@@ -60,14 +60,16 @@ def get_ny_dt(target_dt=datetime.now(tz=tz.gettz('America/New_York'))):
     else:
         raise ValueError("Invalid date input. Expected a string or datetime object.")
 
+    # print(f'check_ny_dt time: {ny_dt}')
+
     # setting timezone to ny. if the supplied value/object is tz aware, convert it. if it is naive, assume it's ny time.
     if is_aware(ny_dt):
-        return ny_dt.astimezone(tz.gettz('America/New_York'))
+        return ny_dt.astimezone(tz=tz.gettz('America/New_York'))
     else:
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
 
-def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyness_range=(1, 5)):
+def get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
     """
     Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time.
 
@@ -94,6 +96,7 @@ def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyne
             dt_iso__dt_iso__range=(time_from, time_to)).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
                                                                'bucket', 'taxi_zone__trees_scaled',
                                                                f'taxi_zone__{style}',
+                                                               f'taxi_zone__zoning__{zone_type}',
                                                                'dt_iso__temp', 'dt_iso__weather_main',
                                                                'dt_iso__weather_icon')
     else:
@@ -102,6 +105,7 @@ def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyne
             dt_iso__weather_main=weather).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
                                                  'bucket', 'taxi_zone__trees_scaled',
                                                  f'taxi_zone__{style}',
+                                                 f'taxi_zone__zoning__{zone_type}',
                                                  'dt_iso__temp', 'dt_iso__weather_main',
                                                  'dt_iso__weather_icon')
 
@@ -118,6 +122,7 @@ def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyne
             'busyness': record['bucket'],
             'trees': record['taxi_zone__trees_scaled'],
             'style': record[f'taxi_zone__{style}'],
+            'zone_type': record[f'taxi_zone__zoning__{zone_type}'],
             'weather': {
                 'temp': record['dt_iso__temp'],
                 'weather_description': record['dt_iso__weather_main'],
@@ -128,7 +133,7 @@ def get_results(style, weather, user_time=get_ny_dt(), tree_range=(1, 5), busyne
     return results
 
 
-def generate_response(target_busyness, target_trees, target_style, target_dt, weather=None, mcdm_method=MAIRCA,
+def generate_response(target_busyness, target_trees, target_style, target_type, target_dt, weather=None, mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
     Generates a dictionary containing top results based on the target busyness, style, date-time, and weather.
@@ -169,7 +174,7 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
             f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
 
     # validate supplied time
-    ny_dt = get_ny_dt(target_dt)
+    ny_dt = check_ny_dt(target_dt)
 
     # if the time supplied is earlier than the earliest available time, take that one
     # if the time supplied is later than the latest available time, take that one
@@ -177,7 +182,7 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    results = get_results(style_dict.get(target_style), weather, ny_dt)
+    results = get_results(style_dict.get(target_style), weather, target_type, ny_dt)
 
     # if there are no records matching the query, return an empty dictionary
     if len(results) == 0:
@@ -191,11 +196,12 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
     alts = np.array([[abs(target_busyness - value['busyness']),
                       abs(target_trees - value['trees']),
                       value['style'],
+                      value['zone_type'],
                       abs((ny_dt - value['dt_iso_tz']).total_seconds())] for value in
                      results.values()], dtype=int)
 
     # define types of criteria (-1 for minimisation, 1 for maximisation)
-    types = np.array([-1, -1, 1, -1])
+    types = np.array([-1, -1, 1, 1, -1])
 
     # set weights for criteria (default is entropy_weights)
     weights = mcdm_weights(alts)
@@ -239,20 +245,33 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, we
     for idx, key in enumerate(top_results.keys()):
         top_results[key]['rank'] = idx + 1
         del top_results[key]['dt_iso_tz']
+        top_results[key]['zone_type'] = f'{round(top_results[key]["zone_type"])}% {target_type}'
 
     return top_results
 
 
 def current_busyness():
-    ny_dt = get_ny_dt()
+
+    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0,microsecond=0)
+
+    # print(f'current time: {ny_dt}')
 
     # find records where dt_iso = ny_dt
-    results = Results.objects.filter(dt_iso=ny_dt)
+    results = Busyness.objects.filter(dt_iso_id=ny_dt).values('taxi_zone_id', 'bucket')
+
+    # if no results have been found, try the next hour
+    # necessary if request is made just after predictions have been updated
+    if len(results) == 0:
+        results = Busyness.objects.filter(dt_iso_id=ny_dt + timedelta(hours=1)).values('taxi_zone_id', 'bucket')
+
+    # print(f'results: {results}')
 
     # New dict to store the busyness for each taxi zone
     busyness_dict = {}
 
     for result in results:
-        busyness_dict[result.taxi_zone] = result.bucket
+        busyness_dict[result['taxi_zone_id']] = result['bucket']
+
+    # print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict

@@ -67,6 +67,7 @@ def open_geo(geojson=zone_path):
 
     zones = []
     image_urls = []
+    image_urls_small = []
     colors = []
 
     features = data['features']
@@ -75,11 +76,12 @@ def open_geo(geojson=zone_path):
         properties = feature['properties']
         zones.append(properties['location_id'])
         image_urls.append(properties['image_url'])
+        image_urls_small.append(properties['image_url_small'])
 
         image = img_load(properties['image_url'])
         colors.append(palette_check(image))
 
-    df = pd.DataFrame({'location_id': zones, 'image_url': image_urls, 'colors': colors})
+    df = pd.DataFrame({'location_id': zones, 'image_url': image_urls, 'image_url_small': image_urls_small, 'colors': colors})
     return df
 
 

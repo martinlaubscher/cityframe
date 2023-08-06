@@ -7,16 +7,19 @@ cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
 sys.path.append(cityframe_path)
 
 from drf_yasg import openapi
+from django.db.models import Case, CharField, Value, When, F
+from django.db.models.functions import Greatest
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.get_results import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response
+from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning
 import requests
 import datetime
 import pytz
+from dateutil import tz
 from django.core.cache import cache
 from django.utils import timezone
 
@@ -34,6 +37,39 @@ def convert_to_datetime_string(timestamp):
     dt = datetime.datetime.utcfromtimestamp(timestamp)
     dt_string = dt.strftime('%Y-%m-%d %H:%M:%S')
     return dt_string
+
+
+def convert_time_format(date_str, golden_hour_str):
+    """This function converts the golden hour string provided by sunrisesunset API to a usable format
+
+    Args:
+        date_str
+        golden_hour_str
+
+    """
+    # Create datetime object
+    datetime_obj = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    golden_hour = datetime.datetime.strptime(golden_hour_str, "%I:%M:%S %p")
+    golden_hour = golden_hour.replace(year=datetime_obj.year, month=datetime_obj.month, day=datetime_obj.day)
+
+    # Return formatted string
+    return golden_hour.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def add_minutes_to_time(time_str, minutes):
+    """This function adds (or subtracts) minutes to a time string
+
+    Args:
+        time_str (str): time string in the format "YYYY-MM-DD HH:MM:SS".
+        minutes (int): number of minutes to add to the time. Can be negative to subtract minutes
+
+    Returns:
+        str: The calculated new time as a string in format "YYYY-MM-DD HH:MM:SS"
+
+    """
+    time_obj = datetime.datetime.strptime(time_str, "%Y-%m-%d %H:%M:%S")
+    new_time_obj = time_obj + datetime.timedelta(minutes=minutes)
+    return new_time_obj.strftime("%Y-%m-%d %H:%M:%S")
 
 
 class CurrentWeatherAPIView(APIView):
@@ -99,77 +135,213 @@ class FutureWeatherAPIView(APIView):
         return RestResponse(closest_match)
 
 
+# class CurrentSuntimesAPIView(APIView):
+#     def get(self, request, formatting=None):
+#
+#         """Get request for current day's sunrise and sunset data
+#
+#         One optional argument ('formatting')
+#
+#         Returns json listing sunrise and sunset in unix timestamp format (with offset applied)
+#         If formatting == 'datetime', returns a datetime string
+#         """
+#         url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
+#         response = requests.get(url)
+#         raw_data = response.json()
+#         sunrise_timestamp = raw_data['sys']['sunrise']
+#         sunset_timestamp = raw_data['sys']['sunset']
+#         timezone_offset = raw_data['timezone']
+#         sunrise_local = sunrise_timestamp + timezone_offset
+#         sunset_local = sunset_timestamp + timezone_offset
+#
+#         # Check if the 'format' query parameter is provided
+#         if formatting == 'datetime':
+#             # Handle datetime format
+#             processed_data = {
+#                 'sunrise': convert_to_datetime_string(sunrise_local),
+#                 'sunset': convert_to_datetime_string(sunset_local),
+#             }
+#         else:
+#             # Handle default format
+#             processed_data = {
+#                 'sunrise': sunrise_local,
+#                 'sunset': sunset_local,
+#             }
+#
+#         return RestResponse(processed_data)
+
+
 class CurrentSuntimesAPIView(APIView):
-    def get(self, request, formatting=None):
+    def get(self, request):
+        """Get request for current day's sunrise and sunset data, including golden and blue hours
 
-        """Get request for current day's sunrise and sunset data
-
-        One optional argument ('formatting')
-
-        Returns json listing sunrise and sunset in unix timestamp format (with offset applied)
-        If formatting == 'datetime', returns a datetime string
+        Returns json listing sunrise, sunset, golden and blue hours in datetime strings (local time)
         """
-        url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-        response = requests.get(url)
-        raw_data = response.json()
+        # Get New York timezone and current date with PYTZ / datetime
+        ny_tz = pytz.timezone('America/New_York')
+        ny_datetime = datetime.datetime.now(ny_tz)
+        today = ny_datetime.strftime('%Y-%m-%d')
+
+        # data sources for accurate sunrise/sunset and evening golden hour times
+        url_suntimes = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid=' \
+                       f'{openweather_key}'
+        url_golden_hr = f'https://api.sunrisesunset.io/json?lat=40.7831&lng=-73.9712&timezone=%22America/New_York%22' \
+                        f'&date={today}'
+
+        # retrieve sunrise / sunset data
+        response_suntimes = requests.get(url_suntimes)
+        raw_data = response_suntimes.json()
         sunrise_timestamp = raw_data['sys']['sunrise']
         sunset_timestamp = raw_data['sys']['sunset']
         timezone_offset = raw_data['timezone']
-        sunrise_local = sunrise_timestamp + timezone_offset
-        sunset_local = sunset_timestamp + timezone_offset
 
-        # Check if the 'format' query parameter is provided
-        if formatting == 'datetime':
-            # Handle datetime format
-            processed_data = {
-                'sunrise': convert_to_datetime_string(sunrise_local),
-                'sunset': convert_to_datetime_string(sunset_local),
-            }
-        else:
-            # Handle default format
-            processed_data = {
-                'sunrise': sunrise_local,
-                'sunset': sunset_local,
-            }
+        # apply timezone offset for local time conversion, and convert to string
+        sunrise_local = sunrise_timestamp + timezone_offset
+        sunrise_local_str = convert_to_datetime_string(sunrise_local)
+        sunset_local = sunset_timestamp + timezone_offset
+        sunset_local_str = convert_to_datetime_string(sunset_local)
+
+        # retrieve evening golden hour data
+        response_golden = requests.get(url_golden_hr)
+        golden_data = response_golden.json()
+
+        # Extract relevant keys/values from the response
+        golden_hour = golden_data['results']['golden_hour']
+        golden_hour_formatted = convert_time_format(today, golden_hour)
+
+        # we have a good data source for evening golden hour but not for its morning equivalent or for blue hours
+        # These times are calculated below, assuming 30 minutes before/after sunrise/sunset
+        blue_hour_morning_str = add_minutes_to_time(sunrise_local_str, -30)
+        blue_hour_evening_str = add_minutes_to_time(sunset_local_str, 30)
+        golden_hour_morning_str = add_minutes_to_time(sunrise_local_str, 30)
+
+        processed_data = {
+            'blue_hour_morning': blue_hour_morning_str,
+            'sunrise': sunrise_local_str,
+            'golden_hour_morning': golden_hour_morning_str,
+            'golden_hour_evening': golden_hour_formatted,
+            'sunset': sunset_local_str,
+            'blue_hour_evening': blue_hour_evening_str,
+        }
 
         return RestResponse(processed_data)
 
 
-class FutureSuntimesAPIView(APIView):
-    def get(self, request, days_in_future, formatting=None):
-        """Get request for future sunrise and sunset data
-        Takes one argument, days_in_future, an int between 1-5 inclusive (representing a number of days into the future)
-        Returns a json listing sunrise and sunset for that day in unix timestamp format (with offset applied)
+class SuntimesAPIView(APIView):
+    def get(self, request, requested_date):
+        """Get request for sunrise/sunset and blue/golden hour data
+
+        Args:
+            requested_date (str), a date in format yyyy-mm-dd, acceptable up to today+14 days new york time
+
+        Returns:
+            a json listing sunrise/sunset, golden/blue hours for that day in datetime string format (local time)
         """
-        url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
-              f'lat=40.7831&lon=-73.9712&cnt=6&appid={openweather_key}'
-        response = requests.get(url)
-        data = response.json()
-        timezone_offset = data['city']['timezone']
+        # Get New York timezone and current date with PYTZ / datetime
+        ny_tz = pytz.timezone('America/New_York')
+        ny_datetime = datetime.datetime.now(ny_tz)
 
-        # Filter the data based on days_in_future
-        filtered_data = data['list'][days_in_future]  # Adjusting index since days_in_future starts from 1
+        # sanitise input for requested_date
+        if requested_date is not None:
+            try:
+                datetime.datetime.strptime(requested_date, '%Y-%m-%d')
+            except ValueError:
+                return RestResponse({'error': 'Invalid date format. It should be in the format "YYYY-MM-DD".'},
+                                    status=status.HTTP_400_BAD_REQUEST)
 
-        # calculate sunrise and sunset with offset applied
-        sunrise_timestamp = filtered_data['sunrise']
-        sunset_timestamp = filtered_data['sunset']
-        sunrise_local = sunrise_timestamp + timezone_offset
-        sunset_local = sunset_timestamp + timezone_offset
+        # Convert future_date to a datetime.date object, compare to today and calculate difference in days
+        requested_date_obj = datetime.datetime.strptime(requested_date, '%Y-%m-%d').date()
+        time_difference = requested_date_obj - ny_datetime.date()
+        days_in_future = time_difference.days
 
-        if formatting == 'datetime':
-            # Handle datetime format
-            processed_data = {
-                'sunrise': convert_to_datetime_string(sunrise_local),
-                'sunset': convert_to_datetime_string(sunset_local),
-            }
+        if requested_date_obj.day == ny_datetime.day:
+            current_suntimes_view = CurrentSuntimesAPIView()
+            return current_suntimes_view.get(request)
         else:
+            # data sources for accurate sunrise/sunset and evening golden hour times
+            url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
+                  f'lat=40.7831&lon=-73.9712&cnt=16&appid={openweather_key}'
+            url_golden_hr = f'https://api.sunrisesunset.io/json?lat=40.7831&lng=-73.9712&timezone=%22America/New_York%22' \
+                            f'&date={requested_date}'
+
+            # retrieve sunrise / sunset data
+            suntimes_response = requests.get(url)
+            suntimes_data = suntimes_response.json()
+
+            # Filter the data based on days_in_future
+            filtered_data = suntimes_data['list'][days_in_future]  # Adjusting index since days_in_future starts from 1
+
+            # calculate sunrise and sunset with offset applied
+            timezone_offset = suntimes_data['city']['timezone']
+            sunrise_timestamp = filtered_data['sunrise']
+            sunset_timestamp = filtered_data['sunset']
+            sunrise_local = sunrise_timestamp + timezone_offset
+            sunrise_local_str = convert_to_datetime_string(sunrise_local)
+            sunset_local = sunset_timestamp + timezone_offset
+            sunset_local_str = convert_to_datetime_string(sunset_local)
+
+            # retrieve evening golden hour data
+            response_golden = requests.get(url_golden_hr)
+            golden_data = response_golden.json()
+
+            # Extract relevant keys/values from the response
+            golden_hour = golden_data['results']['golden_hour']
+            golden_hour_formatted = convert_time_format(requested_date, golden_hour)
+
+            # we have a good data source for evening golden hour but not for its morning equivalent or for blue hours
+            # These times are calculated below, assuming 30 minutes before/after sunrise/sunset
+            blue_hour_morning_str = add_minutes_to_time(sunrise_local_str, -30)
+            blue_hour_evening_str = add_minutes_to_time(sunset_local_str, 30)
+            golden_hour_morning_str = add_minutes_to_time(sunrise_local_str, 30)
+
             # format data correctly for the expected response
             processed_data = {
-                'sunrise': sunrise_local,
-                'sunset': sunset_local
+                'blue_hour_morning': blue_hour_morning_str,
+                'sunrise': sunrise_local_str,
+                'golden_hour_morning': golden_hour_morning_str,
+                'golden_hour_evening': golden_hour_formatted,
+                'sunset': sunset_local_str,
+                'blue_hour_evening': blue_hour_evening_str,
             }
 
-        return RestResponse(processed_data)
+            return RestResponse(processed_data)
+
+
+# class FutureSuntimesAPIView(APIView):
+#     def get(self, request, days_in_future, formatting=None):
+#         """Get request for future sunrise and sunset data
+#         Takes one argument, days_in_future, an int between 1-5 inclusive (representing a number of days into the future)
+#         Returns a json listing sunrise and sunset for that day in unix timestamp format (with offset applied)
+#         """
+#         url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
+#               f'lat=40.7831&lon=-73.9712&cnt=16&appid={openweather_key}'
+#         response = requests.get(url)
+#         data = response.json()
+#         timezone_offset = data['city']['timezone']
+#
+#         # Filter the data based on days_in_future
+#         filtered_data = data['list'][days_in_future]  # Adjusting index since days_in_future starts from 1
+#
+#         # calculate sunrise and sunset with offset applied
+#         sunrise_timestamp = filtered_data['sunrise']
+#         sunset_timestamp = filtered_data['sunset']
+#         sunrise_local = sunrise_timestamp + timezone_offset
+#         sunset_local = sunset_timestamp + timezone_offset
+#
+#         if formatting == 'datetime':
+#             # Handle datetime format
+#             processed_data = {
+#                 'sunrise': convert_to_datetime_string(sunrise_local),
+#                 'sunset': convert_to_datetime_string(sunset_local),
+#             }
+#         else:
+#             # format data correctly for the expected response
+#             processed_data = {
+#                 'sunrise': sunrise_local,
+#                 'sunset': sunset_local
+#             }
+#
+#         return RestResponse(processed_data)
 
 
 class GoldenHourAPIView(APIView):
@@ -211,6 +383,12 @@ class CurrentManhattanTimeAPIView(APIView):
         Returns a JSON of the current Unix timestamp (with offset applied)
         If formatting == 'datetime', returns a JSON with datetime string
         """
+
+        # sanitise input for 'formatting'
+        if formatting is not None and formatting != 'datetime':
+            return RestResponse({'error': 'Invalid formatting type. "datetime" is the only valid option.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
         url = f'http://api.timezonedb.com/v2.1/get-time-zone?key={timezone_db_key}&format=json&by=position&' \
               f'lat=40.7831&lng=-73.9712'
         response = requests.get(url)
@@ -234,10 +412,15 @@ class CurrentManhattanTimeAPIView(APIView):
 
 
 class CurrentManhattanBusyness(APIView):
+    """Get request for the current busyness data in Manhattan
+
+    Returns a JSON with each taxi zone and corresponding busyness level
+    """
+
     def get(self, request):
         busyness_data = cache.get('current_busyness')
 
-        if busyness_data is not None:
+        if busyness_data is not None and len(busyness_data) > 0:
             # If there is data in the cache, return it
             # for debugging
             print("\nBusyness data fetched from Cache")
@@ -259,6 +442,72 @@ class ResponseSerializer(serializers.Serializer):
     submission_id = serializers.IntegerField()
 
 
+class TaxiZoneDataView(APIView):
+    """Get request for general data for each taxi zone
+
+    Returns:
+        JSON with each taxi zone as a key, with corresponding name (str), number of trees (int) and
+        main architectural style (string) as values
+    """
+
+    def get(self, request):
+
+        zone_data = cache.get('zone_data')
+
+        if zone_data is not None:
+            print('zone data fetched from cache')
+            return RestResponse(zone_data)
+        else:
+            styles = [
+                'neo_georgian', 'greek_revival', 'romanesque_revival',
+                'neo_grec', 'renaissance_revival', 'beaux_arts',
+                'queen_anne', 'italianate', 'federal', 'neo_renaissance'
+            ]
+            style_columns = {
+                'neo_georgian': 'neo-Georgian',
+                'greek_revival': 'Greek Revival',
+                'romanesque_revival': 'Romanesque Revival',
+                'neo_grec': 'neo-Grec',
+                'renaissance_revival': 'Renaissance Revival',
+                'beaux_arts': 'Beaux-Arts',
+                'queen_anne': 'Queen Anne',
+                'italianate': 'Italianate',
+                'federal': 'Federal',
+                'neo_renaissance': 'neo-Renaissance'
+            }
+
+            queryset = TaxiZones.objects.annotate(
+                max_style_value=Greatest(*styles),
+                zone_type=F('zoning__zone_type')
+            )
+
+            for style, column in style_columns.items():
+                queryset = queryset.annotate(
+                    **{f'{style}_is_max': Case(When(max_style_value=F(style), then=Value(True)), default=Value(False),
+                                               output_field=CharField())}
+                )
+
+            results = {}
+            for obj in queryset:
+                result = {
+                    'zone': obj.zone,
+                    'trees': obj.trees,
+                    'zone_type': obj.zone_type
+                }
+
+                for style, column in style_columns.items():
+                    if getattr(obj, f'{style}_is_max'):
+                        result['main_style'] = column
+                        break
+
+                results[str(obj.id)] = result
+
+            # Add the data to the cache, with a timeout of 90 days (in seconds)
+            cache.set('zone_data', results, 7776000)
+
+            return RestResponse(results)
+
+
 class MainFormSubmissionView(APIView):
 
     @swagger_auto_schema(
@@ -269,6 +518,7 @@ class MainFormSubmissionView(APIView):
                 'trees': openapi.Schema(type=openapi.TYPE_INTEGER, description='Trees'),
                 'time': openapi.Schema(type=openapi.TYPE_STRING, description='Time string'),
                 'style': openapi.Schema(type=openapi.TYPE_STRING, description='Style'),
+                'weather': openapi.Schema(type=openapi.TYPE_STRING, description='Weather'),
             }
         ),
         responses={200: ResponseSerializer(many=True)}
@@ -278,22 +528,77 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
+        zone_type = str.lower(request.data.get('zone_type'))
+        weather = request.data.get('weather', None)
+
+        # If user chooses 'All' option, set weather to None
+        if weather == 'All':
+            weather = None
+
+        # Sanitise busyness and trees inputs
+        try:
+            busyness = int(busyness)
+            trees = int(trees)
+        except ValueError:
+            return RestResponse({'error': 'Busyness and Trees should be integers.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not (1 <= busyness <= 5) or not (1 <= trees <= 5):
+            return RestResponse({'error': 'Busyness and Trees should be in the range 1-5 inclusive.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        # Sanitise style input
+        valid_styles = ['neo-Georgian', 'Greek Revival', 'Romanesque Revival', 'neo-Grec', 'Renaissance Revival',
+                        'Beaux-Arts', 'Queen Anne', 'Italianate', 'Federal', 'neo-Renaissance']
+        if style not in valid_styles:
+            return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Sanitise zone type input
+        valid_types = ['commercial', 'manufacturing', 'park', 'residential']
+        if zone_type not in valid_types:
+            return RestResponse({'error': 'Invalid zone type.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Sanitise time input
+        try:
+            datetime.datetime.strptime(time, '%Y-%m-%d %H:%M')
+        except ValueError:
+            return RestResponse({'error': 'Invalid time format. It should be in the format "YYYY-MM-DD HH:MM".'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+        # handles the retrieval of optional parameter 'weather', sanitises input
+        try:
+            weather_list = ['Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall',
+                            'Thunderstorm']
+            if weather is not None:
+                assert weather in weather_list
+        except AssertionError:
+            return RestResponse({'error': 'Invalid weather type.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # prints data for debugging
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
+        print(f"zone type: {zone_type}")
         print(f"time: {time}")
+        print(f"weather preference: {weather}")
 
         ny_tz = pytz.timezone('America/New_York')
         query_time = timezone.now().astimezone(ny_tz)
 
+        # consider adding weather column in the Query model
         query = Query.objects.create(
             time=time,
             busyness=busyness,
             trees=trees,
             style=style,
+            zone_type=zone_type,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, time)
+        results = generate_response(busyness, trees, style, zone_type, time, weather)
+
+        # handle empty results (e.g., user searches for 'snow' in summer)
+        if not results:
+            return RestResponse({'error': 'No results found for the given parameters.'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
         responses = []
 
