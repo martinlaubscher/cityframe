@@ -1,3 +1,10 @@
+import os
+import django
+
+# Set up Django
+os.environ['DJANGO_SETTINGS_MODULE'] = 'web_app.settings_dev'
+django.setup()
+
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc
@@ -7,8 +14,7 @@ from pymcdm.weights import critic_weights
 from pymcdm.methods import MAIRCA
 from pymcdm.helpers import rankdata
 import numpy as np
-from api_endpoints.get_results import django_get_results, psycopg_get_results
-
+from api_endpoints.get_results import django_get_results
 
 def check_error_type(e):
     """
@@ -61,9 +67,7 @@ def check_ny_dt(target_dt):
     else:
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
-
-def generate_response(target_busyness, target_trees, target_style, target_type, target_dt, weather=None,
-                      mcdm_method=MAIRCA,
+def generate_response(target_busyness, target_trees, target_style, target_type, target_dt, weather=None, mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
     Generates a dictionary containing top results based on the target busyness, style, date-time, and weather.
@@ -112,33 +116,36 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    # results = django_get_results(style_dict.get(target_style), weather, target_type, ny_dt)
-    records = psycopg_get_results(target_style, weather, target_type, ny_dt)
+    results = django_get_results(style_dict.get(target_style), weather, target_type, ny_dt)
+    # results = psycopg_get_results(target_style, weather, target_type, ny_dt)
 
     # if there are no records matching the query, return an empty dictionary
-    if len(records) == 0:
-        return records
+    if len(results) == 0:
+        return results
 
     # check for errors
-    if isinstance(records, Exception):
-        return check_error_type(records)
+    if isinstance(results, Exception):
+        return check_error_type(results)
 
-    # Create empty array of the right shape
-    alts = np.empty((len(records), 5), dtype=int)
-
-    # Fill the array
-    for i, record in enumerate(records):
-        alts[i, 0] = abs(target_busyness - record['bucket'])
-        alts[i, 1] = abs(target_trees - record['trees_scaled'])
-        alts[i, 2] = record[target_style]
-        alts[i, 3] = record[target_type]
-        alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
+    # prep alternatives with values for four criteria used in mcdm method in a numpy array:
+    alts = np.array([[abs(target_busyness - value['busyness']),
+                      abs(target_trees - value['trees']),
+                      value['style'],
+                      value['zone_type'],
+                      abs((ny_dt - value['dt_iso_tz']).total_seconds())] for value in
+                     results.values()], dtype=int)
 
     # define types of criteria (-1 for minimisation, 1 for maximisation)
     types = np.array([-1, -1, 1, 1, -1])
 
     # set weights for criteria (default is entropy_weights)
     weights = mcdm_weights(alts)
+
+    # print(f' Variance weights: {mcdm_w.variance_weights(alts)}')
+    # print(f' Gini weights: {mcdm_w.gini_weights(alts)}')
+    # print(f' Angle weights: {mcdm_w.angle_weights(alts)}')
+    # print(f' Critic weights: {mcdm_w.critic_weights(alts)}')
+    # print(f' Entropy weights: {mcdm_w.entropy_weights(alts)}')
 
     # initialise mcdm method (default is MAIRCA)
     method = mcdm_method()
@@ -147,8 +154,12 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     pref = method(alts, weights, types)
     ranking = rankdata(pref)
 
-    ranked_records = sorted((dict(rank=ranking[i], **record) for i, record in enumerate(records)),
-                            key=lambda r: r['rank'])
+    # assign rankings to results
+    for idx, key in enumerate(results.keys()):
+        results[key]['rank'] = ranking[idx]
+
+    # sort results by rank
+    sorted_results = {k: v for k, v in sorted(results.items(), key=lambda item: item[1]['rank'])}
 
     # Create a dictionary to track zone occurrences
     zone_occurrences = {}
@@ -156,38 +167,27 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     max_entries_per_zone = 1
 
     # Keep only top 10 with each zone appearing no more than twice
-    results = {}
-    ny_tz = tz.gettz('America/New_York')
-    rank = 1
+    top_results = {}
+    for k, v in sorted_results.items():
+        zone_name = v['zone']
+        if zone_occurrences.get(zone_name, 0) < max_entries_per_zone:
+            zone_occurrences[zone_name] = zone_occurrences.get(zone_name, 0) + 1
+            top_results[k] = v
+            if len(top_results) == 10:
+                break
 
-    for record in ranked_records:
-        if zone_occurrences.get(record['zone'], 0) < max_entries_per_zone:
-            zone_occurrences[record['zone']] = zone_occurrences.get(record['zone'], 0) + 1
-            key = f"{record['taxi_zone']}_{record['dt_iso']}"
-            ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
-            results[key] = {
-                'id': str(record['taxi_zone']),
-                'zone': record['zone'],
-                'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
-                'busyness': record['bucket'],
-                'trees': record['trees_scaled'],
-                'style': record[target_style],
-                'zone_type': f'{round(record[target_type])}% {target_type}',
-                'rank': rank,
-                'weather': {
-                    'temp': record['temp'],
-                    'weather_description': record['weather_main'],
-                    'weather_icon': record['weather_icon']
-                }
-            }
-            rank += 1
-        if rank > 10:
-            break
-    return results
+    # update the rank to be 1-10 for the top results (without repetitions / omissions)
+    for idx, key in enumerate(top_results.keys()):
+        top_results[key]['rank'] = idx + 1
+        del top_results[key]['dt_iso_tz']
+        top_results[key]['zone_type'] = f'{round(top_results[key]["zone_type"])}% {target_type}'
+
+    return top_results
 
 
 def current_busyness():
-    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0, microsecond=0)
+
+    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0,microsecond=0)
 
     # print(f'current time: {ny_dt}')
 

@@ -15,7 +15,22 @@ from datetime import datetime, timedelta
 
 pool = apps.get_app_config('api_endpoints').pool
 
+
 def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
+    """
+    Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time. Uses psycopg.
+
+    Args:
+        style (str): Architectural style. It should match with the architectural style fields in the TaxiZones table.
+        weather (str or None): The desired weather (main category). If not None, it should match one of the present values in the WeatherFc table.
+        zone_type (str): The desired zone type. should match with one of the types in the zoning table.
+        tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range. Optional, defaults to (1, 5).
+        busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range. Optional, defaults to (1, 5).
+        user_time (datetime): The desired time as a timezone-aware datetime object. Optional, defaults to the current time in New York timezone.
+
+    Returns:
+        list: A list of dictionaries (one dictonary per record) of the records matching the query.
+    """
 
     if weather is None:
         time_from = user_time - timedelta(hours=12)
@@ -48,36 +63,17 @@ def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5),
             # Fetch the results as dictionaries
             records = cur.fetchall()
 
-    results = {}
-    ny_tz = tz.gettz('America/New_York')
-    for record in records:
-        key = f"{record['taxi_zone']}_{record['dt_iso']}"
-        ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
-        results[key] = {
-            'id': str(record['taxi_zone']),
-            'zone': record['zone'],
-            'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
-            'dt_iso_tz': ny_dt_iso,
-            'busyness': record['bucket'],
-            'trees': record['trees_scaled'],
-            'style': record[f'{style}'],
-            'zone_type': record[f'{zone_type}'],
-            'weather': {
-                'temp': record['temp'],
-                'weather_description': record['weather_main'],
-                'weather_icon': record['weather_icon']
-            }
-        }
+    return records
 
-    return results
 
 def django_get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
     """
-    Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time.
+    Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time. Uses Django's ORM.
 
     Args:
         style (str): Architectural style. It should match with the architectural style fields in the TaxiZones table.
         weather (str or None): The desired weather (main category). If not None, it should match one of the present values in the WeatherFc table.
+        zone_type (str): The desired zone type. should match with one of the types in the zoning table.
         tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range. Optional, defaults to (1, 5).
         busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range. Optional, defaults to (1, 5).
         user_time (datetime): The desired time as a timezone-aware datetime object. Optional, defaults to the current time in New York timezone.
