@@ -150,19 +150,6 @@ class HiddenGemsDataView(APIView):
 
         response_data = {}
         for zone in zones:
-            # list of style fields
-            # style_fields = {
-            #     "neo_Georgian": zone.neo_georgian,
-            #     "Greek_Revival": zone.greek_revival,
-            #     "Romanesque_Revival": zone.romanesque_revival,
-            #     "neo_Grec": zone.neo_grec,
-            #     "Renaissance_Revival": zone.renaissance_revival,
-            #     "Beaux_Arts": zone.beaux_arts,
-            #     "Queen_Anne": zone.queen_anne,
-            #     "Italianate": zone.italianate,
-            #     "Federal": zone.federal,
-            #     "neo_Renaissance": zone.neo_renaissance,
-            # }
 
             style_fields = {
                 "neo-Georgian": zone.neo_georgian,
