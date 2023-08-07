@@ -10,7 +10,6 @@
     padding-right: 4vw;
     padding-bottom: 2vh;
     padding-top: 1vh;
-    height: 100%;
 }
 
 
@@ -82,7 +81,7 @@
     font-size: 1.5vh;
     text-align: right;
     font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
-    margin-left: 30px;
+    margin-left: 20px;
 }
 
 .weather-icon {

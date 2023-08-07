@@ -7,7 +7,7 @@ cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
 sys.path.append(cityframe_path)
 
 from drf_yasg import openapi
-from django.db.models import Case, CharField, Value, When, F
+from django.db.models import Case, CharField, Value, When, F, Count
 from django.db.models.functions import Greatest
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.get_results import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response, TaxiZones
+from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning
 import requests
 import datetime
 import pytz
@@ -134,6 +134,48 @@ class FutureWeatherAPIView(APIView):
 
         return RestResponse(closest_match)
 
+
+class HiddenGemsDataView(APIView):
+    def get(self, request):
+        least_recommended_zones_ids = (
+            Response.objects.values("zone_id")
+            .annotate(count=Count("zone_id"))
+            .order_by("count")[:10]
+        )
+        # get zone_ids from the results
+        zone_ids = [zone["zone_id"] for zone in least_recommended_zones_ids]
+
+        # Get the relevant TaxiZone objects
+        zones = TaxiZones.objects.filter(id__in=zone_ids)
+
+        response_data = {}
+        for zone in zones:
+
+            style_fields = {
+                "neo-Georgian": zone.neo_georgian,
+                "Greek Revival": zone.greek_revival,
+                "Romanesque Revival": zone.romanesque_revival,
+                "neo-Grec": zone.neo_grec,
+                "Renaissance Revival": zone.renaissance_revival,
+                "Beaux-Arts": zone.beaux_arts,
+                "Queen Anne": zone.queen_anne,
+                "Italianate": zone.italianate,
+                "Federal": zone.federal,
+                "neo-Renaissance": zone.neo_renaissance,
+            }
+
+            # Find the style with the max value
+            max_style = max(style_fields, key=style_fields.get)
+
+            response_data[zone.id] = {
+                "zone_id": zone.id,
+                "name": zone.zone,
+                "trees": zone.trees,
+                "main_style_amount": style_fields[max_style],
+                "main_style": max_style,
+            }
+
+        return RestResponse(response_data)
 
 # class CurrentSuntimesAPIView(APIView):
 #     def get(self, request, formatting=None):
@@ -418,7 +460,6 @@ class CurrentManhattanBusyness(APIView):
     """
 
     def get(self, request):
-
         busyness_data = cache.get('current_busyness')
 
         if busyness_data is not None and len(busyness_data) > 0:
@@ -479,6 +520,7 @@ class TaxiZoneDataView(APIView):
 
             queryset = TaxiZones.objects.annotate(
                 max_style_value=Greatest(*styles),
+                zone_type=F('zoning__zone_type')
             )
 
             for style, column in style_columns.items():
@@ -492,6 +534,7 @@ class TaxiZoneDataView(APIView):
                 result = {
                     'zone': obj.zone,
                     'trees': obj.trees,
+                    'zone_type': obj.zone_type
                 }
 
                 for style, column in style_columns.items():
@@ -527,6 +570,7 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
+        zone_type = str.lower(request.data.get('zone_type'))
         weather = request.data.get('weather', None)
 
         # If user chooses 'All' option, set weather to None
@@ -550,6 +594,11 @@ class MainFormSubmissionView(APIView):
         if style not in valid_styles:
             return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Sanitise zone type input
+        valid_types = ['commercial', 'manufacturing', 'park', 'residential']
+        if zone_type not in valid_types:
+            return RestResponse({'error': 'Invalid zone type.'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Sanitise time input
         try:
             datetime.datetime.strptime(time, '%Y-%m-%d %H:%M')
@@ -570,6 +619,7 @@ class MainFormSubmissionView(APIView):
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
+        print(f"zone type: {zone_type}")
         print(f"time: {time}")
         print(f"weather preference: {weather}")
 
@@ -582,9 +632,10 @@ class MainFormSubmissionView(APIView):
             busyness=busyness,
             trees=trees,
             style=style,
+            zone_type=zone_type,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, time, weather)
+        results = generate_response(busyness, trees, style, zone_type, time, weather)
 
         # handle empty results (e.g., user searches for 'snow' in summer)
         if not results:

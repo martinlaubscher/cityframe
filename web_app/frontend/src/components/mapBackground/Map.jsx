@@ -98,6 +98,10 @@ export default function Map({viewMode, zones, ...props}) {
     setBusynessZonesObj(busynessZonesObj);
   }, [props.busynessZones]);
 
+  function capitaliseFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
   // useEffect(() => {
   //   setPrevBusynessLevel(busynessZonesObj);
   // }, [busynessZonesObj]);
@@ -181,6 +185,7 @@ export default function Map({viewMode, zones, ...props}) {
         const zoneName = zoneDetails ? zoneDetails.zone : "Unknown Zone";
         const architectureStyle = zoneDetails ? zoneDetails.main_style : "Unknown Style";
         const treeCount = zoneDetails ? zoneDetails.trees : "Unknown";
+        const zoneType = zoneDetails ? zoneDetails.zone_type : "Unknown Type";
 
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
           return (
@@ -199,6 +204,10 @@ export default function Map({viewMode, zones, ...props}) {
                   <div className="popup-details">
                     <p>architecture style:</p>
                     <p className="popup-details-value">{architectureStyle}</p>
+                  </div>
+                  <div className="popup-details">
+                    <p>zone type:</p>
+                    <p className="popup-details-value">{capitaliseFirstLetter(zoneType)}</p>
                   </div>
                   <div className="popup-details">
                     <p>trees:</p>

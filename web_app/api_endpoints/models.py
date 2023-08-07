@@ -223,6 +223,7 @@ class Query(models.Model):
     trees = models.IntegerField()
     time = models.CharField(max_length=255)
     style = models.CharField(max_length=255)
+    zone_type = models.CharField(max_length=32, null=True)
     query_time = models.DateTimeField()
 
     class Meta:
@@ -237,9 +238,24 @@ class Response(models.Model):
     busyness = models.IntegerField()
     trees = models.IntegerField()
     style = models.IntegerField()
+    zone_type = models.CharField(max_length=64, null=True)
     weather = models.JSONField()
     rank = models.IntegerField()
     submission = models.ForeignKey(Query, related_name='responses', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'cityframe\".\"user_query_response'
+
+
+class Zoning(models.Model):
+    location_id = models.OneToOneField(TaxiZones, on_delete=models.CASCADE, primary_key=True, db_column='location_id')
+    commercial = models.FloatField()
+    manufacturing = models.FloatField()
+    park = models.FloatField()
+    residential = models.FloatField()
+    special = models.FloatField()
+    zone_type = models.CharField(max_length=32)
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"zoning'
