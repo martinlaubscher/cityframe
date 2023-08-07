@@ -33,18 +33,21 @@ p {
 
 .rank-zone-weathericon {
   display: flex; 
-  justify-content: left; 
+  justify-content: space-between; 
+}
+
+.rank-zone{
+  display: flex;
+  justify-content: left;
   align-items: center;
   font-weight: bold;
   margin-bottom: 1rem;
 }
 
 .rank {
-
   text-align:center;
-
   font-size: 40px;
-  margin-right: 25px;
+  margin-right: 25px !important;
   margin-bottom: 0;
 }
 
@@ -55,7 +58,10 @@ p {
   margin-bottom: 0;
 }
 .weathericon{
+  display: flex;
+  align-items: center;
   margin-left: 25px;
+  margin-bottom: 1rem;
 }
 
 .busyness, .tree, .style, .type, .datetime, .color-pallete {

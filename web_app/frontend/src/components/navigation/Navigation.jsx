@@ -115,7 +115,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span >hidden gem  <a style={{fontSize: "16px"}} className="betaTag">Beta</a></span>
+            <span >hidden gem <a style={{fontSize: "16px"}} className="betaTag">Beta</a></span>
             <span >the most rarely found location</span>
             {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info">

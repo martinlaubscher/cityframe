@@ -47,7 +47,9 @@
 .offcanvas-body-top {
   text-align: left; /* Aligns the content to the left horizontally */
   vertical-align: top; /* Aligns the content to the top vertically */
-  background-color: black!important;
+  background-color: #232323!important;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
 
 }
 
@@ -95,6 +97,7 @@ margin-bottom: 10px;
 
 .offcanvas-body{
   background-color: #232323 !important;
+  padding-top: 10vh;
 }
 .btn-close {
   filter: invert(1);
@@ -105,7 +108,7 @@ margin-bottom: 10px;
   position: fixed;
   top: 12%;
   height: 23% !important;
-  background-color: black;
+  background-color: #232323;
 }
 
 .nav{
@@ -117,4 +120,5 @@ margin-bottom: 10px;
     border-radius: 8px;
     padding: 0px 2px;
     display: inline-block;
+    margin-left: 10px;
 }

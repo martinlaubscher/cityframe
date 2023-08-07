@@ -55,13 +55,16 @@ export default function SearchResult({results, searchOptions}) {
           >
             <div className="result-info">
               <div className="rank-zone-weathericon">
-                <p className="rank">{result.rank}</p>
-                <p className="zone">{result.zone}</p>
+                <div className="rank-zone">
+                  <p className="rank">{result.rank}</p>
+                  <p className="zone">{result.zone}</p>
+                </div>
                 <div className="weathericon">
                   <FontAwesomeIcon
                     icon={getIcon(result.weather.weather_icon)}
                     size="2x"
                   />
+
                 </div>
               </div>
               <div className="busyness">

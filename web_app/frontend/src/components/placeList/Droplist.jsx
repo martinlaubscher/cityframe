@@ -14,7 +14,7 @@ export default function Droplist ({results, searchOptions, hideList}){
         </div>
           <div className="overlay-info">   
             <div className="list-info">
-              <div className="rank-zone-weathericon">
+              <div className="rank-zone">
                 <p className="rank">{results.rank.rank}</p>
                 <p className="zone">{results.rank.zone}</p>
               </div>
@@ -51,13 +51,15 @@ export default function Droplist ({results, searchOptions, hideList}){
                   <p className="colors-title">colors</p>
                 </div>
                 <div className="color-pallete-right place-pallete">
-                  {results.pallete.map((hex, index) => (
+                  
+                  {results.rank.pallete.map((hex, index) => (
                     <div
                       key={index}
                       className="hexdiv"
                       style={{ backgroundColor: hex }}
                     ></div>
-                  )) }
+                  ))
+                  }
                 </div>
               </div>
               <div className="datetime">
