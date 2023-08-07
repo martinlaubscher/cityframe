@@ -1,75 +1,77 @@
 import os
-import django
+import sys
+from datetime import timedelta
 
-# Set up Django
-os.environ['DJANGO_SETTINGS_MODULE'] = 'web_app.settings_dev'
-django.setup()
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(current_path))
 
-from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
-from django.utils.timezone import is_aware
-from api_endpoints.models import TaxiZones, Busyness, WeatherFc, Zoning
+sys.path.append(cityframe_path)
+
+from psycopg.rows import dict_row
+from django.apps import apps
+from api_endpoints.models import TaxiZones, Busyness, WeatherFc
 from dateutil import tz
 from datetime import datetime, timedelta
-from pymcdm.weights import critic_weights
-from pymcdm import weights as mcdm_w
-from pymcdm.methods import MAIRCA
-from pymcdm.helpers import rankdata
-import numpy as np
-from data.database.raw_get_results import raw_get_results
 
-def check_error_type(e):
-    """
-    Checks the type of the raised exception and returns a corresponding message.
+pool = apps.get_app_config('api_endpoints').pool
 
-    Args:
-        e (Exception): The exception object to be checked.
+def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
 
-    Returns:
-        str: A string message indicating the type of the caught exception.
-    """
+    if weather is None:
+        time_from = user_time - timedelta(hours=12)
+        time_to = user_time + timedelta(hours=12)
 
-    if isinstance(e, ObjectDoesNotExist):
-        return f"Caught an ObjectDoesNotExist exception.\n{e}"
-    elif isinstance(e, FieldDoesNotExist):
-        return f"Caught a FieldDoesNotExist exception.\n{e}"
+        sql = f'''
+        SELECT "cityframe"."Results"."taxi_zone", "cityframe"."taxi_zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."taxi_zones"."trees_scaled", "cityframe"."taxi_zones"."{style}", "cityframe"."zoning"."{zone_type}", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
+        FROM "cityframe"."Results"
+        INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
+        INNER JOIN "cityframe"."taxi_zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."taxi_zones"."location_id")
+        LEFT OUTER JOIN "cityframe"."zoning" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."zoning"."location_id")
+        WHERE ("cityframe"."Results"."dt_iso" BETWEEN '{time_from}'::timestamptz AND '{time_to}'::timestamptz AND "cityframe"."Results"."taxi_zone" IN (SELECT U0."location_id" FROM "cityframe"."taxi_zones" U0 WHERE U0."{style}" > 0));'''
     else:
-        return f"Caught an unknown exception.\n{e}"
+        sql = f'''
+        SELECT "cityframe"."Results"."taxi_zone", "cityframe"."taxi_zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."taxi_zones"."trees_scaled", "cityframe"."taxi_zones"."{style}", "cityframe"."zoning"."{zone_type}", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
+        FROM "cityframe"."Results"
+        INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
+        INNER JOIN "cityframe"."taxi_zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."taxi_zones"."location_id")
+        LEFT OUTER JOIN "cityframe"."zoning" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."zoning"."location_id")
+        WHERE ("cityframe"."weather_fc"."weather_main" = '{weather}' AND "cityframe"."Results"."taxi_zone" IN (SELECT U0."location_id" FROM "cityframe"."taxi_zones" U0 WHERE U0."{style}" > 0));'''
 
+    # Create a new transaction
+    with pool.connection() as conn:
 
-def check_ny_dt(target_dt):
-    """
-    Converts the given target date and time to a New York timezone-aware datetime object.
+        # Create a new cursor to execute the SQL statement
+        with conn.cursor(row_factory=dict_row) as cur:
+            # Execute SQL statement
+            cur.execute(sql)
 
-    Args:
-        target_dt (str or datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
-            Optional, defaults to the current time in the New York timezone.
+            # Fetch the results as dictionaries
+            records = cur.fetchall()
 
-    Returns:
-        datetime: A datetime object representing the time in the New York timezone.
+    results = {}
+    ny_tz = tz.gettz('America/New_York')
+    for record in records:
+        key = f"{record['taxi_zone']}_{record['dt_iso']}"
+        ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
+        results[key] = {
+            'id': str(record['taxi_zone']),
+            'zone': record['zone'],
+            'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
+            'dt_iso_tz': ny_dt_iso,
+            'busyness': record['bucket'],
+            'trees': record['trees_scaled'],
+            'style': record[f'{style}'],
+            'zone_type': record[f'{zone_type}'],
+            'weather': {
+                'temp': record['temp'],
+                'weather_description': record['weather_main'],
+                'weather_icon': record['weather_icon']
+            }
+        }
 
-    Raises:
-        ValueError: If the input is neither a correctly formatted string nor a datetime object.
-    """
+    return results
 
-    # creating a datetime object from the string received by the post request.
-    # if the input is neither a correctly formatted string nor a datetime object, raise an error
-    if isinstance(target_dt, str):
-        ny_dt = datetime.strptime(target_dt, "%Y-%m-%d %H:%M").replace(minute=0)
-    elif isinstance(target_dt, datetime):
-        ny_dt = target_dt.replace(minute=0, second=0, microsecond=0)
-    else:
-        raise ValueError("Invalid date input. Expected a string or datetime object.")
-
-    # print(f'check_ny_dt time: {ny_dt}')
-
-    # setting timezone to ny. if the supplied value/object is tz aware, convert it. if it is naive, assume it's ny time.
-    if is_aware(ny_dt):
-        return ny_dt.astimezone(tz=tz.gettz('America/New_York'))
-    else:
-        return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
-
-
-def get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
+def django_get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
     """
     Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time.
 
@@ -133,148 +135,3 @@ def get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busynes
         }
 
     return results
-
-
-def generate_response(target_busyness, target_trees, target_style, target_type, target_dt, weather=None, mcdm_method=MAIRCA,
-                      mcdm_weights=critic_weights):
-    """
-    Generates a dictionary containing top results based on the target busyness, style, date-time, and weather.
-
-    Args:
-        target_busyness (int): The desired level of busyness.
-        target_trees (int): The desired level of trees.
-        target_style (str): The desired architectural style. It should match with one of the architectural styles in the taxi_zones table.
-        target_dt (str or datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
-        weather (str): The desired weather (main category). Optional, defaults to None.
-        mcdm_method (callable): The multi-criteria decision-making method to be used. Optional, defaults to MAIRCA.
-        mcdm_weights (callable): A function to calculate weights for the MCDM method. Optional, defaults to entropy_weights.
-
-    Returns:
-        dict: A dictionary containing the top 10 results.
-
-    Raises:
-        FieldDoesNotExist: If the target_style is not a valid architectural style.
-    """
-
-    # dictionary to translate the style names to django model variables
-    style_dict = {
-        'neo-Georgian': 'neo_georgian',
-        'Greek Revival': 'greek_revival',
-        'Romanesque Revival': 'romanesque_revival',
-        'neo-Grec': 'neo_grec',
-        'Renaissance Revival': 'renaissance_revival',
-        'Beaux-Arts': 'beaux_arts',
-        'Queen Anne': 'queen_anne',
-        'Italianate': 'italianate',
-        'Federal': 'federal',
-        'neo-Renaissance': 'neo_renaissance'
-    }
-
-    # checking if style is valid
-    if style_dict.get(target_style) is None:
-        raise FieldDoesNotExist(
-            f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
-
-    # validate supplied time
-    ny_dt = check_ny_dt(target_dt)
-
-    # if the time supplied is earlier than the earliest available time, take that one
-    # if the time supplied is later than the latest available time, take that one
-    earliest_dt_iso = WeatherFc.objects.earliest('dt_iso').dt_iso
-    latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
-    ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
-
-    # results = get_results(style_dict.get(target_style), weather, target_type, ny_dt)
-    results = raw_get_results(target_style, weather, target_type, ny_dt)
-
-    # if there are no records matching the query, return an empty dictionary
-    if len(results) == 0:
-        return results
-
-    # check for errors
-    if isinstance(results, Exception):
-        return check_error_type(results)
-
-    # prep alternatives with values for four criteria used in mcdm method in a numpy array:
-    alts = np.array([[abs(target_busyness - value['busyness']),
-                      abs(target_trees - value['trees']),
-                      value['style'],
-                      value['zone_type'],
-                      abs((ny_dt - value['dt_iso_tz']).total_seconds())] for value in
-                     results.values()], dtype=int)
-
-    # define types of criteria (-1 for minimisation, 1 for maximisation)
-    types = np.array([-1, -1, 1, 1, -1])
-
-    # set weights for criteria (default is entropy_weights)
-    weights = mcdm_weights(alts)
-
-    # print(f' Variance weights: {mcdm_w.variance_weights(alts)}')
-    # print(f' Gini weights: {mcdm_w.gini_weights(alts)}')
-    # print(f' Angle weights: {mcdm_w.angle_weights(alts)}')
-    # print(f' Critic weights: {mcdm_w.critic_weights(alts)}')
-    # print(f' Entropy weights: {mcdm_w.entropy_weights(alts)}')
-
-    # initialise mcdm method (default is MAIRCA)
-    method = mcdm_method()
-
-    # determine preferences and ranking for alternatives
-    pref = method(alts, weights, types)
-    ranking = rankdata(pref)
-
-    # assign rankings to results
-    for idx, key in enumerate(results.keys()):
-        results[key]['rank'] = ranking[idx]
-
-    # sort results by rank
-    sorted_results = {k: v for k, v in sorted(results.items(), key=lambda item: item[1]['rank'])}
-
-    # Create a dictionary to track zone occurrences
-    zone_occurrences = {}
-
-    max_entries_per_zone = 1
-
-    # Keep only top 10 with each zone appearing no more than twice
-    top_results = {}
-    for k, v in sorted_results.items():
-        zone_name = v['zone']
-        if zone_occurrences.get(zone_name, 0) < max_entries_per_zone:
-            zone_occurrences[zone_name] = zone_occurrences.get(zone_name, 0) + 1
-            top_results[k] = v
-            if len(top_results) == 10:
-                break
-
-    # update the rank to be 1-10 for the top results (without repetitions / omissions)
-    for idx, key in enumerate(top_results.keys()):
-        top_results[key]['rank'] = idx + 1
-        del top_results[key]['dt_iso_tz']
-        top_results[key]['zone_type'] = f'{round(top_results[key]["zone_type"])}% {target_type}'
-
-    return top_results
-
-
-def current_busyness():
-
-    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0,microsecond=0)
-
-    # print(f'current time: {ny_dt}')
-
-    # find records where dt_iso = ny_dt
-    results = Busyness.objects.filter(dt_iso_id=ny_dt).values('taxi_zone_id', 'bucket')
-
-    # if no results have been found, try the next hour
-    # necessary if request is made just after predictions have been updated
-    if len(results) == 0:
-        results = Busyness.objects.filter(dt_iso_id=ny_dt + timedelta(hours=1)).values('taxi_zone_id', 'bucket')
-
-    # print(f'results: {results}')
-
-    # New dict to store the busyness for each taxi zone
-    busyness_dict = {}
-
-    for result in results:
-        busyness_dict[result['taxi_zone_id']] = result['bucket']
-
-    # print(f'busyness dict: {busyness_dict}')
-
-    return busyness_dict

@@ -14,7 +14,7 @@ from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
-from api_endpoints.get_results import generate_response, current_busyness
+from api_endpoints.generate_response import generate_response, current_busyness
 from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning
 import requests
 import datetime
