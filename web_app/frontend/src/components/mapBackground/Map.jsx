@@ -41,15 +41,32 @@ export default function Map({viewMode, zones, ...props}) {
       });
   }, []);
 
+  function handleClick() {
+    // console.log("She doesn't even go here");
+  }
 
   function rankColour(rank) {
     // Define the hue and lightness range for the heatmap. Saturation remains at 100%
     const colourVar = 10 - rank;
+    //const hue = colourVar + 230; // PURPLE!!!
     const hue = 110 + rank * 10;
+    // console.log(rank, hue);
 
+    const lightness = 90 - colourVar * 5;
     return `hsl(${hue}, ${100}%, ${50}%)`;
   }
 
+  function rankOutline(rank) {
+    if (rank === 1) {
+      return "#E6BE00";
+    } else if (rank === 2) {
+      return "#D7D7D7";
+    } else if (rank === 3) {
+      return "#A55028";
+    } else {
+      return "#9B9169";
+    }
+  }
 
   // ======================homepage heatmap============================
   // console.log("busynessZones-Map recieve the prop:", props.busynessZones);
@@ -66,6 +83,7 @@ export default function Map({viewMode, zones, ...props}) {
   };
 
   const [busynessZonesObj, setBusynessZonesObj] = React.useState(null);
+  // const [prevBusynessLevel, setPrevBusynessLevel] = useState(null);
 
   React.useEffect(() => {
     let busynessZonesObj = {};
@@ -83,6 +101,9 @@ export default function Map({viewMode, zones, ...props}) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+  // useEffect(() => {
+  //   setPrevBusynessLevel(busynessZonesObj);
+  // }, [busynessZonesObj]);
 
   // ================================================================================
 
@@ -91,8 +112,10 @@ export default function Map({viewMode, zones, ...props}) {
     var path;
     var click;
 
+    // if (props.isSearched && busynessZonesObj === prevBusynessLevel) {
 
     if (viewMode === 'results') {
+      // console.log("map:result")
       polygons = geojsonData.features.map((feature, idx) => {
         var placeRank = props.searchResults.find(
           (place) => place.id === feature.properties.location_id
@@ -191,6 +214,7 @@ export default function Map({viewMode, zones, ...props}) {
                   </div>
                 </div>
               </Popup>
+              {/*{console.log("Polygon properties:", feature.properties, path)}*/}
             </Polygon>
           );
         });
