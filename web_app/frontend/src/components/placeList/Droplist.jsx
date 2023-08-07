@@ -44,8 +44,19 @@ export default function Droplist ({results, searchOptions, hideList}){
                     count: {results.rank.style}
                   </p>
                 </div>
-                
               </div>
+
+              <div className="type">
+                <div className="type-left">
+                  <p className="type-title">type</p>
+                </div>
+                <div className="type-right">
+                  <p className="type-percent">
+                    {results.rank.zone_type}
+                  </p>
+                </div>
+              </div>
+
               <div className="color-pallete">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
