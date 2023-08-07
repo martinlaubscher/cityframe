@@ -626,15 +626,15 @@ class MainFormSubmissionView(APIView):
         ny_tz = pytz.timezone('America/New_York')
         query_time = timezone.now().astimezone(ny_tz)
 
-        # consider adding weather column in the Query model
-        query = Query.objects.create(
-            time=time,
-            busyness=busyness,
-            trees=trees,
-            style=style,
-            zone_type=zone_type,
-            query_time=query_time,
-        )
+        # # consider adding weather column in the Query model
+        # query = Query.objects.create(
+        #     time=time,
+        #     busyness=busyness,
+        #     trees=trees,
+        #     style=style,
+        #     zone_type=zone_type,
+        #     query_time=query_time,
+        # )
         results = generate_response(busyness, trees, style, zone_type, time, weather)
 
         # handle empty results (e.g., user searches for 'snow' in summer)
@@ -642,17 +642,17 @@ class MainFormSubmissionView(APIView):
             return RestResponse({'error': 'No results found for the given parameters.'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        responses = []
-
-        for zone_data in results.values():
-            zone_data['zone_id'] = zone_data.pop('id')
-            zone_data['submission_id'] = query.id
-            responses.append(Response(**zone_data))
-
-        Response.objects.bulk_create(responses)
-
-        for zone_data in results.values():
-            zone_data['id'] = zone_data.pop('zone_id')
+        # responses = []
+        #
+        # for zone_data in results.values():
+        #     zone_data['zone_id'] = zone_data.pop('id')
+        #     zone_data['submission_id'] = query.id
+        #     responses.append(Response(**zone_data))
+        #
+        # Response.objects.bulk_create(responses)
+        #
+        # for zone_data in results.values():
+        #     zone_data['id'] = zone_data.pop('zone_id')
 
         print(results)  # for debugging, remove later
         return RestResponse(results)
