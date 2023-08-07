@@ -117,7 +117,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>explore hidden gems</span>
+            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>hidden gem</span>
             <span onClick={() => setShowExtraSpan(!showExtraSpan)}>the most rarely found location this month</span>
             {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info">
