@@ -15,7 +15,7 @@ from pymcdm import weights as mcdm_w
 from pymcdm.methods import MAIRCA
 from pymcdm.helpers import rankdata
 import numpy as np
-
+from data.database.raw_get_results import raw_get_results
 
 def check_error_type(e):
     """
@@ -109,6 +109,8 @@ def get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busynes
                                                  'dt_iso__temp', 'dt_iso__weather_main',
                                                  'dt_iso__weather_icon')
 
+    records = tuple(records)
+
     results = {}
     ny_tz = tz.gettz('America/New_York')
     for record in records:
@@ -182,7 +184,8 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    results = get_results(style_dict.get(target_style), weather, target_type, ny_dt)
+    # results = get_results(style_dict.get(target_style), weather, target_type, ny_dt)
+    results = raw_get_results(target_style, weather, target_type, ny_dt)
 
     # if there are no records matching the query, return an empty dictionary
     if len(results) == 0:
