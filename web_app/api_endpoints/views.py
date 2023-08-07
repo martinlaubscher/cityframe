@@ -224,6 +224,9 @@ class CurrentSuntimesAPIView(APIView):
             'blue_hour_evening': blue_hour_evening_str,
         }
 
+        # write to cache for future use w
+        cache.set(today, processed_data, 1382400)
+
         return RestResponse(processed_data)
 
 
@@ -249,62 +252,74 @@ class SuntimesAPIView(APIView):
                 return RestResponse({'error': 'Invalid date format. It should be in the format "YYYY-MM-DD".'},
                                     status=status.HTTP_400_BAD_REQUEST)
 
-        # Convert future_date to a datetime.date object, compare to today and calculate difference in days
-        requested_date_obj = datetime.datetime.strptime(requested_date, '%Y-%m-%d').date()
-        time_difference = requested_date_obj - ny_datetime.date()
-        days_in_future = time_difference.days
+        processed_data = cache.get(requested_date)
 
-        if requested_date_obj.day == ny_datetime.day:
-            current_suntimes_view = CurrentSuntimesAPIView()
-            return current_suntimes_view.get(request)
-        else:
-            # data sources for accurate sunrise/sunset and evening golden hour times
-            url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
-                  f'lat=40.7831&lon=-73.9712&cnt=16&appid={openweather_key}'
-            url_golden_hr = f'https://api.sunrisesunset.io/json?lat=40.7831&lng=-73.9712&timezone=%22America/New_York%22' \
-                            f'&date={requested_date}'
-
-            # retrieve sunrise / sunset data
-            suntimes_response = requests.get(url)
-            suntimes_data = suntimes_response.json()
-
-            # Filter the data based on days_in_future
-            filtered_data = suntimes_data['list'][days_in_future]  # Adjusting index since days_in_future starts from 1
-
-            # calculate sunrise and sunset with offset applied
-            timezone_offset = suntimes_data['city']['timezone']
-            sunrise_timestamp = filtered_data['sunrise']
-            sunset_timestamp = filtered_data['sunset']
-            sunrise_local = sunrise_timestamp + timezone_offset
-            sunrise_local_str = convert_to_datetime_string(sunrise_local)
-            sunset_local = sunset_timestamp + timezone_offset
-            sunset_local_str = convert_to_datetime_string(sunset_local)
-
-            # retrieve evening golden hour data
-            response_golden = requests.get(url_golden_hr)
-            golden_data = response_golden.json()
-
-            # Extract relevant keys/values from the response
-            golden_hour = golden_data['results']['golden_hour']
-            golden_hour_formatted = convert_time_format(requested_date, golden_hour)
-
-            # we have a good data source for evening golden hour but not for its morning equivalent or for blue hours
-            # These times are calculated below, assuming 30 minutes before/after sunrise/sunset
-            blue_hour_morning_str = add_minutes_to_time(sunrise_local_str, -30)
-            blue_hour_evening_str = add_minutes_to_time(sunset_local_str, 30)
-            golden_hour_morning_str = add_minutes_to_time(sunrise_local_str, 30)
-
-            # format data correctly for the expected response
-            processed_data = {
-                'blue_hour_morning': blue_hour_morning_str,
-                'sunrise': sunrise_local_str,
-                'golden_hour_morning': golden_hour_morning_str,
-                'golden_hour_evening': golden_hour_formatted,
-                'sunset': sunset_local_str,
-                'blue_hour_evening': blue_hour_evening_str,
-            }
-
+        if processed_data is not None:
+            # If there is data in the cache, return it
+            # for debugging
+            print(f"\nSuntimes for {requested_date} fetched from Cache")
             return RestResponse(processed_data)
+        else:
+            # Convert future_date to a datetime.date object, compare to today and calculate difference in days
+            requested_date_obj = datetime.datetime.strptime(requested_date, '%Y-%m-%d').date()
+            time_difference = requested_date_obj - ny_datetime.date()
+            days_in_future = time_difference.days
+
+            if requested_date_obj.day == ny_datetime.day:
+                current_suntimes_view = CurrentSuntimesAPIView()
+                return current_suntimes_view.get(request)
+            else:
+                # data sources for accurate sunrise/sunset and evening golden hour times
+                url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
+                      f'lat=40.7831&lon=-73.9712&cnt=16&appid={openweather_key}'
+                url_golden_hr = f'https://api.sunrisesunset.io/json?lat=40.7831&lng=-73.9712&timezone=%22America/New_York%22' \
+                                f'&date={requested_date}'
+
+                # retrieve sunrise / sunset data
+                suntimes_response = requests.get(url)
+                suntimes_data = suntimes_response.json()
+
+                # Filter the data based on days_in_future
+                filtered_data = suntimes_data['list'][
+                    days_in_future]  # Adjusting index since days_in_future starts from 1
+
+                # calculate sunrise and sunset with offset applied
+                timezone_offset = suntimes_data['city']['timezone']
+                sunrise_timestamp = filtered_data['sunrise']
+                sunset_timestamp = filtered_data['sunset']
+                sunrise_local = sunrise_timestamp + timezone_offset
+                sunrise_local_str = convert_to_datetime_string(sunrise_local)
+                sunset_local = sunset_timestamp + timezone_offset
+                sunset_local_str = convert_to_datetime_string(sunset_local)
+
+                # retrieve evening golden hour data
+                response_golden = requests.get(url_golden_hr)
+                golden_data = response_golden.json()
+
+                # Extract relevant keys/values from the response
+                golden_hour = golden_data['results']['golden_hour']
+                golden_hour_formatted = convert_time_format(requested_date, golden_hour)
+
+                # we have a good data source for evening golden hour but not for its morning equivalent or for blue hours
+                # These times are calculated below, assuming 30 minutes before/after sunrise/sunset
+                blue_hour_morning_str = add_minutes_to_time(sunrise_local_str, -30)
+                blue_hour_evening_str = add_minutes_to_time(sunset_local_str, 30)
+                golden_hour_morning_str = add_minutes_to_time(sunrise_local_str, 30)
+
+                # format data correctly for the expected response
+                processed_data = {
+                    'blue_hour_morning': blue_hour_morning_str,
+                    'sunrise': sunrise_local_str,
+                    'golden_hour_morning': golden_hour_morning_str,
+                    'golden_hour_evening': golden_hour_formatted,
+                    'sunset': sunset_local_str,
+                    'blue_hour_evening': blue_hour_evening_str,
+                }
+
+                # adds data to cache, timeout of 16 days (in seconds)
+                cache.set(requested_date, processed_data, 1382400)
+
+                return RestResponse(processed_data)
 
 
 # class FutureSuntimesAPIView(APIView):

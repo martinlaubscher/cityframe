@@ -88,5 +88,5 @@ urlpatterns = [
     path('accounts/login/', LoginView.as_view(template_name='admin/login.html'), name='login'),
     path('accounts/logout/', logout_then_login, name='logout'),
 
-    re_path(r'^.*$', RedirectView.as_view(url='/'), name='fallback'),
-]
+    re_path(r'^(?!api).*$', RedirectView.as_view(url='/'), name='fallback')
+    ]
