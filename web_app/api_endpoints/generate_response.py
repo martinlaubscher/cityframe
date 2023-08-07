@@ -1,3 +1,10 @@
+import os
+import django
+
+# Set up Django
+os.environ['DJANGO_SETTINGS_MODULE'] = 'web_app.settings_dev'
+django.setup()
+
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc
@@ -130,8 +137,8 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     for i, record in enumerate(records):
         alts[i, 0] = abs(target_busyness - record['bucket'])
         alts[i, 1] = abs(target_trees - record['trees_scaled'])
-        alts[i, 2] = record[target_style]
-        alts[i, 3] = record[target_type]
+        alts[i, 2] = record['building_count']
+        alts[i, 3] = record['zone_percent']
         alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
 
     # define types of criteria (-1 for minimisation, 1 for maximisation)
@@ -171,8 +178,8 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
                 'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
                 'busyness': record['bucket'],
                 'trees': record['trees_scaled'],
-                'style': record[target_style],
-                'zone_type': f'{round(record[target_type])}% {target_type}',
+                'style': record['building_count'],
+                'zone_type': f'{round(record["zone_percent"])}% {target_type}',
                 'rank': rank,
                 'weather': {
                     'temp': record['temp'],
@@ -210,3 +217,17 @@ def current_busyness():
     # print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict
+
+
+import timeit
+
+# Define the number of repetitions
+num_runs = 1000
+
+# Use timeit to time the function using a lambda
+total_time = timeit.timeit(lambda: generate_response(3,3,'Federal', 'park', '2023-08-10 15:00', 'Clear'), number=num_runs)
+
+# Calculate the average time
+average_time = total_time / num_runs
+
+print(f"Average execution time over {num_runs} runs: {average_time:.5f} seconds")

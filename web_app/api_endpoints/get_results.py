@@ -37,20 +37,22 @@ def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5),
         time_to = user_time + timedelta(hours=12)
 
         sql = f'''
-        SELECT "cityframe"."Results"."taxi_zone", "cityframe"."taxi_zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."taxi_zones"."trees_scaled", "cityframe"."taxi_zones"."{style}", "cityframe"."zoning"."{zone_type}", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
-        FROM "cityframe"."Results"
-        INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
-        INNER JOIN "cityframe"."taxi_zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."taxi_zones"."location_id")
-        LEFT OUTER JOIN "cityframe"."zoning" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."zoning"."location_id")
-        WHERE ("cityframe"."Results"."dt_iso" BETWEEN '{time_from}'::timestamptz AND '{time_to}'::timestamptz AND "cityframe"."Results"."taxi_zone" IN (SELECT U0."location_id" FROM "cityframe"."taxi_zones" U0 WHERE U0."{style}" > 0));'''
+                SELECT "cityframe"."Results"."taxi_zone", "cityframe"."taxi_zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."taxi_zones"."trees_scaled", "cityframe"."arch_styles"."building_count", "cityframe"."zone_types"."zone_percent", "cityframe"."zone_types"."main_type", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
+                FROM "cityframe"."Results"
+                INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
+                INNER JOIN "cityframe"."taxi_zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."taxi_zones"."location_id")
+                LEFT OUTER JOIN "cityframe"."zone_types" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."zone_types"."location_id")
+                LEFT OUTER JOIN "cityframe"."arch_styles" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."arch_styles"."location_id")
+                WHERE ("cityframe"."Results"."dt_iso" BETWEEN '{time_from}'::timestamptz AND '{time_to}'::timestamptz AND "cityframe"."arch_styles"."style" = '{style}' AND "cityframe"."arch_styles"."building_count" > 0 AND "cityframe"."zone_types"."zone_type" = '{zone_type}');'''
     else:
         sql = f'''
-        SELECT "cityframe"."Results"."taxi_zone", "cityframe"."taxi_zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."taxi_zones"."trees_scaled", "cityframe"."taxi_zones"."{style}", "cityframe"."zoning"."{zone_type}", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
-        FROM "cityframe"."Results"
-        INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
-        INNER JOIN "cityframe"."taxi_zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."taxi_zones"."location_id")
-        LEFT OUTER JOIN "cityframe"."zoning" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."zoning"."location_id")
-        WHERE ("cityframe"."weather_fc"."weather_main" = '{weather}' AND "cityframe"."Results"."taxi_zone" IN (SELECT U0."location_id" FROM "cityframe"."taxi_zones" U0 WHERE U0."{style}" > 0));'''
+                SELECT "cityframe"."Results"."taxi_zone", "cityframe"."taxi_zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."taxi_zones"."trees_scaled", "cityframe"."arch_styles"."building_count", "cityframe"."zone_types"."zone_percent", "cityframe"."zone_types"."main_type", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
+                FROM "cityframe"."Results"
+                INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
+                INNER JOIN "cityframe"."taxi_zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."taxi_zones"."location_id")
+                LEFT OUTER JOIN "cityframe"."zone_types" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."zone_types"."location_id")
+                LEFT OUTER JOIN "cityframe"."arch_styles" ON ("cityframe"."taxi_zones"."location_id" = "cityframe"."arch_styles"."location_id")
+                WHERE ("cityframe"."weather_fc"."weather_main" = '{weather}' AND "cityframe"."arch_styles"."style" = '{style}' AND "cityframe"."arch_styles"."building_count" > 0 AND "cityframe"."zone_types"."zone_type" = '{zone_type}');'''
 
     # Create a new transaction
     with pool.connection() as conn:

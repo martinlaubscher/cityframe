@@ -2,16 +2,16 @@ import os
 import sys
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-cityframe_path = os.path.dirname(os.path.dirname(current_path))
-zoning_path = os.path.join(current_path, "..", "GeoJSON", "zoning.geojson")
-updated_zoning_path = os.path.join(current_path, "..", "GeoJSON", "updated_zoning.geojson")
-taxi_path = os.path.join(current_path, "..", "GeoJSON", "manhattan_taxi_zones.geojson")
+cityframe_path = os.path.dirname(os.path.dirname(os.path.dirname(current_path)))
+zoning_path = os.path.join(current_path, "../..", "GeoJSON", "zoning.geojson")
+updated_zoning_path = os.path.join(current_path, "../..", "GeoJSON", "updated_zoning.geojson")
+taxi_path = os.path.join(current_path, "../..", "GeoJSON", "manhattan_taxi_zones.geojson")
 
 sys.path.append(cityframe_path)
 
 import pandas as pd
 import geopandas as gpd
-from sqlalchemy import create_engine, URL
+from sqlalchemy import create_engine, URL, text
 from credentials import pg_conn
 
 
@@ -73,22 +73,35 @@ def main():
     # group the df, summing the area per zone/district type
     result_df = joined_gdf.groupby(['location_id', 'zonedist']).agg({'area': 'sum'}).reset_index()
     # calculate how much of each zone is what district type
-    result_df['percent'] = result_df.groupby('location_id')['area'].transform(lambda x: x / x.sum() * 100)
+    result_df['zone_percent'] = result_df.groupby('location_id')['area'].transform(lambda x: x / x.sum() * 100)
     result_df = result_df.drop(columns=['area'])
 
     result_df['location_id'] = result_df['location_id'].astype(int)
 
-    # pivot the results so that we have a df with the location id as index
-    # and the percentage for each district type as the columns
-    final_df = pd.pivot_table(result_df, values='percent', index=['location_id'], columns=['zonedist'], aggfunc='sum',
-                              fill_value=0).sort_index()
+    # Identify the zoning district with the maximum percentage for each location
+    main_type_df = result_df.loc[result_df.groupby('location_id')['zone_percent'].idxmax()]
 
-    # add the name of the zone type with the highest value
-    final_df['zone_type'] = final_df.iloc[:].idxmax(axis=1)
+    # Rename the 'zonedist' column to 'main_type' in the new DataFrame
+    main_type_df = main_type_df.rename(columns={'zonedist': 'main_type'})
+
+    # Merge the original DataFrame with the new one to add the 'main_type' column
+    result_df = result_df.merge(main_type_df[['location_id', 'main_type']], on='location_id', how='left')
+    result_df = result_df.rename(columns={'zonedist': 'zone_type'})
+
+    # # pivot the results so that we have a df with the location id as index
+    # # and the percentage for each district type as the columns
+    # final_df = pd.pivot_table(result_df, values='percent', index=['location_id'], columns=['zonedist'], aggfunc='sum',
+    #                           fill_value=0).sort_index()
+    #
+    # # add the name of the zone type with the highest value
+    # final_df['zone_type'] = final_df.iloc[:].idxmax(axis=1)
 
     engine = create_engine(URL.create("postgresql+psycopg", **pg_conn))
 
-    final_df.to_sql('zoning', engine, schema='cityframe', if_exists='replace')
+    with engine.begin() as connection:
+        connection.execute(text("DELETE FROM cityframe.zone_types;"))
+
+    result_df.to_sql('zone_types', engine, schema='cityframe', if_exists='append', index=False)
 
 if __name__ == main():
     main()

@@ -9,7 +9,7 @@ building_path = os.path.join(current_path, "..", "GeoJSON", "Building_points.geo
 sys.path.append(cityframe_path)
 
 from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Integer, BigInteger, String, Float, \
-    DateTime
+    DateTime, Index
 from sqlalchemy.schema import CreateSchema
 import geopandas as gpd
 from credentials import pg_conn
@@ -188,6 +188,25 @@ if __name__ == '__main__':
     # looping through styles to add corresponding columns to taxi_zones table
     for i in building_counts_in_zones.keys():
         taxi_zones.append_column(Column(i, Integer))
+
+    arch_styles = DatabaseTable(
+        'arch_styles', MetaData(),
+        Column('location_id', Integer, primary_key=True),
+        Column('style', String, primary_key=True),
+        Column('building_count', Integer),
+        Index('idx_location_style', 'location_id', 'style'),
+        schema='cityframe'
+    )
+
+    zone_types = DatabaseTable(
+        'zone_types', MetaData(),
+        Column('location_id', Integer, primary_key=True),
+        Column('zone_type', String, primary_key=True),
+        Column('zone_percent', Float),
+        Column('main_type', String),
+        Index('idx_location_type', 'location_id', 'zone_type'),
+        schema='cityframe'
+    )
 
     # creating all schemas initialised previously - if they don't exist yet
     Schema.create_all()
