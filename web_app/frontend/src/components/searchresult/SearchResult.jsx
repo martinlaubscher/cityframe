@@ -4,6 +4,7 @@ import "./SearchResultCSS.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {getIcon} from "../weatherInfo/WeatherHelpers";
 import goldenIcon from "../../assets/goldenhour.png";
+import{getImageUrlSmallById} from "./ResultPictures"
 
 let style;
 
@@ -21,14 +22,6 @@ export default function SearchResult({results, searchOptions}) {
       <div className="error-inner">
         <span className="error-alert">Nothing here!</span>
         <span className="error-alert">More photo spots await! 📷</span>
-        {/* <iframe
-          src="https://giphy.com/embed/NMBqdKUKQ3aLe"
-          width="480"
-          height="359"
-          frameBorder="0"
-          class="giphy-embed"
-          allowFullScreen
-        ></iframe> */}
       </div>
     );
   }
@@ -145,11 +138,8 @@ export default function SearchResult({results, searchOptions}) {
                 )}
               </div>
               <div className="pictures">
-                <img
-                  src={`https://picsum.photos/1920/1080?random=${result.id}`}
-                  alt={`Image ${index}`}
-                />
-                {/* <img src={result.imageUrl} alt={`Image ${index}`} /> */}
+                <img src={getImageUrlSmallById(result.id)} alt={`Image ${index}`} />
+                {console.log("result.id:",result.id,"url:",getImageUrlSmallById(result.id))}
               </div>
             </div>
           </div>
@@ -262,3 +252,4 @@ export async function getGoldenOrBlueHour(dateTime_dt_iso) {
     return false;
   }
 }
+

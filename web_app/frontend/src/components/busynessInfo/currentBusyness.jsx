@@ -10,17 +10,6 @@ export async function getAllBusyness() {
     console.error("There was an error retrieving the data: ", error);
   }
 }
-// export function filterBusyness(busynessLevel, zones) {
-//     const result = {};
-//     for (let zone in zones) {
-//         const level = zones[zone];
-//         if (!(level in result)) {
-//             result[level] = [];
-//         }
-//         result[level].push(zone);
-//     }
-//     return result;
-// }
 
 export function filterBusyness(busynessLevel, zones) {
   const busynessZones = Object.keys(zones).reduce((acc, zone) => {
