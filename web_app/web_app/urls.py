@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, logout_then_login
-from django.urls import include, path
+from django.urls import include, path, re_path
 from core.views import front_page
 from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
@@ -87,4 +87,6 @@ urlpatterns = [
     # login path
     path('accounts/login/', LoginView.as_view(template_name='admin/login.html'), name='login'),
     path('accounts/logout/', logout_then_login, name='logout'),
+
+    re_path(r'^.*$', RedirectView.as_view(url='/'), name='fallback'),
 ]
