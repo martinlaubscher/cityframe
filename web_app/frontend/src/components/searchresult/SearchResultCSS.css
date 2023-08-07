@@ -1,5 +1,9 @@
 /* SearchResultCSS.css */
 
+p {
+  margin: 0 !important;
+}
+
 .error-inner {
   display: flex;
   flex-direction: column;
@@ -32,6 +36,7 @@
   justify-content: left; 
   align-items: center;
   font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .rank {
@@ -53,45 +58,39 @@
   margin-left: 25px;
 }
 
-
-
-.busyness, .tree, .style, .datetime, .color-pallete {
+.busyness, .tree, .style, .type, .datetime, .color-pallete {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5em;
   align-items: center;
 }
 
-.busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left {
+/* title and description */
+.busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left{
   font-size: 15px;
   margin-right: 20px;
 }
 
-.busyness-right, .tree-right, .style-right, .datetime-right, .color-pallete-right {
-/* to be decided */
-}
-
-/* result details */
-.busyness-right, .tree-right, .style-right, datetime-right-only-time, .color-pallete-right {
-  font-size: 16px;
-}
-
-.level{
-  margin-bottom: 0px;
-}
-
 
 /* title*/
-.busyness-title, .tree-title, .style-title, .datetime-title, .colors-title {
+.busyness-title, .tree-title, .style-title, .type-title, .datetime-title, .colors-title {
   font-size: 18px;
   margin-bottom: 0px;
   margin-top: 0px;
   font-weight: bold;
 }
 /* description  */
-.level-of-busyness, .level-of-trees, .architecture {
+.level-of-busyness, .level-of-trees, .architecture, .type-desc {
   font-size: 12px;
   margin-bottom: 10px;
+  margin-top: -10px;
+}
+
+
+/* result details */
+.busyness-right, .tree-right, .style-right, .type-right, .datetime-right-only-time, .color-pallete-right {
+  font-size: 16px;
+  margin-top: 3px;
 }
 
 .result-date-time{

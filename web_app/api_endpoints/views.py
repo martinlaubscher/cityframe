@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.get_results import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response, TaxiZones
+from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning
 import requests
 import datetime
 import pytz
@@ -418,7 +418,6 @@ class CurrentManhattanBusyness(APIView):
     """
 
     def get(self, request):
-
         busyness_data = cache.get('current_busyness')
 
         if busyness_data is not None and len(busyness_data) > 0:
@@ -479,6 +478,7 @@ class TaxiZoneDataView(APIView):
 
             queryset = TaxiZones.objects.annotate(
                 max_style_value=Greatest(*styles),
+                zone_type=F('zoning__zone_type')
             )
 
             for style, column in style_columns.items():
@@ -492,6 +492,7 @@ class TaxiZoneDataView(APIView):
                 result = {
                     'zone': obj.zone,
                     'trees': obj.trees,
+                    'zone_type': obj.zone_type
                 }
 
                 for style, column in style_columns.items():
@@ -527,6 +528,7 @@ class MainFormSubmissionView(APIView):
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
         style = request.data.get('style')
+        zone_type = str.lower(request.data.get('zone_type'))
         weather = request.data.get('weather', None)
 
         # If user chooses 'All' option, set weather to None
@@ -550,6 +552,11 @@ class MainFormSubmissionView(APIView):
         if style not in valid_styles:
             return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Sanitise zone type input
+        valid_types = ['commercial', 'manufacturing', 'park', 'residential']
+        if zone_type not in valid_types:
+            return RestResponse({'error': 'Invalid zone type.'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Sanitise time input
         try:
             datetime.datetime.strptime(time, '%Y-%m-%d %H:%M')
@@ -570,6 +577,7 @@ class MainFormSubmissionView(APIView):
         print(f"busyness: {busyness}")
         print(f"trees: {trees}")
         print(f"style: {style}")
+        print(f"zone type: {zone_type}")
         print(f"time: {time}")
         print(f"weather preference: {weather}")
 
@@ -582,9 +590,10 @@ class MainFormSubmissionView(APIView):
             busyness=busyness,
             trees=trees,
             style=style,
+            zone_type=zone_type,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, time, weather)
+        results = generate_response(busyness, trees, style, zone_type, time, weather)
 
         # handle empty results (e.g., user searches for 'snow' in summer)
         if not results:

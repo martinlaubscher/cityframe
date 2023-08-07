@@ -1,5 +1,5 @@
 .offcanvas {
-    height: 70% !important;
+    height: 75% !important;
 }
 
 .button-wrapper-close {
@@ -85,6 +85,7 @@
     width: 100%;
     padding-left: 2vw;
     padding-right: 2vw;
+    padding-bottom: 2vh;
 }
 
 .search-description {
@@ -105,7 +106,6 @@
     justify-content: flex-end;
     padding-left: 2vw;
     padding-right: 2vw;
-    margin-top: -2vh;
     margin-bottom: 1vh;
 }
 
@@ -363,6 +363,7 @@ input[type="radio"]:checked {
 .scroll-container {
     overflow: auto;
     height: 100vh;
+    background-color: black;
 }
 
 .offcanvas-body, .result-container {
@@ -378,7 +379,7 @@ input[type="radio"]:checked {
     right: 0;
     left: 0;
     height: var(--bs-offcanvas-height);
-    max-height: 60% !important; /* change selections and results window size */
+    max-height: 75% !important; /* change selections and results window size */
     border-top: var(--bs-offcanvas-border-width) solid var(--bs-offcanvas-border-color);
     transform: translateY(100%);
 }

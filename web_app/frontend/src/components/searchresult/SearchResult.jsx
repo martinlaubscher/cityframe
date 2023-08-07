@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import axios from "@/axiosConfig";
 import "./SearchResultCSS.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getIcon } from "../weatherInfo/WeatherHelpers";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {getIcon} from "../weatherInfo/WeatherHelpers";
 import goldenIcon from "../../assets/goldenhour.png";
 
 let style;
 
-export default function SearchResult({ results, searchOptions }) {
+export default function SearchResult({results, searchOptions}) {
   const [goldenHourStatus, setGoldenHourStatus] = useState([]);
 
   useEffect(() => {
@@ -82,7 +82,6 @@ export default function SearchResult({ results, searchOptions }) {
                   <p className="level">level: {result.trees}</p>
                 </div>
               </div>
-
               <div className="style">
                 <div className="style-left">
                   <p className="style-title">{style}</p>
@@ -91,6 +90,17 @@ export default function SearchResult({ results, searchOptions }) {
                 <div className="style-right">
                   <p className="building-counting">
                     {result.style}{result.style === 1 ? " building" : " buildings"}
+                  </p>
+                </div>
+              </div>
+              <div className="type">
+                <div className="type-left">
+                  <p className="type-title">type</p>
+                  <p className="type-desc">zone type</p>
+                </div>
+                <div className="type-right">
+                  <p className="type-percent">
+                    {result.zone_type}
                   </p>
                 </div>
               </div>
@@ -103,7 +113,7 @@ export default function SearchResult({ results, searchOptions }) {
                     <div
                       key={index}
                       className="hexdiv"
-                      style={{ backgroundColor: hex }}
+                      style={{backgroundColor: hex}}
                     ></div>
                   ))}
                 </div>
@@ -118,7 +128,7 @@ export default function SearchResult({ results, searchOptions }) {
                       <img
                         src={goldenIcon}
                         alt="golden icon"
-                        style={{ height: "40px"}}
+                        style={{ height: "25px"}}
                       />
                     </div>
                     <div className="datetime-text-container">
@@ -194,9 +204,10 @@ export async function handleSearch(searchOptions) {
       trees: searchOptions.tree,
       time: searchOptions.datetime,
       style: searchOptions.style,
+      zone_type: searchOptions.zone_type,
 
       ...(searchOptions.weather !== "All"
-        ? { weather: searchOptions.weather }
+        ? {weather: searchOptions.weather}
         : {}),
     };
     const response = await axios.post("/api/submit-main", data);
