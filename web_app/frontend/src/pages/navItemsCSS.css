@@ -69,7 +69,8 @@ p {
   }
   
   .general-support,
-  .support {
+  .support,
+  .press {
     width: 100%; /* Adjust the width as needed */
     margin-bottom: 20px;
   }
