@@ -7,7 +7,7 @@ export default function Contact() {
       </p>
       <div className="contact-methods">
         <div className="general-support">
-          <h2>General Support</h2>
+          <h2>General</h2>
           <p>Mojo Dojo Casa House</p>
           <p>or email us at team@cityfra.me</p>
         </div>
