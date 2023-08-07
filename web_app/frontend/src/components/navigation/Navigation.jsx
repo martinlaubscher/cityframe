@@ -15,7 +15,7 @@ export default function Navigation_offcanvas() {
   const [selectedNavItem, setSelectedNavItem] = useState(null); // add this line
   const [gemResults, setGemResults] = useState([null]);
   const [zoneIDs, setZoneIDs] = useState([null]);
-  const [showExtraSpan, setShowExtraSpan] = useState(null);
+  // const [showExtraSpan, setShowExtraSpan] = useState(null);
 
   const handleClick = () => {
     navigate("/");
@@ -117,8 +117,8 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>hidden gem</span>
-            <span onClick={() => setShowExtraSpan(!showExtraSpan)}>the most rarely found location this month</span>
+            <span >hidden gem  <a style={{fontSize: "16px"}} className="betaTag">Beta</a></span>
+            <span >the most rarely found location this month</span>
             {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info">
 
