@@ -17,4 +17,4 @@ class ApiEndpointsConfig(AppConfig):
         pg_url = URL.create("postgresql", **pg_conn)
 
         # create connection pool
-        ApiEndpointsConfig.pool = ConnectionPool(pg_url.render_as_string(hide_password=False))
+        ApiEndpointsConfig.pool = ConnectionPool(pg_url.render_as_string(hide_password=False), max_size=4)
