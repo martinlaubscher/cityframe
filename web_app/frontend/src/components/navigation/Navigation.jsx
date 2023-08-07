@@ -25,9 +25,9 @@ export default function Navigation_offcanvas() {
   const fetchHiddenGems = async () => {
     try {
       const getResponse = await axios.get("/api/hidden-gems");
-      console.log("hidden-gems", getResponse); // Save the results in state, log for debugging
+      // console.log("hidden-gems", getResponse); // Save the results in state, log for debugging
       setGemResults(getResponse.data);
-      console.log("gem results", gemResults); //log for debugging
+      // console.log("gem results", gemResults); //log for debugging
       if (
         getResponse.data &&
         typeof getResponse.data === "object" &&
@@ -37,7 +37,7 @@ export default function Navigation_offcanvas() {
         // console.log("gem results1", gemResults); //log for debugging
         const ids = Object.values(getResponse.data).map(item => item.zone_id);
         setZoneIDs(ids);
-        console.log("zoneIDs1", zoneIDs); //log for debugging
+        // console.log("zoneIDs1", zoneIDs); //log for debugging
       }
     } catch (error) {
       console.error("Error:", error);
@@ -49,13 +49,11 @@ export default function Navigation_offcanvas() {
   }, []);
 
   useEffect(() => {
-  console.log('gemResults2:', gemResults); //log for debugging
-  // console.log('id', Object.values(gemResults)[1].zone_id)
+  // console.log('gemResults2:', gemResults); //log for debugging
   }, [gemResults]);
 
   useEffect(() => {
-  console.log('zoneIDs2:', zoneIDs); // log for debugging
-  // console.log('id', Object.values(gemResults)[1].zone_id)
+  // console.log('zoneIDs2:', zoneIDs); // log for debugging
   }, [zoneIDs]);
 
   // const zoneID = gemResults[0].zone_id
