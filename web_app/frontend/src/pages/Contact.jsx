@@ -3,27 +3,18 @@ export default function Contact() {
   return (
     <div className="contact-container">
       <p className="contact-info">
-        Get in touch with us with any feedback, comments or issues encountered
-        while on the app.
+        Get in touch with us with any feedback, comments or issues encountered while on the app.
       </p>
-      <div className="contact-user-input">
-        <div className="input-group flex-nowrap email-input">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Your email (optional)"
-            aria-label="Email"
-            aria-describedby="addon-wrapping"
-          />
+      <div className="contact-methods">
+        <div className="general-support">
+          <h2>General Support</h2>
+          <p>Mojo Dojo Casa House</p>
+          <p>Email: team@cityfra.me</p>
         </div>
-        <div className="input-group flex-nowrap message-input">
-          <input
-            type="text"
-            className="form-control"
-            placeholder=" Your message..."
-            aria-label="Message"
-            aria-describedby="addon-wrapping"
-          />
+        <div className="support">
+          <h2>Support</h2>
+          <p>For questions or help using Cityframe:</p>
+          <p>Email: help@cityfra.me</p>
         </div>
       </div>
     </div>
