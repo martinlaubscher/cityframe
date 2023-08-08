@@ -53,7 +53,7 @@ export default function UserSearchMenu(props) {
     });
     setSearchResults([]);
     setIsSearched(false);
-    console.log('search cleared')
+    // console.log('search cleared')
     setClear(true); // set clear flag
   };
 

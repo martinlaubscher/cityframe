@@ -38,7 +38,7 @@ export default function Droplist ({results, searchOptions, hideList}){
 
               <div className="style list-param">
                 <div className="style-left">
-                  <p className="style-title">{searchOptions.style}</p>
+                  <p className="style-title">{results.rank.architecture}</p>
                 </div>
                 <div className="style-right">
                   <p className="level">
