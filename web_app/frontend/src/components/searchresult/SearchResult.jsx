@@ -22,10 +22,10 @@ export default function SearchResult({results, searchOptions}) {
   }, [results]);
 
   if (results.length === 0) {
-    useEffect(() => {
-      setActiveIndex(0);
-      errorRef.current.scrollIntoView({behavior: 'smooth'});
-    }, [results]);
+    // useEffect(() => {
+    //   setActiveIndex(0);
+    //   errorRef.current.scrollIntoView({behavior: 'smooth'});
+    // }, [results]);
     return (
       <div className="error-inner" ref={errorRef}>
         <span className="error-alert">Nothing here!</span>
