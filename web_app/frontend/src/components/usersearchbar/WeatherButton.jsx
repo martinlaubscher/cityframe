@@ -40,16 +40,16 @@ const WeatherButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Weather</div>
+          <div className="option-label">weather</div>
           <div className="option-explanation">
-            {/*fill in as needed*/}
+            preferred weather conditions
           </div>
         </div>
         <div className="option-list" id="weather-selection">
           <select className="weather-select" onChange={handleOptionChange} value={selectedWeatherKey}>
             {Object.keys(weatherOptions).map((key) => (
               <option key={key} value={key}>
-                {weatherOptions[key]}
+                {weatherOptions[key].toLowerCase()}
               </option>
             ))}
           </select>

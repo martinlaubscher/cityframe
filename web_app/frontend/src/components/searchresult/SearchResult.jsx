@@ -21,8 +21,8 @@ export default function SearchResult({ results, searchOptions }) {
   if (results.length === 0) {
     return (
       <div className="error-inner">
-        <span className="error-alert">Nothing here!</span>
-        <span className="error-alert">More photo spots await! 📷</span>
+        <span className="error-alert">nothing here!</span>
+        <span className="error-alert">more photo spots await! 📷</span>
       </div>
     );
   }

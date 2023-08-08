@@ -38,7 +38,7 @@ const StyleButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Style</div>
+          <div className="option-label">style</div>
           <div className="option-explanation">
             architecture
           </div>
@@ -47,7 +47,7 @@ const StyleButton = ({onChange, clear}) => {
           <select className="style-select" onChange={handleOptionChange} value={selectedStyleKey}>
             {Object.keys(styleOptions).map((key) => (
               <option key={key} value={key}>
-                {styleOptions[key]}
+                {styleOptions[key].toLowerCase()}
               </option>
             ))}
           </select>

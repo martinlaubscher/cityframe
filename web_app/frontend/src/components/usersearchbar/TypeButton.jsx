@@ -32,7 +32,7 @@ const TypeButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Zone Type</div>
+          <div className="option-label">zone type</div>
           <div className="option-explanation">
           {/*insert as needed*/}
           </div>
@@ -41,7 +41,7 @@ const TypeButton = ({onChange, clear}) => {
           <select className="style-select" onChange={handleOptionChange} value={selectedTypeKey}>
             {Object.keys(typeOptions).map((key) => (
               <option key={key} value={key}>
-                {typeOptions[key]}
+                {typeOptions[key].toLowerCase()}
               </option>
             ))}
           </select>

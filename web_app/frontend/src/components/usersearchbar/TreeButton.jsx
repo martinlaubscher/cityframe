@@ -22,9 +22,9 @@ const TreeButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Tree</div>
+          <div className="option-label">trees</div>
           <div className="option-explanation">
-            level of trees
+            more or less trees
           </div>
         </div>
         <div className="option-list  radio-list" id="tree-selection">
