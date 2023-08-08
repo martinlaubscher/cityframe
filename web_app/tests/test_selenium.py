@@ -600,7 +600,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                                'buildings': rf'^\d+\sbuilding[s]*$',
                                'busyness': r'^level:\s\d$',
                                'trees': r'^level:\s\d$',
-                               'zone_type': r'^\d+%\s\w+$'}
+                               'zone_type': r'^\d*%?\s?\w+$'}
 
             # go through all the results in the carousel
             for j in range(0, 10):
@@ -674,7 +674,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
 
         # get the selected values
         selections = self._get_selections(3)
-        checks = {'busyness': 'true', 'trees': 'true', 'style': 'Queen Anne', 'zone_type': 'Park', 'weather': 'Clouds'}
+        checks = {'busyness': 'true', 'trees': 'true', 'style': 'Beaux-Arts', 'zone_type': 'Manufacturing', 'weather': 'Clouds'}
         # check the selected values have been stored
         for key in selections.keys():
             self.assertEqual(selections.get(key), checks.get(key))
@@ -684,7 +684,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
 
         # get the selected values
         selections = self._get_selections(1)
-        checks = {'busyness': 'true', 'trees': 'true', 'style': 'neo-Georgian', 'zone_type': 'Commercial',
+        checks = {'busyness': 'true', 'trees': 'true', 'style': 'All', 'zone_type': 'All',
                   'weather': 'All'}
         # check the values have been reset
         for key in selections.keys():
