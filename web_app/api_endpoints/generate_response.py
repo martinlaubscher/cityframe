@@ -14,7 +14,7 @@ from pymcdm.weights import critic_weights
 from pymcdm.methods import MAIRCA
 from pymcdm.helpers import rankdata
 import numpy as np
-from api_endpoints.get_results import django_get_results, psycopg_get_results
+from api_endpoints.get_results import psycopg_get_results
 
 
 def check_error_type(e):
@@ -69,7 +69,7 @@ def check_ny_dt(target_dt):
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
 
-def generate_response(target_busyness, target_trees, target_style, target_dt, target_type='all', weather=None,
+def generate_response(target_busyness, target_trees, target_dt, target_style='all', target_type='all', weather=None,
                       mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
@@ -100,7 +100,6 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    # results = django_get_results(style_dict.get(target_style), weather, target_type, ny_dt)
     records = psycopg_get_results(target_style, weather, target_type, ny_dt)
 
     # if there are no records matching the query, return an empty dictionary
@@ -112,33 +111,33 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
         return check_error_type(records)
 
     # if the zone type is all and the architecture style is specified
-    if str.lower(target_type) == 'all' and str.lower(target_style) != 'all':
+    if target_type == 'all' and target_style != 'all':
         # Create empty array of the right shape
         alts = np.empty((len(records), 4), dtype=int)
         # Fill the array
         for i, record in enumerate(records):
             alts[i, 0] = abs(target_busyness - record['bucket'])
             alts[i, 1] = abs(target_trees - record['trees_scaled'])
-            alts[i, 2] = record['building_count']
+            alts[i, 2] = record['zone_style_value']
             alts[i, 3] = abs((ny_dt - record['dt_iso']).total_seconds())
         # define types of criteria (-1 for minimisation, 1 for maximisation)
         types = np.array([-1, -1, 1, -1])
 
     # if the zone type is specified and the architecture style is all
-    elif str.lower(target_type) != 'all' and str.lower(target_style) == 'all':
+    elif target_type != 'all' and target_style == 'all':
         # Create empty array of the right shape
         alts = np.empty((len(records), 4), dtype=int)
         # Fill the array
         for i, record in enumerate(records):
             alts[i, 0] = abs(target_busyness - record['bucket'])
             alts[i, 1] = abs(target_trees - record['trees_scaled'])
-            alts[i, 2] = record['zone_percent']
+            alts[i, 2] = record['zone_type_value']
             alts[i, 3] = abs((ny_dt - record['dt_iso']).total_seconds())
         # define types of criteria (-1 for minimisation, 1 for maximisation)
         types = np.array([-1, -1, 1, -1])
 
     # if neither the zone type nor the architecture style are specified (both are all)
-    elif str.lower(target_type) == 'all' and str.lower(target_style) == 'all':
+    elif target_type == 'all' and target_style == 'all':
         # Create empty array of the right shape
         alts = np.empty((len(records), 3), dtype=int)
         # Fill the array
@@ -158,8 +157,8 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
         for i, record in enumerate(records):
             alts[i, 0] = abs(target_busyness - record['bucket'])
             alts[i, 1] = abs(target_trees - record['trees_scaled'])
-            alts[i, 2] = record['building_count']
-            alts[i, 3] = record['zone_percent']
+            alts[i, 2] = record['zone_style_value']
+            alts[i, 3] = record['zone_type_value']
             alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
 
         # define types of criteria (-1 for minimisation, 1 for maximisation)
@@ -194,16 +193,16 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
             key = f"{record['taxi_zone']}_{record['dt_iso']}"
             ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
             if str.lower(target_type) == 'all':
-                zone_type = record['main_type'].capitalize()
+                zone_type = record['main_zone_type']
             else:
-                zone_type = f'{round(record["zone_percent"])}% {target_type}'
+                zone_type = f'{round(record["zone_type_value"])}% {record["zone_type"]}'
             if str.lower(target_style) == 'all':
-                arch = record['main_style']
-                style_count = record['main_count']
+                arch = record['main_zone_style']
+                style_value = record['main_zone_style_value']
             else:
-                arch = target_style
-                style_count = record['building_count']
-            if style_count == 0:
+                arch = record['zone_style']
+                style_value = record['zone_style_value']
+            if style_value == 0:
                 arch = "historical buildings"
             results[key] = {
                 'id': str(record['taxi_zone']),
@@ -211,7 +210,7 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
                 'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
                 'busyness': record['bucket'],
                 'trees': record['trees_scaled'],
-                'style': style_count,
+                'style': style_value,
                 'architecture': arch,
                 'zone_type': zone_type,
                 'rank': rank,
@@ -251,3 +250,6 @@ def current_busyness():
     # print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict
+
+
+print(generate_response(3, 3, '2023-08-10 15:00',target_style='federal'))

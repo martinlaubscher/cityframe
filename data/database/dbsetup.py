@@ -195,10 +195,10 @@ if __name__ == '__main__':
         Column('zone', String),
         Column('trees', Integer),
         Column('trees_scaled', Integer),
-        Column('zone_style', String),
-        Column('zone_style_value', Integer),
-        Column('zone_type', String, primary_key=True),
-        Column('zone_type_value', Float),
+        Column('main_zone_style', String),
+        Column('main_zone_style_value', Integer),
+        Column('main_zone_type', String, primary_key=True),
+        Column('main_zone_type_value', Float),
         Index('idx_location', 'location_id'),
         schema='cityframe'
 

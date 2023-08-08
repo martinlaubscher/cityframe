@@ -584,13 +584,15 @@ class MainFormSubmissionView(APIView):
         time = request.data.get('time')
         busyness = int(request.data.get('busyness'))
         trees = int(request.data.get('trees'))
-        style = request.data.get('style')
+        style = str.lower(request.data.get('style'))
         zone_type = str.lower(request.data.get('zone_type'))
-        weather = request.data.get('weather', None)
+        # weather = request.data.get('weather', None)
+        weather = str.lower(request.data.get('weather'))
 
-        # If user chooses 'All' option, set weather to None
-        if weather == 'All':
-            weather = None
+
+        # # If user chooses 'All' option, set weather to None
+        # if weather == 'All':
+        #     weather = None
 
         # Sanitise busyness and trees inputs
         try:
@@ -623,8 +625,8 @@ class MainFormSubmissionView(APIView):
 
         # handles the retrieval of optional parameter 'weather', sanitises input
         try:
-            weather_list = ['Clear', 'Clouds', 'Drizzle', 'Fog', 'Haze', 'Mist', 'Rain', 'Smoke', 'Snow', 'Squall',
-                            'Thunderstorm']
+            weather_list = ['clear', 'clouds', 'drizzle', 'fog', 'haze', 'mist', 'rain', 'smoke', 'snow', 'squall',
+                            'thunderstorm']
             if weather is not None:
                 assert weather in weather_list
         except AssertionError:

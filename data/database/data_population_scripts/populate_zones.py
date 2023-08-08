@@ -87,8 +87,8 @@ with engine.begin() as connection:
 
         if result:
             zone_style_maxes[location_id] = {
-                'zone_style': result[1],
-                'zone_style_value': result[2]
+                'main_zone_style': result[1],
+                'main_zone_style_value': result[2]
             }
 
     # Get the type with the highest percentage per location_id from the zone_types table
@@ -103,8 +103,8 @@ with engine.begin() as connection:
 
         if result:
             zone_type_maxes[location_id] = {
-                'zone_type': result[1],
-                'zone_type_value': result[2]
+                'main_zone_type': result[1],
+                'main_zone_type_value': result[2]
             }
 
     # Update vals to include the new columns
