@@ -302,7 +302,7 @@ class EndpointTests(TestCase):
         data = {
             "busyness": 3,
             "trees": 3,
-            "time": "2023-07-26 17:00",
+            "time": "2023-08-12 06:00",
             "style": "Federal",
             "zone_type": "Commercial",
             "weather": "All"

@@ -47,37 +47,41 @@ p {
     margin-bottom: 1rem;
 }
 
-/* Contact section styles */
-.contact-info {
-    padding: 5px;
-}
-
-/* .form-control::placeholder {
-    background-color: #302D2D;
-} */
-
-
-
-
-.contact-user-input .form-control::placeholder,
-.contact-user-input .form-control:-ms-input-placeholder, /* IE 10-11 */
-.contact-user-input .form-control::-ms-input-placeholder { /* Edge 18- */
+.contact-container {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .contact-info {
     color: white;
-    opacity: 1;
-}
-.email-input{
-    margin-bottom:20px;
-    height: 30px;
-}
-
-.message-input{
-    height: 80px;
-    margin-bottom:20px;
-}
-
-/* Specific placeholder styles for "Your email (optional)" and "Leave your message here" */
-.contact-user-input .input-group.email-input .form-control::placeholder,
-.contact-user-input .input-group.message-input .form-control::placeholder {
-    color: white;
-
-}
+    font-size: 14px;
+    margin:0px;
+  }
+  
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+  
+  .general-support,
+  .support,
+  .press {
+    width: 100%; /* Adjust the width as needed */
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: #ff6600; 
+    font-size: 18px; 
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+  

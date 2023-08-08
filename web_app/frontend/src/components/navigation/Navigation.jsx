@@ -15,7 +15,7 @@ export default function Navigation_offcanvas() {
   const [selectedNavItem, setSelectedNavItem] = useState(null); // add this line
   const [gemResults, setGemResults] = useState([null]);
   const [zoneIDs, setZoneIDs] = useState([null]);
-  // const [showExtraSpan, setShowExtraSpan] = useState(null);
+
 
   const handleClick = () => {
     navigate("/");
@@ -67,6 +67,7 @@ export default function Navigation_offcanvas() {
         data-bs-target="#offcanvasTop"
         aria-controls="offcanvasTop"
         onClick={handleClick}
+        aria-label="open menu"
       >
         <svg
           className="hamburger-menu"
@@ -130,20 +131,17 @@ export default function Navigation_offcanvas() {
                   <p className="level-of-trees">number of trees</p>
                 </div>
                 <div className="tree-right">
-                  {/*<p className="level">level: {result.trees}</p>*/}
                   <p className="level">{Object.values(gemResults)[0].trees}</p>
                 </div>
               </div>
 
               <div className="style">
                 <div className="style-left">
-                  {/*<p className="style-title">{style}</p>*/}
                   <p className="style-title">{Object.values(gemResults)[0].main_style}</p>
                   <p className="architecture">architecture</p>
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
-                    {/*{result.style}{result.style === 1 ? " building" : " buildings"}*/}
                     {Object.values(gemResults)[0].main_style_amount}
                   </p>
                 </div>

@@ -11,26 +11,6 @@ import ToggleViewButton from './ToggleViewButton'
 export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChange, zones, ...props}) {
   const [busynessLevel, setBusynessLevel] = useState(3);
   const [selectedZones, setSelectedZones] = useState();
-  // const [zones, setZones] = useState({});
-  //
-  // // Get data from API when component mounts
-  // useEffect(() => {
-  //   getAllBusyness()
-  //     .then((data) => {
-  //       // Ensure that data is an object before setting zones
-  //       if (data && typeof data === 'object') {
-  //         setZones(data);
-  //       } else {
-  //         // If data is not an object, set zones as an empty object
-  //         setZones({});
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching busyness data:', error);
-  //       // If there's an error, set zones as an empty object
-  //       setZones({});
-  //     });
-  // }, []);
 
 
   useEffect(() => {

@@ -84,9 +84,7 @@
     margin-left: 20px;
 }
 
-.weather-icon {
-    /* adjust as necessary */
-}
+
 
 .label-container {
     flex-grow: 1;
@@ -103,9 +101,7 @@
     margin-bottom: 0.1vh;
 }
 
-.offcanvas-content {
-    /*height: 100%; */
-}
+
 
 /*SLIDER STYLING START*/
 /*adapted from Bootstrap's form-range class*/

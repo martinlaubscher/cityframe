@@ -7,7 +7,6 @@ import {
 import "./MapBackground.css";
 import React from "react";
 import axios from "@/axiosConfig";
-import {useEffect, useState} from "react";
 
 export default function Map({viewMode, zones, ...props}) {
   const defaultOptions = {

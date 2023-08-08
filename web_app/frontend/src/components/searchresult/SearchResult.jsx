@@ -1,13 +1,15 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "@/axiosConfig";
 import "./SearchResultCSS.css";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {getIcon} from "../weatherInfo/WeatherHelpers";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getIcon } from "../weatherInfo/WeatherHelpers";
 import goldenIcon from "../../assets/goldenhour.png";
+import goldenIcon_avif from "../../assets/goldenhour.avif";
+import { getImageUrlSmallById } from "./ResultPictures";
 
 let style;
 
-export default function SearchResult({results, searchOptions}) {
+export default function SearchResult({ results, searchOptions }) {
   const [goldenHourStatus, setGoldenHourStatus] = useState([]);
 
   useEffect(() => {
@@ -21,14 +23,6 @@ export default function SearchResult({results, searchOptions}) {
       <div className="error-inner">
         <span className="error-alert">Nothing here!</span>
         <span className="error-alert">More photo spots await! 📷</span>
-        {/* <iframe
-          src="https://giphy.com/embed/NMBqdKUKQ3aLe"
-          width="480"
-          height="359"
-          frameBorder="0"
-          class="giphy-embed"
-          allowFullScreen
-        ></iframe> */}
       </div>
     );
   }
@@ -92,7 +86,8 @@ export default function SearchResult({results, searchOptions}) {
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
-                    {result.style}{result.style === 1 ? " building" : " buildings"}
+                    {result.style}
+                    {result.style === 1 ? " building" : " buildings"}
                   </p>
                 </div>
               </div>
@@ -102,9 +97,7 @@ export default function SearchResult({results, searchOptions}) {
                   <p className="type-desc">zone type</p>
                 </div>
                 <div className="type-right">
-                  <p className="type-percent">
-                    {result.zone_type}
-                  </p>
+                  <p className="type-percent">{result.zone_type}</p>
                 </div>
               </div>
               <div className="color-pallete">
@@ -116,7 +109,7 @@ export default function SearchResult({results, searchOptions}) {
                     <div
                       key={index}
                       className="hexdiv"
-                      style={{backgroundColor: hex}}
+                      style={{ backgroundColor: hex }}
                     ></div>
                   ))}
                 </div>
@@ -128,11 +121,19 @@ export default function SearchResult({results, searchOptions}) {
                 {goldenHourStatus[index] ? (
                   <div className="datetime-right-time-golden-blue-hour">
                     <div className="datetime-icon-container">
-                      <img
-                        src={goldenIcon}
-                        alt="golden icon"
-                        style={{ height: "25px"}}
-                      />
+                      <picture>
+                        <source
+                          className="logo-image"
+                          srcSet={goldenIcon_avif}
+                          type="image/avif"
+                          style={{ height: "25px" }}
+                        />
+                        <img
+                          src={goldenIcon}
+                          alt="golden icon"
+                          style={{ height: "25px" }}
+                        />
+                      </picture>
                     </div>
                     <div className="datetime-text-container">
                       <p className="result-date-time">{result.dt_iso}</p>
@@ -148,11 +149,16 @@ export default function SearchResult({results, searchOptions}) {
                 )}
               </div>
               <div className="pictures">
-                <img className="sample-image"
-                  src={`https://picsum.photos/1920/1080?random=${result.id}`}
+                <img
+                  src={getImageUrlSmallById(result.id)}
                   alt={`Image ${index}`}
                 />
-                {/* <img src={result.imageUrl} alt={`Image ${index}`} /> */}
+                {console.log(
+                  "result.id:",
+                  result.id,
+                  "url:",
+                  getImageUrlSmallById(result.id)
+                )}
               </div>
             </div>
           </div>
@@ -210,7 +216,7 @@ export async function handleSearch(searchOptions) {
       zone_type: searchOptions.zone_type,
 
       ...(searchOptions.weather !== "All"
-        ? {weather: searchOptions.weather}
+        ? { weather: searchOptions.weather }
         : {}),
     };
     const response = await axios.post("/api/submit-main", data);

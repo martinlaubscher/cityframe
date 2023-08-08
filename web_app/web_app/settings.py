@@ -23,6 +23,7 @@ from pathlib import Path
 from whitenoise import WhiteNoise
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -36,7 +37,7 @@ SECRET_KEY = django_key
 # this is now set in the environment specific settings files
 # DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cityfra.me', 'www.cityfra.me', 'csi6220-3-vm2.ucd.ie']
 
 # Application definition
 INSTALLED_APPS = [
