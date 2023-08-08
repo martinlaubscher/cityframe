@@ -20,7 +20,7 @@ const BusynessButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Busyness</div>
+          <div className="option-label">busyness</div>
           <div className="option-explanation">
             level of busyness
           </div>

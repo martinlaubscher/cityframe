@@ -46,8 +46,8 @@ export default function UserSearchMenu(props) {
     setSearchOptions({
       datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
       busyness: 1,
-      style: "neo-Georgian",
-      zone_type: "Commercial",
+      style: "neo-georgian",
+      zone_type: "commercial",
       tree: 1,
       weather: "All"
     });
@@ -96,7 +96,7 @@ export default function UserSearchMenu(props) {
             <TypeButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>
             <button type="button" className="btn btn-dark" id="search-button" onClick={onSearch}>
-              Search
+              search
             </button>
           </div>
         </div>
