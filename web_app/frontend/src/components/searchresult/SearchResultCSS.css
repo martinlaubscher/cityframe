@@ -56,10 +56,7 @@ p {
   align-items: flex-start;
 }
 
-/* title and description */
-.busyness-left, .tree-left, .style-left, .type-left, .datetime-left, .color-pallete-left{
- 
-}
+
 /* title*/
 .busyness-title, .tree-title, .style-title, .type-title, .datetime-title, .colors-title {
   font-size: 18px;
