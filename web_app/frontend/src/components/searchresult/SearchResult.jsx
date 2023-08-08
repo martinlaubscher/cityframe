@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import axios from "@/axiosConfig";
 import "./SearchResultCSS.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -9,12 +9,30 @@ let style;
 
 export default function SearchResult({results, searchOptions}) {
   const [goldenHourStatus, setGoldenHourStatus] = useState([]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const carouselRef = useRef(null);
 
   useEffect(() => {
     Promise.all(
       results.map((result) => getGoldenOrBlueHour(result.dt_iso))
     ).then((statuses) => setGoldenHourStatus(statuses));
   }, [results]);
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [results]);
+
+  useEffect(() => {
+    const updateActiveIndex = (event) => {
+      const newIndex = Array.from(carouselRef.current.children[1].children).indexOf(event.relatedTarget);
+      setActiveIndex(newIndex);
+    };
+    carouselRef.current.addEventListener('slid.bs.carousel', updateActiveIndex);
+
+    return () => {
+      carouselRef.current.removeEventListener('slid.bs.carousel', updateActiveIndex);
+    };
+  }, []);
 
   if (results.length === 0) {
     return (
@@ -33,7 +51,7 @@ export default function SearchResult({results, searchOptions}) {
     );
   }
   return (
-    <div id="carouselExampleIndicators" className="carousel slide">
+    <div id="carouselExampleIndicators" className="carousel slide" ref={carouselRef}>
       <div className="carousel-indicators">
         {results.map((result, index) => (
           <button
@@ -51,7 +69,7 @@ export default function SearchResult({results, searchOptions}) {
         {results.map((result, index) => (
           <div
             key={result.id}
-            className={`carousel-item ${index === 0 ? "active" : ""}`}
+            className={`carousel-item ${index === activeIndex ? "active" : ""}`}
           >
             <div className="result-info">
               <div className="rank-zone-weathericon">
@@ -128,7 +146,7 @@ export default function SearchResult({results, searchOptions}) {
                       <img
                         src={goldenIcon}
                         alt="golden icon"
-                        style={{height: "25px"}}
+                        style={{height: "25px", width: "auto"}}
                       />
                     </div>
                     <div className="datetime-text-container">
