@@ -84,7 +84,7 @@ export default function SearchResult({results, searchOptions}) {
               </div>
               <div className="style">
                 <div className="style-left">
-                  <p className="style-title">{style}</p>
+                  <p className="style-title">{result.architecture}</p>
                   <p className="architecture">architecture</p>
                 </div>
                 <div className="style-right">
@@ -128,7 +128,7 @@ export default function SearchResult({results, searchOptions}) {
                       <img
                         src={goldenIcon}
                         alt="golden icon"
-                        style={{ height: "25px"}}
+                        style={{height: "25px"}}
                       />
                     </div>
                     <div className="datetime-text-container">
@@ -217,6 +217,7 @@ export async function handleSearch(searchOptions) {
       typeof response.data === "object" &&
       !Array.isArray(response.data)
     ) {
+      console.log(response.data)
       return Object.values(response.data).sort((a, b) => a.rank - b.rank);
     }
 

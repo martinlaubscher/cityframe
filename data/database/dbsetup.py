@@ -194,6 +194,8 @@ if __name__ == '__main__':
         Column('location_id', Integer, primary_key=True),
         Column('style', String, primary_key=True),
         Column('building_count', Integer),
+        Column('main_style', String),
+        Column('main_count', Integer),
         Index('idx_location_style', 'location_id', 'style'),
         schema='cityframe'
     )

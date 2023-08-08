@@ -47,18 +47,35 @@ with engine.begin() as connection:
     # load taxi zone geojson
     with open(taxi_path, 'r') as f:
         data = json.load(f)
+
+    main_styles = {}
     # loop through taxi zones and add id + zone name to dictionary for that zone
     for feature in data['features']:
         properties = feature['properties']
         row = {'location_id': int(properties['location_id']), 'zone': properties['zone']}
         # loop through building styles and add record for each
         for style in building_counts_in_zones.keys():
-            row = {'location_id': int(properties['location_id']), 'style': style,
-                   'building_count': building_counts_in_zones[style].get(properties['zone'], 0)}
-            # append the dictionary representing the record to the list of all records
+            count = building_counts_in_zones[style].get(properties['zone'], 0)
+            row = {
+                'location_id': int(properties['location_id']),
+                'style': style,
+                'building_count': count
+            }
+
+            # determine if this style has a higher count for the location.
+            if row['location_id'] not in main_styles or count > main_styles[row['location_id']]['building_count']:
+                main_styles[row['location_id']] = {
+                    'main_style': style,
+                    'building_count': count
+                }
             vals.append(row)
-    # sort the contents of vals by the location id
+
+    # add main style and sort the contents of vals by the location id
+    for val in vals:
+        val['main_style'] = main_styles[val['location_id']]['main_style']
+        val['main_count'] = main_styles[val['location_id']]['building_count']
     vals = sorted(vals, key=lambda i: i['location_id'])
+
     # prepare the insert statement - on conflict do nothing is necessary since zone 103 has three entries
     # due to it consisting of three islands
     insert_stmt = insert(table).on_conflict_do_nothing()

@@ -150,7 +150,6 @@ class HiddenGemsDataView(APIView):
 
         response_data = {}
         for zone in zones:
-
             style_fields = {
                 "neo-Georgian": zone.neo_georgian,
                 "Greek Revival": zone.greek_revival,
@@ -176,6 +175,7 @@ class HiddenGemsDataView(APIView):
             }
 
         return RestResponse(response_data)
+
 
 # class CurrentSuntimesAPIView(APIView):
 #     def get(self, request, formatting=None):
@@ -604,13 +604,13 @@ class MainFormSubmissionView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
         # Sanitise style input
-        valid_styles = ['neo-Georgian', 'Greek Revival', 'Romanesque Revival', 'neo-Grec', 'Renaissance Revival',
+        valid_styles = ['All', 'neo-Georgian', 'Greek Revival', 'Romanesque Revival', 'neo-Grec', 'Renaissance Revival',
                         'Beaux-Arts', 'Queen Anne', 'Italianate', 'Federal', 'neo-Renaissance']
         if style not in valid_styles:
             return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Sanitise zone type input
-        valid_types = ['commercial', 'manufacturing', 'park', 'residential']
+        valid_types = ['all', 'commercial', 'manufacturing', 'park', 'residential']
         if zone_type not in valid_types:
             return RestResponse({'error': 'Invalid zone type.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -650,7 +650,7 @@ class MainFormSubmissionView(APIView):
             zone_type=zone_type,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, zone_type, time, weather)
+        results = generate_response(busyness, trees, style, time, zone_type, weather)
 
         # handle empty results (e.g., user searches for 'snow' in summer)
         if not results:

@@ -69,7 +69,7 @@ def check_ny_dt(target_dt):
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
 
-def generate_response(target_busyness, target_trees, target_style, target_type, target_dt, weather=None,
+def generate_response(target_busyness, target_trees, target_style, target_dt, target_type='all', weather=None,
                       mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
@@ -102,7 +102,8 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
         'Queen Anne': 'queen_anne',
         'Italianate': 'italianate',
         'Federal': 'federal',
-        'neo-Renaissance': 'neo_renaissance'
+        'neo-Renaissance': 'neo_renaissance',
+        'All': 'all'
     }
 
     # checking if style is valid
@@ -130,19 +131,59 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     if isinstance(records, Exception):
         return check_error_type(records)
 
-    # Create empty array of the right shape
-    alts = np.empty((len(records), 5), dtype=int)
+    # if the zone type is all and the architecture style is specified
+    if str.lower(target_type) == 'all' and str.lower(target_style) != 'all':
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 4), dtype=int)
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = record['building_count']
+            alts[i, 3] = abs((ny_dt - record['dt_iso']).total_seconds())
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, 1, -1])
 
-    # Fill the array
-    for i, record in enumerate(records):
-        alts[i, 0] = abs(target_busyness - record['bucket'])
-        alts[i, 1] = abs(target_trees - record['trees_scaled'])
-        alts[i, 2] = record['building_count']
-        alts[i, 3] = record['zone_percent']
-        alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
+    # if the zone type is specified and the architecture style is all
+    elif str.lower(target_type) != 'all' and str.lower(target_style) == 'all':
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 4), dtype=int)
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = record['zone_percent']
+            alts[i, 3] = abs((ny_dt - record['dt_iso']).total_seconds())
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, 1, -1])
 
-    # define types of criteria (-1 for minimisation, 1 for maximisation)
-    types = np.array([-1, -1, 1, 1, -1])
+    # if neither the zone type nor the architecture style are specified (both are all)
+    elif str.lower(target_type) == 'all' and str.lower(target_style) == 'all':
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 3), dtype=int)
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = abs((ny_dt - record['dt_iso']).total_seconds())
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, -1])
+
+    # if both the architecture style and zone type are specified
+    else:
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 5), dtype=int)
+
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = record['building_count']
+            alts[i, 3] = record['zone_percent']
+            alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
+
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, 1, 1, -1])
 
     # set weights for criteria (default is entropy_weights)
     weights = mcdm_weights(alts)
@@ -172,14 +213,25 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
             zone_occurrences[record['zone']] = zone_occurrences.get(record['zone'], 0) + 1
             key = f"{record['taxi_zone']}_{record['dt_iso']}"
             ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
+            if target_type == 'all':
+                zone_type = record['main_type'].capitalize()
+            else:
+                zone_type = f'{round(record["zone_percent"])}% {target_type}'
+            if target_style == 'All':
+                arch = record['main_style']
+                style_count = record['main_count']
+            else:
+                arch = target_style
+                style_count = record['building_count']
             results[key] = {
                 'id': str(record['taxi_zone']),
                 'zone': record['zone'],
                 'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
                 'busyness': record['bucket'],
                 'trees': record['trees_scaled'],
-                'style': record['building_count'],
-                'zone_type': f'{round(record["zone_percent"])}% {target_type}',
+                'style': style_count,
+                'architecture': arch,
+                'zone_type': zone_type,
                 'rank': rank,
                 'weather': {
                     'temp': record['temp'],
@@ -217,17 +269,3 @@ def current_busyness():
     # print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict
-
-
-import timeit
-
-# Define the number of repetitions
-num_runs = 1000
-
-# Use timeit to time the function using a lambda
-total_time = timeit.timeit(lambda: generate_response(3,3,'Federal', 'park', '2023-08-10 15:00', 'Clear'), number=num_runs)
-
-# Calculate the average time
-average_time = total_time / num_runs
-
-print(f"Average execution time over {num_runs} runs: {average_time:.5f} seconds")

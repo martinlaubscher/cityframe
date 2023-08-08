@@ -238,6 +238,7 @@ class Response(models.Model):
     busyness = models.IntegerField()
     trees = models.IntegerField()
     style = models.IntegerField()
+    architecture = models.CharField(max_length=64, null=True)
     zone_type = models.CharField(max_length=64, null=True)
     weather = models.JSONField()
     rank = models.IntegerField()
