@@ -68,6 +68,17 @@ def check_ny_dt(target_dt):
     else:
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
+def get_uniform_column_indices(array):
+    """
+    Returns indices of columns in the criteria array that have uniform values.
+
+    Args:
+        array: numpy array with the criteria to be checked for uniformity
+
+    """
+    return [i for i in range(array.shape[1]) if np.all(array[:, i] == array[0, i])]
+
+
 
 def generate_response(target_busyness, target_trees, target_dt, target_style='all', target_type='all', weather=None,
                       mcdm_method=MAIRCA,
@@ -163,6 +174,13 @@ def generate_response(target_busyness, target_trees, target_dt, target_style='al
 
         # define types of criteria (-1 for minimisation, 1 for maximisation)
         types = np.array([-1, -1, 1, 1, -1])
+
+    uniform_cols = get_uniform_column_indices(alts)
+
+    if uniform_cols:
+        print(f"Warning: Removing {len(uniform_cols)} criteria due to uniform values.")
+        alts = np.delete(alts, uniform_cols, axis=1)
+        types = np.delete(types, uniform_cols)
 
     # set weights for criteria (default is entropy_weights)
     weights = mcdm_weights(alts)
