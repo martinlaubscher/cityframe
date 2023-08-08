@@ -1,12 +1,10 @@
 import Navigation from "../components/navigation/Navigation.jsx";
 import {Logo} from "../components/logo/Logo";
-//import MapBackground from '../components/mapBackground/MapBackground.jsx';
 import UserSearchBar from "../components/usersearchbar/UserSearchBar.jsx";
 import "./homePageCSS.css";
 
 import Map from "../components/mapBackground/Map.jsx";
 import junkdynamic from "../components/dummydata/geojunk.js";
-import dynamic from "../components/dummydata/dynamicdata.js";
 import data from "../components/dummydata/locationjunk.js";
 import {useState, useEffect} from "react";
 import Droplist from "../components/placeList/Droplist.jsx";
@@ -93,11 +91,13 @@ export default function Homepage() {
 
   return (
     <div className='app-container'>
+
       <div className='header-container'>
-        <Logo/>
+
         {/*<div className="side-naviagtion-container">*/}
         <Navigation/>
         {/*</div>*/}
+
       </div>
       <div className="main-application-container">
         <div className="main-body-container">
@@ -133,11 +133,6 @@ export default function Homepage() {
             hideList={hideList}
           />
         )}
-        {
-          //listShow && <div className="result-container">
-          //{<SearchResult results={searchResults} searchOptions={searchOptions} onePlace={true}/>}
-          //</div>
-        }
 
 
       </div>

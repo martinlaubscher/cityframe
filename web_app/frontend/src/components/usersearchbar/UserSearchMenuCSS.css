@@ -1,12 +1,14 @@
 .offcanvas {
     height: 75% !important;
+    background-color: #232323 !important;
+
 }
 
 .button-wrapper-close {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    background-color: black;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  background-color: #232323;
 }
 
 .btn-close {
@@ -29,15 +31,14 @@
 }
 
 .offcanvas-body {
-    display: flex;
-    /*justify-content: flex-start;*/
-    /*align-items: flex-start;*/
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    color: black !important;
-    overflow: hidden; /* Change this */
+  display: flex;
+  /*justify-content: flex-start;
+  align-items: flex-start;*/
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  overflow: hidden; /* Change this */
 }
 
 .offcanvas-body form label {
@@ -62,13 +63,8 @@
     justify-content: space-between;
     width: 100%;
     overflow: visible; /* Add this if the content might overflow */
-}
-
-
-.button-container > * {
-    width: 100%;
     text-align: left;
-}
+  }
 
 .option-button {
     width: 100%;
@@ -76,10 +72,19 @@
 }
 
 .btn-block {
-    width: 100% !important;
-    background-color: black !important;
-    border: none !important;
+  width: 100% !important;
+  background-color: #232323 !important;
+  border: none !important;
 }
+
+
+.search-description-clear{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
 
 .search-description-container {
     display: flex;
@@ -91,6 +96,7 @@
     padding-left: 2vw;
     padding-right: 2vw;
     padding-bottom: 2vh;
+    text-align: left !important;
 }
 
 .search-description {
@@ -106,9 +112,11 @@
 }
 
 .clear-search-container {
+    margin-left: 20px;
     width: 100%;
     display: flex;
     justify-content: flex-end;
+    padding-top: 1em;
     padding-left: 2vw;
     padding-right: 2vw;
     margin-bottom: 1vh;
@@ -118,7 +126,7 @@
     height: 2.5vh;
     font-size: 1.5vh;
     color: #ffffff;
-    background-color: #383e3d;
+    background-color: #464646;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,12 +180,18 @@
     margin-top: 5px;
 }
 
+.radio-list{
+  margin-right: 6px;
+}
+
+
+
 
 /* -------------date time picker------------------------- */
 /* Set all optional date text to black */
 .rdtPicker table tbody tr td {
-    color: white;
-    background-color: black;
+  color: white;
+  background-color: #232323;
 }
 
 /* Set non-selectable date text to grey */
@@ -187,25 +201,25 @@
 
 /* Set the background colour of the selected date to black and the text colour to white */
 .rdtPicker table tbody tr td.rdtActive {
-    background-color: white;
-    color: black;
+  background-color: white;
+  color: #232323;
 }
 
 /* Set the time picker icon and text to black */
 .rdtPicker table thead tr th,
 .rdtPicker table thead tr th span {
-    color: white;
-    background-color: black;
+  color: white;
+  background-color: #232323;
 }
 
 .rdtPicker .rdtTimeToggle {
-    color: white;
-    background-color: black;
+  color: white;
+  background-color: #232323;
 }
 
 .rdtSwitch {
-    background-color: black;
-    color: white;
+  background-color: #232323;
+  color: white;
 }
 
 .rdtCounter .rdtCount {
@@ -213,11 +227,14 @@
 }
 
 .dateTimePicker {
-    /*width: 135px;*/
+    /*width: 135px;
+      font-size: 12px;
+  margin-right: 20px;
+  margin-left: 20px;*/
     /*margin-right: 50px;*/
     width: 17vh;
     color: white;
-    background-color: black;
+    background-color: #232323;
     margin-right: 18px;
     position: relative;
 }
@@ -225,42 +242,44 @@
 .form-control {
     padding: 3px !important; /* date time picker */
     font-size: 2vh !important; /* date time picker */
+    border-width: 2px !important;
 }
 
 .form-control:after {
-    color: white;
-    background-color: black;
+  color: white;
+  background-color: #232323;
 }
 
 .form-control:active {
-    color: white;
-    background-color: black;
+  color: white;
+  background-color: #232323;
 }
 
 .rdtOpen .rdtPicker {
     position: absolute;
     right: 0;
-    background-color: black;
-    border: 1px white solid;
+    background-color: #232323;
+    border: 2px white solid;
+    /* left: -96px;  date time picker */
 }
 
 .rdtDays table {
     color: white;
-    background-color: black;
+    background-color: #232323;
     border: transparent;
     font-size: 1.5vh;
     margin-right: 5vw;
 }
 
 .rdtPicker {
-    color: white;
-    background-color: black;
+  color: white;
+  background-color: #232323;
 }
 
 input[type="text"] {
-    color: white;
-    background-color: black;
-    padding: 5px;
+  color: white;
+  background-color: #232323;
+  padding: 5px;
 }
 
 .rdtBtn:active {
@@ -272,13 +291,15 @@ input[type="text"] {
 input[type="radio"] {
     appearance: none;
     background-color: transparent;
-    margin: 0;
+    margin: 0 !important;
     font: inherit;
     color: currentColor;
-    width: 1.15em;
-    height: 1.15em;
+    width: min(1.15em, calc(20vw - 48px));
+    height: min(1.15em, calc(20vw - 48px));
     border: 0.10em solid currentColor;
     border-radius: 50%;
+
+    
 }
 
 input[type="radio"]:checked {
@@ -303,7 +324,6 @@ input[type="radio"]:checked {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: -3px;
     margin-top: -5px;
     margin-right: 2px;
 }
@@ -312,30 +332,46 @@ input[type="radio"]:checked {
     margin-right: 5px;
 }
 
+.option-list{
+  margin-left: 20px;
+}
+
+.form-check-label {
+  margin-left: 2px;
+}
+
+.form-check {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 0px !important;
+}
 
 /* -------------architecture and weather style------------------------- */
-.style-select, .weather-select {
-    font-size: 2vh;
-    margin-left: 20px;
-    margin-right: 20px;
-    color: white;
-    background-color: black;
-    border-width: 1px;
-    border-color: #FFFFFF;
-    border-radius: 5px;
-    padding: 4px;
+.style-select,.weather-select{
+  font-size: 2vh;
+  margin-left: 20px;
+  margin-right: 20px;
+  color: white;
+  background-color: #232323;
+  border-width: 2px;
+  border-color: #FFFFFF;
+  border-radius: 6px;
+  padding: 4px;
 }
 
 /* -------------search button------------------------- */
-.btn-dark {
-    color: white;
+.search-button {
+    color: white !important;
     font-weight: bold !important;
+    background-color: #464646 !important;
 }
+
 
 .scroll-container {
     overflow: auto;
     height: 100vh;
-    background-color: black;
+    background-color: #232323;
 }
 
 .offcanvas-body, .result-container {

@@ -7,6 +7,7 @@ export default function ToggleViewButton({ isSearched, viewMode, toggleViewMode 
       id="toggle-view-button"
       onClick={toggleViewMode}
       disabled={!isSearched}
+      aria-label="toggle view"
     >
       {/*if current busyness is showing, display button to switch to results view and vice versa*/}
       {viewMode === 'heatmap' ? 'show search results' : 'show current busyness'}

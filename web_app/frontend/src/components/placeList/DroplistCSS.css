@@ -1,13 +1,72 @@
 .droplist{
-    position: absolute;
+    position: fixed;
     z-index: 3;
     bottom: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;;
     align-items: center;
-    height: 60%;
-    width: 100%;
-    background-color: black;
+    margin: 10px;
+    width: calc(100% - 20px);
+    height: 60vh;
+    background-color: #363636;
+    color: white;
+    overflow: scroll;
     /*border: 15px solid black; */
 }
 
+.overlay-info{
+  width: 100%;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.div-button{
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    padding-right: 10px;
+}
+
+.place-pallete{
+    height: calc(10vw - 15.4px);
+}
+
+.info-button{
+    width: 100%;
+    border: 2px solid white;
+    border-radius: 6px;
+    background-color: transparent;
+    color: white;
+    font-weight: bold;
+}
+
+.list-info{ 
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  
+  }
+
+
+.sample-img{
+    max-height: 20vh;
+    max-width: 100%;
+}
+
+.list-param {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.2em;
+    align-items: center;
+  }
+
+.list-head{
+    height: 40px;
+    margin-bottom: 0.5em;
+}
+
+.list-pic{
+    padding-bottom: 10px;
+}

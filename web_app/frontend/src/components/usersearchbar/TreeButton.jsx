@@ -2,9 +2,6 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const TreeButton = ({onChange, clear}) => {
-  // const handleOptionChange = (event) => {
-  //   onChange("tree", event.target.checked ? 1 : 0);
-  // };
 
   const handleOptionChange = (event) => {
     setSelectedValue(event.target.value);
@@ -13,28 +10,6 @@ const TreeButton = ({onChange, clear}) => {
 
   const [selectedValue, setSelectedValue] = useState("option1");
 
-  // return (
-  //   <div>
-  //     <div className="option-container">
-  //       <div className="option-label">Tree</div>
-  //       <div className="option-list">
-  //         <div className="form-check form-switch">
-  //           <input
-  //             className="form-check-input"
-  //             type="checkbox"
-  //             role="switch"
-  //             id="flexSwitchCheckDefault"
-  //             onChange={handleOptionChange}
-  //           />
-  //           <label
-  //             className="form-check-label"
-  //             htmlFor="flexSwitchCheckDefault"
-  //           ></label>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
 
   // watch for the clear flag and reset the state
   useEffect(() => {
@@ -52,7 +27,7 @@ const TreeButton = ({onChange, clear}) => {
             level of trees
           </div>
         </div>
-        <div className="option-list" id="tree-selection">
+        <div className="option-list  radio-list" id="tree-selection">
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"

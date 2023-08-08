@@ -2,7 +2,7 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    background-color: black;
+    background-color: #232323;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -46,7 +46,7 @@
     height: 2.5vh;
     font-size: 1.5vh;
     color: #ffffff;
-    background-color: #383e3d;
+    background-color: #464646;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,9 +84,7 @@
     margin-left: 20px;
 }
 
-.weather-icon {
-    /* adjust as necessary */
-}
+
 
 .label-container {
     flex-grow: 1;
@@ -103,9 +101,7 @@
     margin-bottom: 0.1vh;
 }
 
-.offcanvas-content {
-    /*height: 100%; */
-}
+
 
 /*SLIDER STYLING START*/
 /*adapted from Bootstrap's form-range class*/

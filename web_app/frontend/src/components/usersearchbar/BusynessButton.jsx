@@ -25,7 +25,7 @@ const BusynessButton = ({onChange, clear}) => {
             level of busyness
           </div>
         </div>
-        <div className="option-list" id="busyness-selection">
+        <div className="option-list  radio-list" id="busyness-selection">
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"

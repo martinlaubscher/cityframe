@@ -4,6 +4,8 @@ import "./SearchResultCSS.css";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {getIcon} from "../weatherInfo/WeatherHelpers";
 import goldenIcon from "../../assets/goldenhour.png";
+import goldenIcon_avif from "../../assets/goldenhour.avif";
+import { getImageUrlSmallById } from "./ResultPictures";
 
 let style;
 
@@ -40,14 +42,6 @@ export default function SearchResult({results, searchOptions}) {
       <div className="error-inner">
         <span className="error-alert">Nothing here!</span>
         <span className="error-alert">More photo spots await! 📷</span>
-        {/* <iframe
-          src="https://giphy.com/embed/NMBqdKUKQ3aLe"
-          width="480"
-          height="359"
-          frameBorder="0"
-          class="giphy-embed"
-          allowFullScreen
-        ></iframe> */}
       </div>
     );
   }
@@ -74,8 +68,10 @@ export default function SearchResult({results, searchOptions}) {
           >
             <div className="result-info">
               <div className="rank-zone-weathericon">
-                <p className="rank">{result.rank}</p>
-                <p className="zone">{result.zone}</p>
+                <div className="rank-zone">
+                  <p className="rank">{result.rank}</p>
+                  <p className="zone">{result.zone}</p>
+                </div>
                 <div className="weathericon">
                   <FontAwesomeIcon
                     icon={getIcon(result.weather.weather_icon)}
@@ -83,7 +79,7 @@ export default function SearchResult({results, searchOptions}) {
                   />
                 </div>
               </div>
-              <div className="busyness">
+              <div className="busyness result-param">
                 <div className="busyness-left">
                   <p className="busyness-title">busyness</p>
                   <p className="level-of-busyness">level of busyness</p>
@@ -92,7 +88,7 @@ export default function SearchResult({results, searchOptions}) {
                   <p className="level">level: {result.busyness}</p>
                 </div>
               </div>
-              <div className="tree">
+              <div className="tree result-param">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
                   <p className="level-of-trees">level of trees</p>
@@ -101,33 +97,32 @@ export default function SearchResult({results, searchOptions}) {
                   <p className="level">level: {result.trees}</p>
                 </div>
               </div>
-              <div className="style">
+              <div className="style result-param">
                 <div className="style-left">
                   <p className="style-title">{result.architecture}</p>
                   <p className="architecture">architecture</p>
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
-                    {result.style}{result.style === 1 ? " building" : " buildings"}
+                    {result.style}
+                    {result.style === 1 ? " building" : " buildings"}
                   </p>
                 </div>
               </div>
-              <div className="type">
+              <div className="type result-param">
                 <div className="type-left">
                   <p className="type-title">type</p>
                   <p className="type-desc">zone type</p>
                 </div>
                 <div className="type-right">
-                  <p className="type-percent">
-                    {result.zone_type}
-                  </p>
+                  <p className="type-percent">{result.zone_type}</p>
                 </div>
               </div>
-              <div className="color-pallete">
+              <div className="color-pallete result-param">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
                 </div>
-                <div className="color-pallete-right">
+                <div className="color-pallete-right search-pallete">
                   {result.pallete.map((hex, index) => (
                     <div
                       key={index}
@@ -137,18 +132,26 @@ export default function SearchResult({results, searchOptions}) {
                   ))}
                 </div>
               </div>
-              <div className="datetime">
+              <div className="datetime result-param">
                 <div className="datetime-left">
                   <p className="datetime-title">date/time</p>
                 </div>
                 {goldenHourStatus[index] ? (
                   <div className="datetime-right-time-golden-blue-hour">
                     <div className="datetime-icon-container">
-                      <img
+                      <picture>
+                        <source
+                          className="logo-image"
+                          srcSet={goldenIcon_avif}
+                          type="image/avif"
+                          style={{ height: "25px" }}
+                        />
+                        <img
                         src={goldenIcon}
                         alt="golden icon"
                         style={{height: "25px", width: "auto"}}
-                      />
+                        />
+                      </picture>
                     </div>
                     <div className="datetime-text-container">
                       <p className="result-date-time">{result.dt_iso}</p>
@@ -165,10 +168,15 @@ export default function SearchResult({results, searchOptions}) {
               </div>
               <div className="pictures">
                 <img
-                  src={`https://picsum.photos/1920/1080?random=${result.id}`}
+                  src={getImageUrlSmallById(result.id)}
                   alt={`Image ${index}`}
                 />
-                {/* <img src={result.imageUrl} alt={`Image ${index}`} /> */}
+                {console.log(
+                  "result.id:",
+                  result.id,
+                  "url:",
+                  getImageUrlSmallById(result.id)
+                )}
               </div>
             </div>
           </div>
@@ -236,7 +244,6 @@ export async function handleSearch(searchOptions) {
       typeof response.data === "object" &&
       !Array.isArray(response.data)
     ) {
-      console.log(response.data)
       return Object.values(response.data).sort((a, b) => a.rank - b.rank);
     }
 
