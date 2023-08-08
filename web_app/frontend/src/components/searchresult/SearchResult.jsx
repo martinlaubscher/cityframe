@@ -70,7 +70,7 @@ export default function SearchResult({ results, searchOptions }) {
               <div className="tree">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
-                  <p className="level-of-trees">level of trees</p>
+                  <p className="level-of-trees">more or less trees</p>
                 </div>
                 <div className="tree-right">
                   <p className="level">level: {result.trees}</p>
@@ -79,7 +79,7 @@ export default function SearchResult({ results, searchOptions }) {
               <div className="style">
                 <div className="style-left">
                   <p className="style-title">{style}</p>
-                  <p className="architecture">architecture</p>
+                  <p className="architecture">architecture style</p>
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
@@ -100,6 +100,7 @@ export default function SearchResult({ results, searchOptions }) {
               <div className="color-pallete">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
+                  <p className="colors-desc">common colors in this zone</p>
                 </div>
                 <div className="color-pallete-right">
                   {result.pallete.map((hex, index) => (
