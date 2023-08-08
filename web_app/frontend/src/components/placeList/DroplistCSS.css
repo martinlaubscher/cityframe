@@ -6,11 +6,12 @@
     flex-direction: column;
     justify-content: flex-start;;
     align-items: center;
-    min-height: 300px;
     margin: 10px;
     width: calc(100% - 20px);
-    background-color: #232323;
+    height: 60vh;
+    background-color: #363636;
     color: white;
+    overflow: scroll;
     /*border: 15px solid black; */
 }
 
@@ -18,7 +19,6 @@
   width: 100%;
   padding-left: 30px;
   padding-right: 30px;
-  padding-bottom: 15px;
 }
 
 .div-button{
@@ -48,3 +48,25 @@
     font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   
   }
+
+
+.sample-img{
+    max-height: 20vh;
+    max-width: 100%;
+}
+
+.list-param {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.2em;
+    align-items: center;
+  }
+
+.list-head{
+    height: 40px;
+    margin-bottom: 0.5em;
+}
+
+.list-pic{
+    padding-bottom: 10px;
+}

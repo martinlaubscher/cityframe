@@ -52,7 +52,7 @@ export default function Map({viewMode, zones, ...props}) {
       const map = mapRef.current;
       const height = map.getSize().y;
       const zoom = map.getZoom();
-      const lat = center.lng - (height / (2 ** zoom)) * 0.2; //make the actual centre slightly below the coordinates 
+      const lat = center.lng - (height / (2 ** zoom)) * 0.32; //make the actual centre slightly below the coordinates 
       mapRef.current.setView([lat, center.lat]); //no idea whose idea it was to swap lat and lng for setting the view but this sets the view correctly
     }
   }

@@ -1,6 +1,7 @@
 //import ListItem from "./ListItem.jsx"
 import "../searchresult/SearchResultCSS.css"
 import "./DroplistCSS.css"
+import { getImageUrlSmallById } from "../searchresult/ResultPictures";
 
 export default function Droplist ({results, searchOptions, hideList}){
         return(
@@ -14,11 +15,11 @@ export default function Droplist ({results, searchOptions, hideList}){
         </div>
           <div className="overlay-info">   
             <div className="list-info">
-              <div className="rank-zone">
+              <div className="rank-zone list-head">
                 <p className="rank">{results.rank.rank}</p>
                 <p className="zone">{results.rank.zone}</p>
               </div>
-              <div className="busyness">
+              <div className="busyness list-param">
                 <div className="busyness-left">
                   <p className="busyness-title">busyness</p>
                 </div>
@@ -26,7 +27,7 @@ export default function Droplist ({results, searchOptions, hideList}){
                   <p className="level">level: {results.rank.busyness}</p>
                 </div>
               </div>
-              <div className="tree">
+              <div className="tree list-param">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
                 </div>
@@ -35,7 +36,7 @@ export default function Droplist ({results, searchOptions, hideList}){
                 </div>
               </div>
 
-              <div className="style">
+              <div className="style list-param">
                 <div className="style-left">
                   <p className="style-title">{searchOptions.style}</p>
                 </div>
@@ -46,7 +47,7 @@ export default function Droplist ({results, searchOptions, hideList}){
                 </div>
               </div>
 
-              <div className="type">
+              <div className="type list-param">
                 <div className="type-left">
                   <p className="type-title">type</p>
                 </div>
@@ -57,7 +58,7 @@ export default function Droplist ({results, searchOptions, hideList}){
                 </div>
               </div>
 
-              <div className="color-pallete">
+              <div className="color-pallete list-param">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
                 </div>
@@ -73,7 +74,7 @@ export default function Droplist ({results, searchOptions, hideList}){
                   }
                 </div>
               </div>
-              <div className="datetime">
+              <div className="datetime list-param">
                 <div className="datetime-left">
                   <p className="datetime-title">date/time</p>
                 </div>
@@ -81,9 +82,24 @@ export default function Droplist ({results, searchOptions, hideList}){
                   <p className="level">{results.rank.dt_iso}</p>
                 </div>
               </div>
+
+              <div className="pictures list-pic">
+                <img className="sample-img"
+                  src={getImageUrlSmallById(results.rank.id)}
+                  alt={`Image`}
+                />
+                {console.log(
+                  "result.id:",
+                  results.rank.id,
+                  "url:",
+                  getImageUrlSmallById(results.rank.id)
+                )}
+              </div>
+{/*
               <div className="more-info">
                 <button className="info-button">more info</button>
               </div>
+                */}
             </div>
           </div>          
         </div>
