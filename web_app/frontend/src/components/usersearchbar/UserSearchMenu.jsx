@@ -46,8 +46,8 @@ export default function UserSearchMenu(props) {
     setSearchOptions({
       datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
       busyness: 1,
-      style: "neo-Georgian",
-      zone_type: "Commercial",
+      style: "All",
+      zone_type: "All",
       tree: 1,
       weather: "All"
     });
