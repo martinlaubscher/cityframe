@@ -1,7 +1,7 @@
 /* Common styles for about and contact sections */
 .about-this-web-container {
     color:white;
-    background-color: #302D2D;
+    background-color: #353535;
     position: relative;
     width: 100%;
     padding: 1rem;
@@ -14,7 +14,7 @@
 
 .contact-container {
     color:white;
-    background-color: #302D2D;
+    background-color: #353535;
     position: relative;
     width: 100%;
     padding: 1rem;
@@ -75,7 +75,7 @@ p {
   }
   
   h2 {
-    color: #ff6600; 
+    color: #ffffff; 
     font-size: 18px; 
     margin-bottom: 10px;
   }

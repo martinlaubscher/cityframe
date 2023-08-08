@@ -7,6 +7,7 @@ import AboutThisWeb from "../../pages/AboutThisWeb";
 import React, {useEffect, useState} from 'react';
 import axios from "@/axiosConfig.js";
 import colours from '../dummydata/colours.js';
+import {Logo} from "../logo/Logo";
 
 
 export default function Navigation_offcanvas() {
@@ -59,7 +60,9 @@ export default function Navigation_offcanvas() {
   // const zoneID = gemResults[0].zone_id
   const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
   return (
+    <div className="head">
     <div className="nav-container">
+      <Logo/>
       <button
         className="btn menu-button"
         type="button"
@@ -93,6 +96,7 @@ export default function Navigation_offcanvas() {
           </g>
         </svg>
       </button>
+      </div>
 
       <div
         className="offcanvas offcanvas-top"
@@ -100,7 +104,7 @@ export default function Navigation_offcanvas() {
         id="offcanvasTop"
         aria-labelledby="offcanvasTopLabel"
       >
-        <div className="offcanvas-body-top">
+        <div className="offcanvas-body-top nav-offcanvas">
         <ul className="nav flex-column pe-5">
       {selectedNavItem === null || selectedNavItem === '/mostuniqueareas' ? (
         <li className="nav-item ">
@@ -118,7 +122,7 @@ export default function Navigation_offcanvas() {
             <span >hidden gem <a style={{fontSize: "16px"}} className="betaTag">Beta</a></span>
             <span >the most rarely found location</span>
             {selectedNavItem === '/mostuniqueareas' && (
-                    <div className="result-info">
+                    <div className="result-info gem-result">
 
                       <div className="rank-zone-weathericon"></div>
 

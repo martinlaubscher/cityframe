@@ -1,11 +1,24 @@
+.head{
+  position: relative;
+  top: 0;
+  width: 100vw;
+  height: 12vh;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
 /* Nav container */
 .nav-container {
   position: relative;
   display: flex;
   align-items: center;
   height: 100%;
-  width: 15%;
-  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  width: 100%;
+  background-color: #232323;
+  z-index: 1050;
+  padding: 2vh;
 }
 
 /* Hamburger menu */
@@ -37,22 +50,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  width: min(15%, 8vh);
+
   height: 100%;
   padding: 0 !important;
   background-color: transparent !important;
   border: 0 !important;
 }
-/* Offcanvas body content alignment */
-.offcanvas-body-top {
-  text-align: left; /* Aligns the content to the left horizontally */
-  vertical-align: top; /* Aligns the content to the top vertically */
-  background-color: #232323!important;
-  padding-top: 2vh;
-  padding-bottom: 2vh;
 
+.nav{
+  margin-left: 20px;
 }
-
 
 /* Nav item - font settings */
 .nav-item{
@@ -91,12 +99,11 @@ margin-bottom: 10px;
 
 /* Offcanvas header */
 .offcanvas-header{
-  background-color: #232323  !important;
+  background-color: #353535  !important;
   color: white;
 }
 
-.offcanvas-body{
-  background-color: #232323 !important;
+.nav-offcanvas{
   padding-top: 10vh;
 }
 .btn-close {
@@ -105,15 +112,22 @@ margin-bottom: 10px;
 
 /* Offcanvas top */
 #offcanvasTop{
+  padding-top: 12vh;
   position: fixed;
-  top: 12%;
-  height: 23% !important;
-  background-color: #232323;
+  height: 35vh !important;
 }
 
-.nav{
-  margin-left: 20px;
+
+/* Offcanvas body content alignment */
+.offcanvas-body-top {
+  text-align: left; /* Aligns the content to the left horizontally */
+  vertical-align: top; /* Aligns the content to the top vertically */
+  background-color: #353535!important;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
 }
+
+
 
 .betaTag {
     border: 2px solid white;
@@ -142,4 +156,8 @@ margin-bottom: 10px;
 }
 .nav-pallete{
   height: calc(10vw - 14.2px);
+}
+
+.gem-result{
+  margin-top: 20px;
 }
