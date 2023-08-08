@@ -14,6 +14,7 @@ export default function SearchResult({results, searchOptions}) {
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
   const errorRef = useRef(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     Promise.all(
@@ -21,23 +22,25 @@ export default function SearchResult({results, searchOptions}) {
     ).then((statuses) => setGoldenHourStatus(statuses));
   }, [results]);
 
-  if (results.length === 0) {
-    // useEffect(() => {
-    //   setActiveIndex(0);
-    //   errorRef.current.scrollIntoView({behavior: 'smooth'});
-    // }, [results]);
-    return (
-      <div className="error-inner" ref={errorRef}>
-        <span className="error-alert">Nothing here!</span>
-        <span className="error-alert">More photo spots await! 📷</span>
-      </div>
-    );
-  }
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // useEffect(() => {
+  //   setActiveIndex(0);
+  //   carouselRef.current.scrollIntoView({behavior: 'smooth'});
+  // }, [results]);
 
   useEffect(() => {
-    setActiveIndex(0);
-    carouselRef.current.scrollIntoView({behavior: 'smooth'});
-  }, [results]);
+    if (isMounted) {
+      if (results.length === 0) {
+        errorRef.current?.scrollIntoView({behavior: 'smooth'});
+      } else {
+        setActiveIndex(0);
+        carouselRef.current?.scrollIntoView({behavior: 'smooth'});
+      }
+    }
+  }, [results, isMounted]);
 
   useEffect(() => {
     const updateActiveIndex = (event) => {
@@ -50,6 +53,15 @@ export default function SearchResult({results, searchOptions}) {
       carouselRef.current.removeEventListener('slid.bs.carousel', updateActiveIndex);
     };
   }, []);
+
+  if (results.length === 0) {
+    return (
+      <div className="error-inner" ref={errorRef}>
+        <span className="error-alert">Nothing here!</span>
+        <span className="error-alert">More photo spots await! 📷</span>
+      </div>
+    );
+  }
 
   return (
     <div id="carouselExampleIndicators" className="carousel slide" ref={carouselRef}>
