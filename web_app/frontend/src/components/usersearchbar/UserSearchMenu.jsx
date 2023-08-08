@@ -81,12 +81,14 @@ export default function UserSearchMenu(props) {
 
       <div className="scroll-container">
         <div className="offcanvas-body small">
+          <div className="search-description-clear">
           <div className="search-description-container">
-            <p className="search-description">search the city zones</p>
+            <p className="search-description">Search the city zones</p>
             <p className="search-explanation">find locations according to the following parameters</p>
           </div>
           <div className="clear-search-container">
             <ClearSearchButton clearSearchOptions={clearSearchOptions}/>
+          </div>
           </div>
           <div className="button-container">
             <TimeButton onChange={handleOptionsChange} clear={clear}/>

@@ -58,7 +58,6 @@ export default function Navigation_offcanvas() {
 
   // const zoneID = gemResults[0].zone_id
   const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
-
   return (
     <div className="nav-container">
       <button
@@ -155,11 +154,12 @@ export default function Navigation_offcanvas() {
                 </div>
 
                 {/*  below works*/}
-                <div className="color-pallete-right">
+                <div className="color-pallete-right nav-pallete">
+                  {console.log("WE ARE THE CRYSTAL GEMS", gemColour.colors)}
                   {gemColour && gemColour.colors.map((hex, index) => (
                     <div
                         key={index}
-                        className="hexdiv"
+                        className="hex-div"
                         style={{ backgroundColor: hex }}
                         ></div>
                     ))}

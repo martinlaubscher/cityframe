@@ -122,3 +122,24 @@ margin-bottom: 10px;
     display: inline-block;
     margin-left: 10px;
 }
+
+.hex-div{
+  width: 10%;
+  max-width: 1.5em;
+  height: 100%;
+  margin: 0em;
+  /* border-style: solid; */
+  border-width: 0em;
+  /* border-color: white; */
+}
+
+.color-pallete-right{
+  display: flex;
+  justify-content: right;
+  width: 100%;
+  max-height: 1.5em;
+  min-height: 0.5em;
+}
+.nav-pallete{
+  height: calc(10vw - 14.2px);
+}
