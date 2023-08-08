@@ -27,7 +27,7 @@ const TreeButton = ({onChange, clear}) => {
             level of trees
           </div>
         </div>
-        <div className="option-list" id="tree-selection">
+        <div className="option-list  radio-list" id="tree-selection">
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"

@@ -91,11 +91,13 @@ export default function Homepage() {
 
   return (
     <div className='app-container'>
+
       <div className='header-container'>
-        <Logo/>
+
         {/*<div className="side-naviagtion-container">*/}
         <Navigation/>
         {/*</div>*/}
+
       </div>
       <div className="main-application-container">
         <div className="main-body-container">

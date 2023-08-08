@@ -49,16 +49,19 @@ export default function SearchResult({ results, searchOptions }) {
           >
             <div className="result-info">
               <div className="rank-zone-weathericon">
-                <p className="rank">{result.rank}</p>
-                <p className="zone">{result.zone}</p>
+                <div className="rank-zone">
+                  <p className="rank">{result.rank}</p>
+                  <p className="zone">{result.zone}</p>
+                </div>
                 <div className="weathericon">
                   <FontAwesomeIcon
                     icon={getIcon(result.weather.weather_icon)}
                     size="2x"
                   />
+
                 </div>
               </div>
-              <div className="busyness">
+              <div className="busyness result-param">
                 <div className="busyness-left">
                   <p className="busyness-title">busyness</p>
                   <p className="level-of-busyness">level of busyness</p>
@@ -67,7 +70,7 @@ export default function SearchResult({ results, searchOptions }) {
                   <p className="level">level: {result.busyness}</p>
                 </div>
               </div>
-              <div className="tree">
+              <div className="tree result-param">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
                   <p className="level-of-trees">level of trees</p>
@@ -76,7 +79,7 @@ export default function SearchResult({ results, searchOptions }) {
                   <p className="level">level: {result.trees}</p>
                 </div>
               </div>
-              <div className="style">
+              <div className="style result-param">
                 <div className="style-left">
                   <p className="style-title">{style}</p>
                   <p className="architecture">architecture</p>
@@ -88,7 +91,7 @@ export default function SearchResult({ results, searchOptions }) {
                   </p>
                 </div>
               </div>
-              <div className="type">
+              <div className="type result-param">
                 <div className="type-left">
                   <p className="type-title">type</p>
                   <p className="type-desc">zone type</p>
@@ -97,11 +100,11 @@ export default function SearchResult({ results, searchOptions }) {
                   <p className="type-percent">{result.zone_type}</p>
                 </div>
               </div>
-              <div className="color-pallete">
+              <div className="color-pallete result-param">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
                 </div>
-                <div className="color-pallete-right">
+                <div className="color-pallete-right search-pallete">
                   {result.pallete.map((hex, index) => (
                     <div
                       key={index}
@@ -111,7 +114,7 @@ export default function SearchResult({ results, searchOptions }) {
                   ))}
                 </div>
               </div>
-              <div className="datetime">
+              <div className="datetime result-param">
                 <div className="datetime-left">
                   <p className="datetime-title">date/time</p>
                 </div>

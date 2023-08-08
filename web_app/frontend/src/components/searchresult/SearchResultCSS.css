@@ -18,11 +18,13 @@ p {
 
 .result-container {
   overflow: visible; 
-  background-color: black;
+  background-color: #232323;
 }
 
 .result-info {
-
+  display: flex;
+  flex-direction: column;
+  height: calc(90vh - 75px);
   color: white;
   font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 
@@ -32,35 +34,54 @@ p {
 .rank-zone-weathericon {
   display: flex; 
   justify-content: space-between; 
-  align-items: center;
-  font-weight: bold;
   margin-bottom: 1rem;
 }
 
+.rank-zone{
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-weight: bold;
+}
 
 .rank {
-  font-size: 25px;
   text-align:center;
-  margin-left: 20px; 
+  font-size: 40px;
+  margin-right: 25px !important;
+  margin-bottom: 0;
 }
 
 .zone {
-  font-size: 20px;
   text-align:center; 
+  font-size: 22px;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+.weathericon{
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
+  margin-bottom: 1rem;
 }
 
-.busyness, .tree, .style, .type, .datetime, .color-pallete {
+.result-param {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
-  align-items: flex-start;
+  margin-bottom: 0.5em;
+  align-items: center;
+}
+
+/* title and description */
+.busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left{
+  font-size: 15px;
+  margin-right: 20px;
 }
 
 
 /* title*/
 .busyness-title, .tree-title, .style-title, .type-title, .datetime-title, .colors-title {
   font-size: 18px;
-  margin-bottom: -1px;
+  margin-bottom: 0px;
   margin-top: 0px;
   font-weight: bold;
 }
@@ -90,11 +111,15 @@ p {
 
 
 .pictures{
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 0; /*I don't know why it works but it does*/
   display: flex;
   align-items: center;
   justify-content: center;
-  
 }
+
 
 
 .datetime-right-time-golden-blue-hour {
@@ -110,11 +135,11 @@ p {
 }
 
 .goldenicon {
-  margin-right: 10px; /* space between the icon and the text */
+  margin-right: 10px; /* space between the icon and the text*/
 }
 .datetime-icon-container {
   display: flex;
-  /* flex-direction: row-reverse; */
+  /* flex-direction: row-reverse;*/ 
   align-items: center;
 }
 
@@ -129,7 +154,7 @@ p {
 .carousel-inner {
   display: flex;
   height: 90vh;  
-  /* notice,when result list finishe need to be adjust */
+  /* notice, when result list finished need to be adjusted */
 }
 
 .carousel-item {
@@ -139,14 +164,14 @@ p {
   align-items: center;
   height: 300px; 
   width: 500px; 
-  border: 15px solid black; 
+  border: 15px solid #232323; 
   margin-top: 10px; 
   background-position: center; 
   background-size: cover;
 }
 
 .carousel-item img {
-  object-fit: cover; 
+  object-fit: contain; 
   height: 100%; 
   width: 100%; 
 }
@@ -168,12 +193,25 @@ p {
 
 .color-pallete-right {
   display: flex;
+  justify-content: right;
+  width:100%;
+  max-height: 1.5em;
+  min-height: 0.5em;
 }
+
+.search-pallete{
+  height: calc(10vw - 10.333px);
+}
+
 .hexdiv{
-  width: 1.5em;
-  height: 1.5em;
+  width: 10%;
+  max-width: 1.5em;
+  height: 100%;
   margin: 0em;
   /* border-style: solid; */
   border-width: 0em;
   /* border-color: white; */
 }
+
+
+

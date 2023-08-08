@@ -16,8 +16,11 @@ export default function Map({viewMode, zones, ...props}) {
     fillOpacity: 0,
   };
 
+
   const [geojsonData, setGeojsonData] = React.useState(null);
   const [zoneData, setZoneData] = React.useState(null);
+  const mapRef = React.useRef(null);
+
 
   React.useEffect(() => {
     axios
@@ -41,32 +44,38 @@ export default function Map({viewMode, zones, ...props}) {
       });
   }, []);
 
-  function handleClick() {
-    // console.log("She doesn't even go here");
+
+  function setCenter(feature){ //set the map to focus on the clicked polygon
+    const center = L.latLngBounds(feature.geometry.coordinates).getCenter(); //get center of polygon
+
+    if (mapRef.current) {
+      const map = mapRef.current;
+      const height = map.getSize().y;
+      const zoom = map.getZoom();
+      const lat = center.lng - (height / (2 ** zoom)) * 0.32; //make the actual centre slightly below the coordinates 
+      mapRef.current.setView([lat, center.lat]); //no idea whose idea it was to swap lat and lng for setting the view but this sets the view correctly
+    }
+  }
+
+  function handleClick(feature) {
+    //console.log("She doesn't even go here");
+    setCenter(feature)
+  }
+
+  function listBuild(feature, rank){
+    props.buildlist(feature, rank)
+    setCenter(feature)
   }
 
   function rankColour(rank) {
     // Define the hue and lightness range for the heatmap. Saturation remains at 100%
     const colourVar = 10 - rank;
     //const hue = colourVar + 230; // PURPLE!!!
-    const hue = 110 + rank * 10;
     // console.log(rank, hue);
-
-    const lightness = 90 - colourVar * 5;
-    return `hsl(${hue}, ${100}%, ${50}%)`;
+    const lightness = 54.2 + rank * 4.2;
+    return `hsl(${230}, ${100}%, ${lightness}%)`;
   }
 
-  function rankOutline(rank) {
-    if (rank === 1) {
-      return "#E6BE00";
-    } else if (rank === 2) {
-      return "#D7D7D7";
-    } else if (rank === 3) {
-      return "#A55028";
-    } else {
-      return "#9B9169";
-    }
-  }
 
   // ======================homepage heatmap============================
   // console.log("busynessZones-Map recieve the prop:", props.busynessZones);
@@ -128,10 +137,10 @@ export default function Map({viewMode, zones, ...props}) {
             fillColor: rankColour(placeRank.rank),
             fillOpacity: 1,
           };
-          click = () => props.buildlist(feature, placeRank);
+          click = () => listBuild(feature, placeRank);
         } else {
           path = defaultOptions;
-          click = handleClick;
+          click = () => handleClick(feature);
         }
 
         return feature.geometry.coordinates.map((polygon, polygonIndex) => {
@@ -221,10 +230,12 @@ export default function Map({viewMode, zones, ...props}) {
       });
     }
   }
+    
 
   return (
     <div className="Map--div">
       <MapContainer
+        ref={mapRef}
         center={[40.7831, -73.9712]}
         zoom={12}
         scrollWheelZoom={true}
