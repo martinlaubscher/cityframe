@@ -71,24 +71,11 @@ export default function Map({viewMode, zones, ...props}) {
     // Define the hue and lightness range for the heatmap. Saturation remains at 100%
     const colourVar = 10 - rank;
     //const hue = colourVar + 230; // PURPLE!!!
-    const hue = 110 + rank * 10;
     // console.log(rank, hue);
-
-    const lightness = 90 - colourVar * 5;
-    return `hsl(${hue}, ${100}%, ${50}%)`;
+    const lightness = 54.2 + rank * 4.2;
+    return `hsl(${230}, ${100}%, ${lightness}%)`;
   }
 
-  function rankOutline(rank) {
-    if (rank === 1) {
-      return "#E6BE00";
-    } else if (rank === 2) {
-      return "#D7D7D7";
-    } else if (rank === 3) {
-      return "#A55028";
-    } else {
-      return "#9B9169";
-    }
-  }
 
   // ======================homepage heatmap============================
   // console.log("busynessZones-Map recieve the prop:", props.busynessZones);
