@@ -32,11 +32,11 @@ def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5),
         list: A list of dictionaries (one dictonary per record) of the records matching the query.
     """
 
-    zone_type_filter = ''
+    zone_type_filter = 'AND "cityframe"."zone_types"."zone_type" = "cityframe"."zone_types"."main_type"'
     if str.lower(zone_type) != 'all':
         zone_type_filter = f'AND "cityframe"."zone_types"."zone_type" = \'{zone_type}\''
 
-    arch_style_filter = ''
+    arch_style_filter = 'AND "cityframe"."arch_styles"."style" = "cityframe"."arch_styles"."main_style"'
     if str.lower(style) != 'all':
         arch_style_filter = f'AND "cityframe"."arch_styles"."style" = \'{style}\' AND "cityframe"."arch_styles"."building_count" > 0'
 

@@ -91,26 +91,6 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
         FieldDoesNotExist: If the target_style is not a valid architectural style.
     """
 
-    # dictionary to translate the style names to django model variables
-    style_dict = {
-        'neo-Georgian': 'neo_georgian',
-        'Greek Revival': 'greek_revival',
-        'Romanesque Revival': 'romanesque_revival',
-        'neo-Grec': 'neo_grec',
-        'Renaissance Revival': 'renaissance_revival',
-        'Beaux-Arts': 'beaux_arts',
-        'Queen Anne': 'queen_anne',
-        'Italianate': 'italianate',
-        'Federal': 'federal',
-        'neo-Renaissance': 'neo_renaissance',
-        'All': 'all'
-    }
-
-    # checking if style is valid
-    if style_dict.get(target_style) is None:
-        raise FieldDoesNotExist(
-            f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
-
     # validate supplied time
     ny_dt = check_ny_dt(target_dt)
 
@@ -213,16 +193,18 @@ def generate_response(target_busyness, target_trees, target_style, target_dt, ta
             zone_occurrences[record['zone']] = zone_occurrences.get(record['zone'], 0) + 1
             key = f"{record['taxi_zone']}_{record['dt_iso']}"
             ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
-            if target_type == 'all':
+            if str.lower(target_type) == 'all':
                 zone_type = record['main_type'].capitalize()
             else:
                 zone_type = f'{round(record["zone_percent"])}% {target_type}'
-            if target_style == 'All':
+            if str.lower(target_style) == 'all':
                 arch = record['main_style']
                 style_count = record['main_count']
             else:
                 arch = target_style
                 style_count = record['building_count']
+            if style_count == 0:
+                arch = "historical buildings"
             results[key] = {
                 'id': str(record['taxi_zone']),
                 'zone': record['zone'],
