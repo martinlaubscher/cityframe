@@ -251,5 +251,4 @@ def current_busyness():
 
     return busyness_dict
 
-
-print(generate_response(3, 3, '2023-08-10 15:00',target_style='federal'))
+# print(generate_response(3, 3, '2023-08-10 15:00',target_style='federal'))

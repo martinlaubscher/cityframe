@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.generate_response import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning
+from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning, Zones
 import requests
 import datetime
 import pytz
@@ -515,49 +515,18 @@ class TaxiZoneDataView(APIView):
             print('zone data fetched from cache')
             return RestResponse(zone_data)
         else:
-            styles = [
-                'neo_georgian', 'greek_revival', 'romanesque_revival',
-                'neo_grec', 'renaissance_revival', 'beaux_arts',
-                'queen_anne', 'italianate', 'federal', 'neo_renaissance'
-            ]
-            style_columns = {
-                'neo_georgian': 'neo-Georgian',
-                'greek_revival': 'Greek Revival',
-                'romanesque_revival': 'Romanesque Revival',
-                'neo_grec': 'neo-Grec',
-                'renaissance_revival': 'Renaissance Revival',
-                'beaux_arts': 'Beaux-Arts',
-                'queen_anne': 'Queen Anne',
-                'italianate': 'Italianate',
-                'federal': 'Federal',
-                'neo_renaissance': 'neo-Renaissance'
-            }
-
-            queryset = TaxiZones.objects.annotate(
-                max_style_value=Greatest(*styles),
-                zone_type=F('zoning__zone_type')
-            )
-
-            for style, column in style_columns.items():
-                queryset = queryset.annotate(
-                    **{f'{style}_is_max': Case(When(max_style_value=F(style), then=Value(True)), default=Value(False),
-                                               output_field=CharField())}
-                )
-
+            queryset = Zones.objects.all()
             results = {}
+
             for obj in queryset:
                 result = {
                     'zone': obj.zone,
                     'trees': obj.trees,
-                    'zone_type': obj.zone_type
+                    'zone_type': obj.main_zone_type,
+                    'main_style': obj.main_zone_style
                 }
 
-                for style, column in style_columns.items():
-                    if getattr(obj, f'{style}_is_max'):
-                        result['main_style'] = column
-                        break
-
-                results[str(obj.id)] = result
+                results[str(obj.location_id)] = result
 
             # Add the data to the cache, with a timeout of 90 days (in seconds)
             cache.set('zone_data', results, 7776000)
@@ -587,12 +556,13 @@ class MainFormSubmissionView(APIView):
         style = str.lower(request.data.get('style'))
         zone_type = str.lower(request.data.get('zone_type'))
         # weather = request.data.get('weather', None)
-        weather = str.lower(request.data.get('weather'))
+        weather = request.data.get('weather', None)
 
+        print(time, busyness, trees, style, zone_type, weather)
 
-        # # If user chooses 'All' option, set weather to None
-        # if weather == 'All':
-        #     weather = None
+        # If user chooses 'All' option, set weather to None
+        if weather == 'all':
+            weather = None
 
         # Sanitise busyness and trees inputs
         try:
@@ -628,6 +598,7 @@ class MainFormSubmissionView(APIView):
             weather_list = ['clear', 'clouds', 'drizzle', 'fog', 'haze', 'mist', 'rain', 'smoke', 'snow', 'squall',
                             'thunderstorm']
             if weather is not None:
+                weather = str.lower(weather)
                 assert weather in weather_list
         except AssertionError:
             return RestResponse({'error': 'Invalid weather type.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -652,7 +623,8 @@ class MainFormSubmissionView(APIView):
             zone_type=zone_type,
             query_time=query_time,
         )
-        results = generate_response(busyness, trees, style, time, zone_type, weather)
+        results = generate_response(target_busyness=busyness, target_trees=trees, target_style=style, target_dt=time,
+                                    target_type=zone_type, weather=weather)
 
         # handle empty results (e.g., user searches for 'snow' in summer)
         if not results:

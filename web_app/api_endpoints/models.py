@@ -170,39 +170,53 @@ class WeatherCurrent(models.Model):
             return None
 
 
-# class TaxiZones(models.Model):
-#     id = models.IntegerField(primary_key=True, db_column='location_id')
-#     zone = models.CharField(max_length=100)
-#     trees = models.IntegerField()
-#     trees_scaled = models.IntegerField()
-#     neo_georgian = models.IntegerField(db_column='neo-Georgian')
-#     greek_revival = models.IntegerField(db_column='Greek Revival')
-#     romanesque_revival = models.IntegerField(db_column='Romanesque Revival')
-#     neo_grec = models.IntegerField(db_column='neo-Grec')
-#     renaissance_revival = models.IntegerField(db_column='Renaissance Revival')
-#     beaux_arts = models.IntegerField(db_column='Beaux-Arts')
-#     queen_anne = models.IntegerField(db_column='Queen Anne')
-#     italianate = models.IntegerField(db_column='Italianate')
-#     federal = models.IntegerField(db_column='Federal')
-#     neo_renaissance = models.IntegerField(db_column='neo-Renaissance')
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'cityframe\".\"taxi_zones'
-
 class TaxiZones(models.Model):
     id = models.IntegerField(primary_key=True, db_column='location_id')
     zone = models.CharField(max_length=100)
     trees = models.IntegerField()
     trees_scaled = models.IntegerField()
-    zone_style = models.CharField(max_length=64)
-    zone_style_count = models.IntegerField()
-    zone_type = models.CharField(max_length=64)
-    zone_type_percent = models.IntegerField()
+    neo_georgian = models.IntegerField(db_column='neo-Georgian')
+    greek_revival = models.IntegerField(db_column='Greek Revival')
+    romanesque_revival = models.IntegerField(db_column='Romanesque Revival')
+    neo_grec = models.IntegerField(db_column='neo-Grec')
+    renaissance_revival = models.IntegerField(db_column='Renaissance Revival')
+    beaux_arts = models.IntegerField(db_column='Beaux-Arts')
+    queen_anne = models.IntegerField(db_column='Queen Anne')
+    italianate = models.IntegerField(db_column='Italianate')
+    federal = models.IntegerField(db_column='Federal')
+    neo_renaissance = models.IntegerField(db_column='neo-Renaissance')
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"taxi_zones'
+
+class Zones(models.Model):
+    location_id = models.IntegerField(primary_key=True)
+    zone = models.CharField(max_length=100)
+    trees = models.IntegerField()
+    trees_scaled = models.IntegerField()
+    main_zone_style = models.CharField(max_length=100)
+    main_zone_style_value = models.IntegerField()
+    main_zone_type = models.CharField(max_length=100)
+    main_zone_type_value = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'cityframe\".\"zones'
+
+# class TaxiZones(models.Model):
+#     id = models.IntegerField(primary_key=True, db_column='location_id')
+#     zone = models.CharField(max_length=100)
+#     trees = models.IntegerField()
+#     trees_scaled = models.IntegerField()
+#     zone_style = models.CharField(max_length=64)
+#     zone_style_count = models.IntegerField()
+#     zone_type = models.CharField(max_length=64)
+#     zone_type_percent = models.IntegerField()
+#
+#     class Meta:
+#         managed = False
+#         db_table = 'cityframe\".\"zones'
 
 
 class Busyness(models.Model):
