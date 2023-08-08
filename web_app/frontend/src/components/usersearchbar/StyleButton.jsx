@@ -2,16 +2,16 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const styleOptions = {
-  1: 'neo-Georgian',
-  2: 'Greek Revival',
-  3: 'Romanesque Revival',
-  4: 'neo-Grec',
-  5: 'Renaissance Revival',
-  6: 'Beaux-Arts',
-  7: 'Queen Anne',
-  8: 'Italianate',
-  9: 'Federal',
-  10: 'neo-Renaissance'
+  1: 'neo-georgian',
+  2: 'greek revival',
+  3: 'romanesque revival',
+  4: 'neo-grec',
+  5: 'renaissance revival',
+  6: 'beaux-arts',
+  7: 'queen anne',
+  8: 'italianate',
+  9: 'federal',
+  10: 'neo-renaissance'
 };
 
 const StyleButton = ({onChange, clear}) => {
@@ -47,7 +47,7 @@ const StyleButton = ({onChange, clear}) => {
           <select className="style-select" onChange={handleOptionChange} value={selectedStyleKey}>
             {Object.keys(styleOptions).map((key) => (
               <option key={key} value={key}>
-                {styleOptions[key].toLowerCase()}
+                {styleOptions[key]}
               </option>
             ))}
           </select>
