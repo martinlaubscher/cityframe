@@ -5,7 +5,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {getIcon} from "../weatherInfo/WeatherHelpers";
 import goldenIcon from "../../assets/goldenhour.png";
 import goldenIcon_avif from "../../assets/goldenhour.avif";
-import { getImageUrlSmallById } from "./ResultPictures";
+import {getImageUrlSmallById} from "./ResultPictures";
 
 let style;
 
@@ -13,6 +13,7 @@ export default function SearchResult({results, searchOptions}) {
   const [goldenHourStatus, setGoldenHourStatus] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef(null);
+  const errorRef = useRef(null);
 
   useEffect(() => {
     Promise.all(
@@ -20,9 +21,22 @@ export default function SearchResult({results, searchOptions}) {
     ).then((statuses) => setGoldenHourStatus(statuses));
   }, [results]);
 
+  if (results.length === 0) {
+    useEffect(() => {
+      setActiveIndex(0);
+      errorRef.current.scrollIntoView({behavior: 'smooth'});
+    }, [results]);
+    return (
+      <div className="error-inner" ref={errorRef}>
+        <span className="error-alert">Nothing here!</span>
+        <span className="error-alert">More photo spots await! 📷</span>
+      </div>
+    );
+  }
+
   useEffect(() => {
     setActiveIndex(0);
-    carouselRef.current.scrollIntoView({ behavior: 'smooth' });
+    carouselRef.current.scrollIntoView({behavior: 'smooth'});
   }, [results]);
 
   useEffect(() => {
@@ -37,14 +51,6 @@ export default function SearchResult({results, searchOptions}) {
     };
   }, []);
 
-  if (results.length === 0) {
-    return (
-      <div className="error-inner">
-        <span className="error-alert">Nothing here!</span>
-        <span className="error-alert">More photo spots await! 📷</span>
-      </div>
-    );
-  }
   return (
     <div id="carouselExampleIndicators" className="carousel slide" ref={carouselRef}>
       <div className="carousel-indicators">
@@ -144,12 +150,12 @@ export default function SearchResult({results, searchOptions}) {
                           className="logo-image"
                           srcSet={goldenIcon_avif}
                           type="image/avif"
-                          style={{ height: "25px" }}
+                          style={{height: "25px"}}
                         />
                         <img
-                        src={goldenIcon}
-                        alt="golden icon"
-                        style={{height: "25px", width: "auto"}}
+                          src={goldenIcon}
+                          alt="golden icon"
+                          style={{height: "25px", width: "auto"}}
                         />
                       </picture>
                     </div>
@@ -238,7 +244,7 @@ export async function handleSearch(searchOptions) {
         : {}),
     };
     const response = await axios.post("/api/submit-main", data);
-    // console.log("submit-main", response);
+    console.log("submit-main", response);
     if (
       response.data &&
       typeof response.data === "object" &&
