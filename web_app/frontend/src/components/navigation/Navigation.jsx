@@ -8,7 +8,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "@/axiosConfig.js";
 import colours from '../dummydata/colours.js';
 import {Logo} from "../logo/Logo";
-
+import "../searchresult/SearchResultCSS.css"
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
@@ -124,12 +124,10 @@ export default function Navigation_offcanvas() {
             {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info gem-result">
 
-                      <div className="rank-zone-weathericon"></div>
-
                         <div className="rank-zone-weathericon">
                             <p className="zone">{Object.values(gemResults)[0].name}</p>
                         </div>
-              <div className="tree">
+              <div className="tree result-param">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
                   <p className="level-of-trees">number of trees</p>
@@ -139,7 +137,7 @@ export default function Navigation_offcanvas() {
                 </div>
               </div>
 
-              <div className="style">
+              <div className="style result-param">
                 <div className="style-left">
                   <p className="style-title">{Object.values(gemResults)[0].main_style}</p>
                   <p className="architecture">architecture</p>
@@ -150,7 +148,7 @@ export default function Navigation_offcanvas() {
                   </p>
                 </div>
               </div>
-              <div className="color-pallete">
+              <div className="color-pallete result-param">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
                 </div>
