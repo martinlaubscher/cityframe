@@ -167,36 +167,51 @@ if __name__ == '__main__':
         schema='cityframe'
     )
 
-    # initialising taxi_zones table
-    taxi_zones = DatabaseTable(
-        'taxi_zones', MetaData(),
-        # Column('id', Integer, autoincrement=True, primary_key=True),
+    # # initialising taxi_zones table
+    # taxi_zones = DatabaseTable(
+    #     'taxi_zones', MetaData(),
+    #     # Column('id', Integer, autoincrement=True, primary_key=True),
+    #     Column('location_id', Integer, primary_key=True),
+    #     Column('zone', String),
+    #     Column('trees', Integer),
+    #     Column('trees_scaled', Integer),
+    #     # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
+    #     schema='cityframe'
+    # )
+    #
+    # # getting architecture styles
+    # building_points = gpd.read_file(building_path)
+    # zone_polygons = gpd.read_file(taxi_path)
+    # building_feature_filter = 'Style_Prim'
+    # building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
+    #
+    # # looping through styles to add corresponding columns to taxi_zones table
+    # for i in building_counts_in_zones.keys():
+    #     taxi_zones.append_column(Column(i, Integer))
+
+    zones = DatabaseTable(
+        'zones', MetaData(),
         Column('location_id', Integer, primary_key=True),
         Column('zone', String),
         Column('trees', Integer),
         Column('trees_scaled', Integer),
-        # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
+        Column('zone_style', String),
+        Column('zone_style_value', Integer),
+        Column('zone_type', String, primary_key=True),
+        Column('zone_type_value', Float),
+        Index('idx_location', 'location_id'),
         schema='cityframe'
+
     )
 
-    # getting architecture styles
-    building_points = gpd.read_file(building_path)
-    zone_polygons = gpd.read_file(taxi_path)
-    building_feature_filter = 'Style_Prim'
-    building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
-
-    # looping through styles to add corresponding columns to taxi_zones table
-    for i in building_counts_in_zones.keys():
-        taxi_zones.append_column(Column(i, Integer))
-
-    arch_styles = DatabaseTable(
-        'arch_styles', MetaData(),
+    zone_styles = DatabaseTable(
+        'zone_styles', MetaData(),
         Column('location_id', Integer, primary_key=True),
-        Column('style', String, primary_key=True),
-        Column('building_count', Integer),
-        Column('main_style', String),
-        Column('main_count', Integer),
-        Index('idx_location_style', 'location_id', 'style'),
+        Column('zone_style', String, primary_key=True),
+        Column('zone_style_value', Integer),
+        # Column('main_style', String),
+        # Column('main_count', Integer),
+        Index('idx_location_style', 'location_id', 'zone_style'),
         schema='cityframe'
     )
 
@@ -204,8 +219,8 @@ if __name__ == '__main__':
         'zone_types', MetaData(),
         Column('location_id', Integer, primary_key=True),
         Column('zone_type', String, primary_key=True),
-        Column('zone_percent', Float),
-        Column('main_type', String),
+        Column('zone_type_value', Float),
+        # Column('main_type', String),
         Index('idx_location_type', 'location_id', 'zone_type'),
         schema='cityframe'
     )

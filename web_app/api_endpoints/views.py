@@ -604,8 +604,8 @@ class MainFormSubmissionView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
         # Sanitise style input
-        valid_styles = ['All', 'neo-Georgian', 'Greek Revival', 'Romanesque Revival', 'neo-Grec', 'Renaissance Revival',
-                        'Beaux-Arts', 'Queen Anne', 'Italianate', 'Federal', 'neo-Renaissance']
+        valid_styles = ['all', 'neo-georgian', 'greek revival', 'romanesque revival', 'neo-grec', 'renaissance revival',
+                        'beaux-arts', 'queen anne', 'italianate', 'federal', 'neo-renaissance']
         if style not in valid_styles:
             return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
 
