@@ -2,18 +2,18 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const weatherOptions = {
-  1: 'All',
-  2: 'Clear',
-  3: 'Clouds',
-  4: 'Drizzle',
-  5: 'Fog',
-  6: 'Haze',
-  7: 'Mist',
-  8: 'Rain',
-  9: 'Smoke',
-  10: 'Snow',
-  11: 'Squall',
-  12: 'Thunderstorm'
+  1: 'all',
+  2: 'clear',
+  3: 'clouds',
+  4: 'drizzle',
+  5: 'fog',
+  6: 'haze',
+  7: 'mist',
+  8: 'rain',
+  9: 'smoke',
+  10: 'snow',
+  11: 'squall',
+  12: 'thunderstorm'
 };
 
 const WeatherButton = ({onChange, clear}) => {
@@ -49,7 +49,7 @@ const WeatherButton = ({onChange, clear}) => {
           <select className="weather-select" onChange={handleOptionChange} value={selectedWeatherKey}>
             {Object.keys(weatherOptions).map((key) => (
               <option key={key} value={key}>
-                {weatherOptions[key].toLowerCase()}
+                {weatherOptions[key]}
               </option>
             ))}
           </select>

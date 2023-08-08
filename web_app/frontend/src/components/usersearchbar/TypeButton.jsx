@@ -2,10 +2,10 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const typeOptions = {
-  1: 'Commercial',
-  2: 'Manufacturing',
-  3: 'Park',
-  4: 'Residential',
+  1: 'commercial',
+  2: 'manufacturing',
+  3: 'park',
+  4: 'residential',
 };
 
 const TypeButton = ({onChange, clear}) => {
@@ -41,7 +41,7 @@ const TypeButton = ({onChange, clear}) => {
           <select className="style-select" onChange={handleOptionChange} value={selectedTypeKey}>
             {Object.keys(typeOptions).map((key) => (
               <option key={key} value={key}>
-                {typeOptions[key].toLowerCase()}
+                {typeOptions[key]}
               </option>
             ))}
           </select>
