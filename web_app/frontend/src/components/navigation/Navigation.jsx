@@ -7,8 +7,7 @@ import AboutThisWeb from "../../pages/AboutThisWeb";
 import React, {useEffect, useState} from 'react';
 import axios from "@/axiosConfig.js";
 import colours from '../dummydata/colours.js';
-import {Logo} from "../logo/Logo";
-import "../searchresult/SearchResultCSS.css"
+
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
@@ -59,10 +58,9 @@ export default function Navigation_offcanvas() {
 
   // const zoneID = gemResults[0].zone_id
   const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
+
   return (
-    <div className="head">
     <div className="nav-container">
-      <Logo/>
       <button
         className="btn menu-button"
         type="button"
@@ -96,7 +94,6 @@ export default function Navigation_offcanvas() {
           </g>
         </svg>
       </button>
-      </div>
 
       <div
         className="offcanvas offcanvas-top"
@@ -104,7 +101,7 @@ export default function Navigation_offcanvas() {
         id="offcanvasTop"
         aria-labelledby="offcanvasTopLabel"
       >
-        <div className="offcanvas-body-top nav-offcanvas">
+        <div className="offcanvas-body-top">
         <ul className="nav flex-column pe-5">
       {selectedNavItem === null || selectedNavItem === '/mostuniqueareas' ? (
         <li className="nav-item ">
@@ -119,15 +116,17 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span >hidden gem <a style={{fontSize: "16px"}} className="betaTag">Beta</a></span>
+            <span >hidden gem  <a style={{fontSize: "16px"}} className="betaTag">BETA</a></span>
             <span >the most rarely found location</span>
             {selectedNavItem === '/mostuniqueareas' && (
-                    <div className="result-info gem-result">
+                    <div className="result-info">
+
+                      <div className="rank-zone-weathericon"></div>
 
                         <div className="rank-zone-weathericon">
                             <p className="zone">{Object.values(gemResults)[0].name}</p>
                         </div>
-              <div className="tree result-param">
+              <div className="tree">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
                   <p className="level-of-trees">number of trees</p>
@@ -137,7 +136,7 @@ export default function Navigation_offcanvas() {
                 </div>
               </div>
 
-              <div className="style result-param">
+              <div className="style">
                 <div className="style-left">
                   <p className="style-title">{Object.values(gemResults)[0].main_style}</p>
                   <p className="architecture">architecture</p>
@@ -148,18 +147,17 @@ export default function Navigation_offcanvas() {
                   </p>
                 </div>
               </div>
-              <div className="color-pallete result-param">
+              <div className="color-pallete">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
                 </div>
 
                 {/*  below works*/}
-                <div className="color-pallete-right nav-pallete">
-                  {console.log("WE ARE THE CRYSTAL GEMS", gemColour.colors)}
+                <div className="color-pallete-right">
                   {gemColour && gemColour.colors.map((hex, index) => (
                     <div
                         key={index}
-                        className="hex-div"
+                        className="hexdiv"
                         style={{ backgroundColor: hex }}
                         ></div>
                     ))}
@@ -202,7 +200,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span>about this web app</span>
+            <span>about this app</span>
             <span>user help information</span>
           </NavLink>
         </li>

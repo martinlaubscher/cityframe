@@ -46,8 +46,8 @@ export default function UserSearchMenu(props) {
     setSearchOptions({
       datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
       busyness: 1,
-      style: "neo-Georgian",
-      zone_type: "Commercial",
+      style: "neo-georgian",
+      zone_type: "commercial",
       tree: 1,
       weather: "All"
     });
@@ -81,14 +81,12 @@ export default function UserSearchMenu(props) {
 
       <div className="scroll-container">
         <div className="offcanvas-body small">
-          <div className="search-description-clear">
           <div className="search-description-container">
-            <p className="search-description">Search the city zones</p>
+            <p className="search-description">search the city zones</p>
             <p className="search-explanation">find locations according to the following parameters</p>
           </div>
           <div className="clear-search-container">
             <ClearSearchButton clearSearchOptions={clearSearchOptions}/>
-          </div>
           </div>
           <div className="button-container">
             <TimeButton onChange={handleOptionsChange} clear={clear}/>
@@ -97,8 +95,8 @@ export default function UserSearchMenu(props) {
             <StyleButton onChange={handleOptionsChange} clear={clear}/>
             <TypeButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>
-            <button type="button" className="btn search-button" id="search-button" onClick={onSearch}>
-              Search
+            <button type="button" className="btn btn-dark" id="search-button" onClick={onSearch}>
+              search
             </button>
           </div>
         </div>
