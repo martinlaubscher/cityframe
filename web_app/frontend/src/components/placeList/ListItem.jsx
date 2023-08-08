@@ -1,7 +1,7 @@
 export default function ListItem (props){
 
     function handleClick(){
-        console.log("clicked")
+        // console.log("clicked")
     }
     
     return(

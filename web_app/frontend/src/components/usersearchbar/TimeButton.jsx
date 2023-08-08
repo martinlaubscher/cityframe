@@ -12,7 +12,7 @@ const TimeButton = ({onChange, clear}) => {
     if (moment.isMoment(newDateTime)) {
       setDatetime(newDateTime);
       onChange("datetime", newDateTime.format("YYYY-MM-DD HH:mm"));
-      console.log("handleDateTimeChange newDateTime:", newDateTime.format("YYYY-MM-DD HH:mm"));
+      // console.log("handleDateTimeChange newDateTime:", newDateTime.format("YYYY-MM-DD HH:mm"));
     }
   };
 

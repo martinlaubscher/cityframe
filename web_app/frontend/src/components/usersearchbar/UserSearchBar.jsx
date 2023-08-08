@@ -14,7 +14,7 @@ export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChang
 
 
   useEffect(() => {
-    console.log("Zone change!")
+    // console.log("Zone change!")
     if (Object.keys(zones).length !== 0) {
       // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);

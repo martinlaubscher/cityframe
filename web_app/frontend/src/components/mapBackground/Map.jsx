@@ -160,7 +160,7 @@ export default function Map({viewMode, zones, ...props}) {
     // ======================homepage heatmap============================
     else {
       // if(props.busynessZones){
-      console.log(zoneData)
+      // console.log(zoneData)
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 

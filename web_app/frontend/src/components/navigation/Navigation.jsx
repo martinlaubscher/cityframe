@@ -155,7 +155,7 @@ export default function Navigation_offcanvas() {
 
                 {/*  below works*/}
                 <div className="color-pallete-right nav-pallete">
-                  {console.log("WE ARE THE CRYSTAL GEMS", gemColour.colors)}
+                  {/*{console.log("WE ARE THE CRYSTAL GEMS", gemColour.colors)}*/}
                   {gemColour && gemColour.colors.map((hex, index) => (
                     <div
                         key={index}

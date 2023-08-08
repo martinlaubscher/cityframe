@@ -88,12 +88,12 @@ export default function Droplist ({results, searchOptions, hideList}){
                   src={getImageUrlSmallById(results.rank.id)}
                   alt={`Image`}
                 />
-                {console.log(
-                  "result.id:",
-                  results.rank.id,
-                  "url:",
-                  getImageUrlSmallById(results.rank.id)
-                )}
+                {/*{console.log(*/}
+                {/*  "result.id:",*/}
+                {/*  results.rank.id,*/}
+                {/*  "url:",*/}
+                {/*  getImageUrlSmallById(results.rank.id)*/}
+                {/*)}*/}
               </div>
 {/*
               <div className="more-info">

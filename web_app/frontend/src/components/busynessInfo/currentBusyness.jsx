@@ -4,7 +4,7 @@ export async function getAllBusyness() {
   try {
     const response = await axios.get(`/api/current-busyness/`);
 
-    console.log(response.data); // Add this line to debug API response
+    // console.log(response.data); // Add this line to debug API response
     return response.data;
   } catch (error) {
     console.error("There was an error retrieving the data: ", error);

@@ -171,12 +171,12 @@ export default function SearchResult({results, searchOptions}) {
                   src={getImageUrlSmallById(result.id)}
                   alt={`Image ${index}`}
                 />
-                {console.log(
-                  "result.id:",
-                  result.id,
-                  "url:",
-                  getImageUrlSmallById(result.id)
-                )}
+                {/*{console.log(*/}
+                {/*  "result.id:",*/}
+                {/*  result.id,*/}
+                {/*  "url:",*/}
+                {/*  getImageUrlSmallById(result.id)*/}
+                {/*)}*/}
               </div>
             </div>
           </div>
@@ -207,20 +207,20 @@ export default function SearchResult({results, searchOptions}) {
 export async function handleSearch(searchOptions) {
   try {
     // Log the response data to the console
-    console.log(
-      "searchOptions:",
-      "time:",
-      searchOptions.datetime,
-      "busyness:",
-      searchOptions.busyness,
-      "trees:",
-      // searchOptions.tree ? 1 : 0,
-      searchOptions.tree,
-      "style:",
-      searchOptions.style,
-      "weather:",
-      searchOptions.weather
-    );
+    // console.log(
+    //   "searchOptions:",
+    //   "time:",
+    //   searchOptions.datetime,
+    //   "busyness:",
+    //   searchOptions.busyness,
+    //   "trees:",
+    //   // searchOptions.tree ? 1 : 0,
+    //   searchOptions.tree,
+    //   "style:",
+    //   searchOptions.style,
+    //   "weather:",
+    //   searchOptions.weather
+    // );
 
     // save style at request time to use for results later
     style = searchOptions.style;
@@ -238,7 +238,7 @@ export async function handleSearch(searchOptions) {
         : {}),
     };
     const response = await axios.post("/api/submit-main", data);
-    console.log("submit-main", response);
+    // console.log("submit-main", response);
     if (
       response.data &&
       typeof response.data === "object" &&
@@ -257,10 +257,10 @@ export async function handleSearch(searchOptions) {
 export async function getGoldenOrBlueHour(dateTime_dt_iso) {
   let dateTime_dt_iso_split = dateTime_dt_iso.split(" ");
   let date_dt_iso = dateTime_dt_iso_split[0];
-  console.log("Date: " + date_dt_iso);
+  // console.log("Date: " + date_dt_iso);
 
   let timeOfSun__dt_iso = await axios.get(`/api/suntimes/${date_dt_iso}`);
-  console.log("timeOfSun: " + JSON.stringify(timeOfSun__dt_iso.data));
+  // console.log("timeOfSun: " + JSON.stringify(timeOfSun__dt_iso.data));
 
   const dateTimeDate = new Date(dateTime_dt_iso);
   const goldenHourMorningDate = new Date(
@@ -282,10 +282,10 @@ export async function getGoldenOrBlueHour(dateTime_dt_iso) {
     (goldenHourEveningDate <= dateTimeDate &&
       dateTimeDate <= blueHourEveningDate)
   ) {
-    console.log("The time is within the golden hour.");
+    // console.log("The time is within the golden hour.");
     return true;
   } else {
-    console.log("The time is not within the golden hour.");
+    // console.log("The time is not within the golden hour.");
     return false;
   }
 }

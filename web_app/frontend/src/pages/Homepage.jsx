@@ -64,7 +64,7 @@ export default function Homepage() {
 
   function toggleViewMode() {
     setViewMode(viewMode === 'heatmap' ? 'results' : 'heatmap');
-    console.log(viewMode)
+    // console.log(viewMode)
   }
 
   const [zones, setZones] = useState({});
