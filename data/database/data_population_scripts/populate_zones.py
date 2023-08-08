@@ -8,8 +8,9 @@ building_path = os.path.join(current_path, "../..", "GeoJSON", "Building_points.
 tree_path = os.path.join(current_path, "../..", "GeoJSON", "tree_points.geojson")
 
 sys.path.append(cityframe_path)
+print(cityframe_path)
 
-from sqlalchemy import create_engine, URL, MetaData, Table, desc, func
+from sqlalchemy import create_engine, URL, MetaData, Table, desc, text
 from sqlalchemy.dialects.postgresql import insert
 import json
 from credentials import pg_conn
@@ -61,15 +62,13 @@ with engine.begin() as connection:
     # load taxi zone geojson
     with open(taxi_path, 'r') as f:
         data = json.load(f)
-    # loop through taxi zones and add id + zone name to dictionary for that zone
+    # loop through taxi zones and add id + zone name + tree info to dictionary for that zone
     for feature in data['features']:
         properties = feature['properties']
         row = {'location_id': int(properties['location_id']),
                'zone': str.lower(properties['zone']),
                'trees': tree_counts_in_zones.get(properties['zone'], 0),
                'trees_scaled': tree_counts_scaled.get(properties['zone'], 1)}
-        # add tree count to dictionary
-        # add tree counts mapped to scale 1-5 to dictionary
         # append the dictionary representing the record to the list of all records
         vals.append(row)
     # sort the contents of vals by the location id
@@ -120,3 +119,19 @@ with engine.begin() as connection:
     insert_stmt = insert(zones_table).on_conflict_do_nothing()
     # executing the query
     connection.execute(insert_stmt, vals)
+
+    fk_zone_styles = '''
+    ALTER TABLE cityframe.zone_styles 
+    ADD CONSTRAINT fk_zone_styles_zones_location_id 
+    FOREIGN KEY (location_id) REFERENCES cityframe.zones(location_id) ON DELETE CASCADE;
+    '''
+
+    # Define constraints for zone_types_table
+    fk_zone_types = '''
+    ALTER TABLE cityframe.zone_types 
+    ADD CONSTRAINT fk_zone_types_zones_location_id 
+    FOREIGN KEY (location_id) REFERENCES cityframe.zones(location_id) ON DELETE CASCADE;
+    '''
+    connection.execute(text(fk_zone_styles))
+    connection.execute(text(fk_zone_types))
+

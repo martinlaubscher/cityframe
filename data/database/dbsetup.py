@@ -9,7 +9,7 @@ building_path = os.path.join(current_path, "..", "GeoJSON", "Building_points.geo
 sys.path.append(cityframe_path)
 
 from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Integer, BigInteger, String, Float, \
-    DateTime, Index
+    DateTime, Index, ForeignKey
 from sqlalchemy.schema import CreateSchema
 import geopandas as gpd
 from credentials import pg_conn
@@ -75,6 +75,7 @@ class DatabaseTable(Table):
     """
 
     tables = []
+    meta = MetaData()
 
     def __init__(self, name, metadata, *args, **kw):
         """
@@ -118,7 +119,7 @@ if __name__ == '__main__':
 
     # initialise database tables to be added
     DatabaseTable(
-        'weather_fc', MetaData(),
+        'weather_fc', DatabaseTable.meta,
         Column('dt', BigInteger, primary_key=True),
         Column('dt_iso', DateTime(timezone=True), unique=True),
         Column('temp', Float),
@@ -143,7 +144,7 @@ if __name__ == '__main__':
     )
 
     DatabaseTable(
-        'weather_current', MetaData(),
+        'weather_current', DatabaseTable.meta,
         Column('dt', BigInteger, primary_key=True),
         Column('dt_iso', DateTime),
         Column('temp', Float),
@@ -169,7 +170,7 @@ if __name__ == '__main__':
 
     # # initialising taxi_zones table
     # taxi_zones = DatabaseTable(
-    #     'taxi_zones', MetaData(),
+    #     'taxi_zones', DatabaseTable.meta,
     #     # Column('id', Integer, autoincrement=True, primary_key=True),
     #     Column('location_id', Integer, primary_key=True),
     #     Column('zone', String),
@@ -190,38 +191,32 @@ if __name__ == '__main__':
     #     taxi_zones.append_column(Column(i, Integer))
 
     zones = DatabaseTable(
-        'zones', MetaData(),
+        'zones', DatabaseTable.meta,
         Column('location_id', Integer, primary_key=True),
         Column('zone', String),
         Column('trees', Integer),
         Column('trees_scaled', Integer),
         Column('main_zone_style', String),
         Column('main_zone_style_value', Integer),
-        Column('main_zone_type', String, primary_key=True),
+        Column('main_zone_type', String),
         Column('main_zone_type_value', Float),
-        Index('idx_location', 'location_id'),
         schema='cityframe'
 
     )
 
     zone_styles = DatabaseTable(
-        'zone_styles', MetaData(),
+        'zone_styles', DatabaseTable.meta,
         Column('location_id', Integer, primary_key=True),
         Column('zone_style', String, primary_key=True),
         Column('zone_style_value', Integer),
-        # Column('main_style', String),
-        # Column('main_count', Integer),
-        Index('idx_location_style', 'location_id', 'zone_style'),
         schema='cityframe'
     )
 
     zone_types = DatabaseTable(
-        'zone_types', MetaData(),
+        'zone_types', DatabaseTable.meta,
         Column('location_id', Integer, primary_key=True),
         Column('zone_type', String, primary_key=True),
         Column('zone_type_value', Float),
-        # Column('main_type', String),
-        Index('idx_location_type', 'location_id', 'zone_type'),
         schema='cityframe'
     )
 
