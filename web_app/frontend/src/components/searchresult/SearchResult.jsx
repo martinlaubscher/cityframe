@@ -20,6 +20,7 @@ export default function SearchResult({results, searchOptions}) {
 
   useEffect(() => {
     setActiveIndex(0);
+    carouselRef.current.scrollIntoView({ behavior: 'smooth' });
   }, [results]);
 
   useEffect(() => {
