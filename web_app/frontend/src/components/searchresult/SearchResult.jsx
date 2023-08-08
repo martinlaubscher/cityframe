@@ -265,7 +265,7 @@ export async function getGoldenOrBlueHour(dateTime_dt_iso) {
   let date_dt_iso = dateTime_dt_iso_split[0];
   // console.log("Date: " + date_dt_iso);
 
-  let timeOfSun__dt_iso = await axios.get(`/api/suntimes/${date_dt_iso}`);
+  let timeOfSun__dt_iso = await axios.get(`/api/suntimes/${date_dt_iso}/`);
   // console.log("timeOfSun: " + JSON.stringify(timeOfSun__dt_iso.data));
 
   const dateTimeDate = new Date(dateTime_dt_iso);
