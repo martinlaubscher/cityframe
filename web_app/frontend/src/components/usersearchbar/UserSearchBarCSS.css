@@ -231,3 +231,24 @@
 }
 
 /*SLIDER STYLING END*/
+
+
+
+@media (min-width: 768px) {
+    .usersearch-container {
+        top: 0;
+        height: 25%;
+        padding-top: 10%;
+        margin: 0px;
+        
+    }
+    .weather-time-reset-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: column;   
+    }
+    .weather-time-reset-container > * {
+        margin-top: 10px;
+    }
+}

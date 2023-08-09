@@ -29,11 +29,15 @@
 }
 
 
-/* @media (min-width: 768px) {
+@media (min-width: 768px) {
     .main-footer-container {
         position: fixed;
         left: 0;
-        width: 35% !important;
+        width: 300px !important;
         height: 100vh;
     }
-} */
+    .header-container{
+    position: fixed;
+    bottom:0;
+    }
+}
