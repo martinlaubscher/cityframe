@@ -190,6 +190,7 @@ class TaxiZones(models.Model):
         managed = False
         db_table = 'cityframe\".\"taxi_zones'
 
+
 class Zones(models.Model):
     location_id = models.IntegerField(primary_key=True)
     zone = models.CharField(max_length=100)
@@ -203,20 +204,6 @@ class Zones(models.Model):
     class Meta:
         managed = False
         db_table = 'cityframe\".\"zones'
-
-# class TaxiZones(models.Model):
-#     id = models.IntegerField(primary_key=True, db_column='location_id')
-#     zone = models.CharField(max_length=100)
-#     trees = models.IntegerField()
-#     trees_scaled = models.IntegerField()
-#     zone_style = models.CharField(max_length=64)
-#     zone_style_count = models.IntegerField()
-#     zone_type = models.CharField(max_length=64)
-#     zone_type_percent = models.IntegerField()
-#
-#     class Meta:
-#         managed = False
-#         db_table = 'cityframe\".\"zones'
 
 
 class Busyness(models.Model):
@@ -288,3 +275,15 @@ class Zoning(models.Model):
     class Meta:
         managed = False
         db_table = 'cityframe\".\"zoning'
+
+
+class HiddenGem(models.Model):
+    zone_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    trees = models.IntegerField()
+    main_style_amount = models.IntegerField()
+    main_style = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'cityframe\".\"hidden_gems'

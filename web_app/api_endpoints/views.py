@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response as RestResponse
 from credentials import openweather_key, timezone_db_key
 from api_endpoints.generate_response import generate_response, current_busyness
-from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning, Zones
+from .models import WeatherCurrent, Query, Response, TaxiZones, Zoning, Zones, HiddenGem
 import requests
 import datetime
 import pytz
@@ -135,17 +135,79 @@ class FutureWeatherAPIView(APIView):
         return RestResponse(closest_match)
 
 
+# class HiddenGemsDataView(APIView):
+#     def get(self, request):
+#         least_recommended_zones_ids = (
+#             Response.objects.values("zone_id")
+#             .annotate(count=Count("zone_id"))
+#             .order_by("count")[:10]
+#         )
+#         # get zone_ids from the results
+#         zone_ids = [zone["zone_id"] for zone in least_recommended_zones_ids]
+#
+#         # Get the relevant TaxiZone objects
+#         zones = TaxiZones.objects.filter(id__in=zone_ids)
+#
+#         response_data = {}
+#         for zone in zones:
+#             style_fields = {
+#                 "neo-Georgian": zone.neo_georgian,
+#                 "Greek Revival": zone.greek_revival,
+#                 "Romanesque Revival": zone.romanesque_revival,
+#                 "neo-Grec": zone.neo_grec,
+#                 "Renaissance Revival": zone.renaissance_revival,
+#                 "Beaux-Arts": zone.beaux_arts,
+#                 "Queen Anne": zone.queen_anne,
+#                 "Italianate": zone.italianate,
+#                 "Federal": zone.federal,
+#                 "neo-Renaissance": zone.neo_renaissance,
+#             }
+#
+#             # Find the style with the max value
+#             max_style = max(style_fields, key=style_fields.get)
+#
+#             response_data[zone.id] = {
+#                 "zone_id": zone.id,
+#                 "name": zone.zone,
+#                 "trees": zone.trees,
+#                 "main_style_amount": style_fields[max_style],
+#                 "main_style": max_style,
+#             }
+#
+#         return RestResponse(response_data)
 class HiddenGemsDataView(APIView):
     def get(self, request):
+        """Get request for 10 least recommended zones. Populates hidden_gems table if existing records not valid
+
+        Returns:
+            JSON data with zone_id as keys
+        """
+        # Check the database for HiddenGem records
+        current_date = timezone.now()
+        first_record = HiddenGem.objects.first()
+        # If there are 10 records and the first is less than 60 days old, return these records
+        if first_record and (current_date - first_record.created_at).days < 60 and HiddenGem.objects.count() == 10:
+            response_data = {gem.zone_id: {
+                "zone_id": gem.zone_id,
+                "name": gem.name,
+                "trees": gem.trees,
+                "main_style_amount": gem.main_style_amount,
+                "main_style": gem.main_style
+            } for gem in HiddenGem.objects.all()}
+            return RestResponse(response_data)
+
+        # If records are older than 60 days or there are fewer than 10 records, calculate hidden gems,
+        # populate database and return formatted data
+
+        # Delete all old records, which are logically invalid
+        HiddenGem.objects.all().delete()
+
         least_recommended_zones_ids = (
             Response.objects.values("zone_id")
             .annotate(count=Count("zone_id"))
             .order_by("count")[:10]
         )
-        # get zone_ids from the results
         zone_ids = [zone["zone_id"] for zone in least_recommended_zones_ids]
-
-        # Get the relevant TaxiZone objects
         zones = TaxiZones.objects.filter(id__in=zone_ids)
 
         response_data = {}
@@ -162,10 +224,7 @@ class HiddenGemsDataView(APIView):
                 "Federal": zone.federal,
                 "neo-Renaissance": zone.neo_renaissance,
             }
-
-            # Find the style with the max value
             max_style = max(style_fields, key=style_fields.get)
-
             response_data[zone.id] = {
                 "zone_id": zone.id,
                 "name": zone.zone,
@@ -173,44 +232,18 @@ class HiddenGemsDataView(APIView):
                 "main_style_amount": style_fields[max_style],
                 "main_style": max_style,
             }
+            # Update or create the records in the HiddenGem model
+            HiddenGem.objects.update_or_create(
+                zone_id=zone.id,
+                defaults={
+                    "name": zone.zone,
+                    "trees": zone.trees,
+                    "main_style_amount": style_fields[max_style],
+                    "main_style": max_style
+                }
+            )
 
         return RestResponse(response_data)
-
-
-# class CurrentSuntimesAPIView(APIView):
-#     def get(self, request, formatting=None):
-#
-#         """Get request for current day's sunrise and sunset data
-#
-#         One optional argument ('formatting')
-#
-#         Returns json listing sunrise and sunset in unix timestamp format (with offset applied)
-#         If formatting == 'datetime', returns a datetime string
-#         """
-#         url = f'https://api.openweathermap.org/data/2.5/weather?lat=40.7831&lon=-73.9712&appid={openweather_key}'
-#         response = requests.get(url)
-#         raw_data = response.json()
-#         sunrise_timestamp = raw_data['sys']['sunrise']
-#         sunset_timestamp = raw_data['sys']['sunset']
-#         timezone_offset = raw_data['timezone']
-#         sunrise_local = sunrise_timestamp + timezone_offset
-#         sunset_local = sunset_timestamp + timezone_offset
-#
-#         # Check if the 'format' query parameter is provided
-#         if formatting == 'datetime':
-#             # Handle datetime format
-#             processed_data = {
-#                 'sunrise': convert_to_datetime_string(sunrise_local),
-#                 'sunset': convert_to_datetime_string(sunset_local),
-#             }
-#         else:
-#             # Handle default format
-#             processed_data = {
-#                 'sunrise': sunrise_local,
-#                 'sunset': sunset_local,
-#             }
-#
-#         return RestResponse(processed_data)
 
 
 class CurrentSuntimesAPIView(APIView):
@@ -362,43 +395,6 @@ class SuntimesAPIView(APIView):
                 cache.set(requested_date, processed_data, 1382400)
 
                 return RestResponse(processed_data)
-
-
-# class FutureSuntimesAPIView(APIView):
-#     def get(self, request, days_in_future, formatting=None):
-#         """Get request for future sunrise and sunset data
-#         Takes one argument, days_in_future, an int between 1-5 inclusive (representing a number of days into the future)
-#         Returns a json listing sunrise and sunset for that day in unix timestamp format (with offset applied)
-#         """
-#         url = f'https://api.openweathermap.org/data/2.5/forecast/daily?' \
-#               f'lat=40.7831&lon=-73.9712&cnt=16&appid={openweather_key}'
-#         response = requests.get(url)
-#         data = response.json()
-#         timezone_offset = data['city']['timezone']
-#
-#         # Filter the data based on days_in_future
-#         filtered_data = data['list'][days_in_future]  # Adjusting index since days_in_future starts from 1
-#
-#         # calculate sunrise and sunset with offset applied
-#         sunrise_timestamp = filtered_data['sunrise']
-#         sunset_timestamp = filtered_data['sunset']
-#         sunrise_local = sunrise_timestamp + timezone_offset
-#         sunset_local = sunset_timestamp + timezone_offset
-#
-#         if formatting == 'datetime':
-#             # Handle datetime format
-#             processed_data = {
-#                 'sunrise': convert_to_datetime_string(sunrise_local),
-#                 'sunset': convert_to_datetime_string(sunset_local),
-#             }
-#         else:
-#             # format data correctly for the expected response
-#             processed_data = {
-#                 'sunrise': sunrise_local,
-#                 'sunset': sunset_local
-#             }
-#
-#         return RestResponse(processed_data)
 
 
 class GoldenHourAPIView(APIView):
