@@ -114,9 +114,12 @@ function getCurrentTime() {
   const optionsDate = {
     timeZone: "America/New_York",
     day: "2-digit",
-    month: "2-digit",
+    month: "short",
   };
+
   const time = now.toLocaleTimeString("en-US", optionsTime);
   const date = now.toLocaleDateString("en-US", optionsDate);
-  return `${time} ${date}`;
+  const [day, month] = date.split(" ");
+  
+  return `${time} ${month}/${day}`;
 }
