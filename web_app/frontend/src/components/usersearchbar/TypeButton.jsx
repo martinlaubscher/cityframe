@@ -2,11 +2,11 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const typeOptions = {
-  1: 'All',
-  2: 'Commercial',
-  3: 'Manufacturing',
-  4: 'Park',
-  5: 'Residential',
+  1: 'any',
+  2: 'commercial',
+  3: 'manufacturing',
+  4: 'park',
+  5: 'residential',
 };
 
 const TypeButton = ({onChange, clear}) => {
@@ -33,7 +33,7 @@ const TypeButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Zone Type</div>
+          <div className="option-label">zone type</div>
           <div className="option-explanation">
           {/*insert as needed*/}
           </div>

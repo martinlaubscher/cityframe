@@ -55,7 +55,7 @@ export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChang
         </div>
         <div className="label-container">
           <label htmlFor="busyness-slider" className="form-label" id="busyness-slider-label">
-            busyness in Manhattan
+            busyness in manhattan
           </label>
         </div>
         <div className="busyness-level">

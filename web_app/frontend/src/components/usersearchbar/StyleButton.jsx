@@ -2,17 +2,17 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const styleOptions = {
-  1: 'All',
-  2: 'neo-Georgian',
-  3: 'Greek Revival',
-  4: 'Romanesque Revival',
-  5: 'neo-Grec',
-  6: 'Renaissance Revival',
-  7: 'Beaux-Arts',
-  8: 'Queen Anne',
-  9: 'Italianate',
-  10: 'Federal',
-  11: 'neo-Renaissance'
+  1: 'any',
+  2: 'neo-georgian',
+  3: 'greek revival',
+  4: 'romanesque revival',
+  5: 'neo-grec',
+  6: 'renaissance revival',
+  7: 'beaux-arts',
+  8: 'queen anne',
+  9: 'italianate',
+  10: 'federal',
+  11: 'neo-renaissance'
 };
 
 const StyleButton = ({onChange, clear}) => {
@@ -39,7 +39,7 @@ const StyleButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Style</div>
+          <div className="option-label">style</div>
           <div className="option-explanation">
             architecture
           </div>

@@ -3,35 +3,38 @@ export default function AboutThisWeb() {
     <div className="about-this-web-container">
       <div className="scrollable-content">
         <div className="section">
-          <span className="title">About</span>
+          <span className="title">about</span>
           <p>
-            Cityframe helps you find the perfect frame for your shot. Whether
+            CITYFRAME helps you find the perfect frame for your shot. whether
             you're a professional filmmaker or an amateur photographer, use
-            cityframe to discover Manhattan in ways you never have before.
+            cityframe to discover manhattan in ways you never have before.
           </p>
+          <br></br>
         </div>
 
         <div className="section">
-          <span className="title">How to use</span>
+          <span className="title">how to use</span>
 
           <div className="subsection">
-            <p className="subtitle">Explore Busyness</p>
+            <p className="subtitle">explore busyness</p>
             <p>
-              Use the slider on the homepage to see current busyness levels in
-              Manhattan city zones.
+              use the slider on the homepage to see current busyness levels in
+              manhattan city zones.
             </p>
+            <br></br>
           </div>
 
           <div className="subsection">
-            <p className="subtitle">Search in city zones</p>
+            <p className="subtitle">search in city zones</p>
             <p>
-              Select search input parameters and get results of the top ten zones
+              select search input parameters and get results of the top ten zones
               in the city which best match your input returned.
             </p>
+            <br></br>
             <p>
-              Read your search results data carefully. Zones which are returned
-              may not match all your given search values. The accuracy of search
-              results will vary depending on the input given. Unlikely searches,
+              read your search results data carefully. zones which are returned
+              may not match all your given search values. the accuracy of search
+              results will vary depending on the input given. unlikely searches,
               for example, high busyness in the middle of the night, will include
               results at more suitable times which match your other search
               parameters.

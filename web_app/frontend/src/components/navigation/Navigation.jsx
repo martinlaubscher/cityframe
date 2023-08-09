@@ -59,6 +59,7 @@ export default function Navigation_offcanvas() {
 
   // const zoneID = gemResults[0].zone_id
   const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
+
   return (
     <div className="head">
     <div className="nav-container">
@@ -119,7 +120,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span >hidden gem <a style={{fontSize: "16px"}} className="betaTag">Beta</a></span>
+            <span >hidden gem  <a style={{fontSize: "16px", color: "grey"}} className="betaTag">beta</a></span>
             <span >the most rarely found location</span>
             {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info gem-result">
@@ -202,7 +203,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span>about this web app</span>
+            <span>about this app</span>
             <span>user help information</span>
           </NavLink>
         </li>

@@ -62,7 +62,6 @@ export default function SearchResult({results, searchOptions}) {
       </div>
     );
   }
-
   return (
     <div id="carouselExampleIndicators" className="carousel slide" ref={carouselRef}>
       <div className="carousel-indicators">
@@ -109,7 +108,7 @@ export default function SearchResult({results, searchOptions}) {
               <div className="tree result-param">
                 <div className="tree-left">
                   <p className="tree-title">trees</p>
-                  <p className="level-of-trees">level of trees</p>
+                  <p className="level-of-trees">more or less trees</p>
                 </div>
                 <div className="tree-right">
                   <p className="level">level: {result.trees}</p>
@@ -118,7 +117,7 @@ export default function SearchResult({results, searchOptions}) {
               <div className="style result-param">
                 <div className="style-left">
                   <p className="style-title">{result.architecture}</p>
-                  <p className="architecture">architecture</p>
+                  <p className="architecture">architecture style</p>
                 </div>
                 <div className="style-right">
                   <p className="building-counting">
@@ -139,6 +138,7 @@ export default function SearchResult({results, searchOptions}) {
               <div className="color-pallete result-param">
                 <div className="color-pallete-left">
                   <p className="colors-title">colors</p>
+                  <p className="colors-desc">common colors in this zone</p>
                 </div>
                 <div className="color-pallete-right search-pallete">
                   {result.pallete.map((hex, index) => (
