@@ -33,7 +33,8 @@ router = routers.DefaultRouter()
 
 # Read the content of api_description.txt file
 with open('web_app/api_description.txt', 'r') as file:
-    api_description = file.read()
+    api_description = "\n\n[Open Homepage (new tab)](https://cityfra.me)\n\n"
+    api_description += file.read()
 
 schema_view = get_schema_view(
     openapi.Info(
