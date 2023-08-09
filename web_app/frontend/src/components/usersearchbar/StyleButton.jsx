@@ -2,16 +2,17 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const styleOptions = {
-  1: 'neo-georgian',
-  2: 'greek revival',
-  3: 'romanesque revival',
-  4: 'neo-grec',
-  5: 'renaissance revival',
-  6: 'beaux-arts',
-  7: 'queen anne',
-  8: 'italianate',
-  9: 'federal',
-  10: 'neo-renaissance'
+  1: 'any',
+  2: 'neo-georgian',
+  3: 'greek revival',
+  4: 'romanesque revival',
+  5: 'neo-grec',
+  6: 'renaissance revival',
+  7: 'beaux-arts',
+  8: 'queen anne',
+  9: 'italianate',
+  10: 'federal',
+  11: 'neo-renaissance'
 };
 
 const StyleButton = ({onChange, clear}) => {

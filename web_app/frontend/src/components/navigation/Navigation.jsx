@@ -7,7 +7,8 @@ import AboutThisWeb from "../../pages/AboutThisWeb";
 import React, {useEffect, useState} from 'react';
 import axios from "@/axiosConfig.js";
 import colours from '../dummydata/colours.js';
-
+import {Logo} from "../logo/Logo";
+import "../searchresult/SearchResultCSS.css"
 
 export default function Navigation_offcanvas() {
   const location = useLocation();
@@ -60,7 +61,9 @@ export default function Navigation_offcanvas() {
   const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
 
   return (
+    <div className="head">
     <div className="nav-container">
+      <Logo/>
       <button
         className="btn menu-button"
         type="button"
@@ -94,6 +97,7 @@ export default function Navigation_offcanvas() {
           </g>
         </svg>
       </button>
+      </div>
 
       <div
         className="offcanvas offcanvas-top"

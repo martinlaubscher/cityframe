@@ -2,10 +2,11 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const typeOptions = {
-  1: 'commercial',
-  2: 'manufacturing',
-  3: 'park',
-  4: 'residential',
+  1: 'any',
+  2: 'commercial',
+  3: 'manufacturing',
+  4: 'park',
+  5: 'residential',
 };
 
 const TypeButton = ({onChange, clear}) => {

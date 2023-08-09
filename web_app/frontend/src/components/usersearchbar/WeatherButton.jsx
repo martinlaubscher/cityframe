@@ -2,7 +2,7 @@ import "./UserSearchMenuCSS.css";
 import React, {useEffect, useState} from "react";
 
 const weatherOptions = {
-  1: 'all',
+  1: 'any',
   2: 'clear',
   3: 'clouds',
   4: 'drizzle',

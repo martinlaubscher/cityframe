@@ -16,10 +16,10 @@ export default function UserSearchMenu(props) {
   const [searchOptions, setSearchOptions] = useState({
     datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
     busyness: 1,
-    style: "neo-Georgian",
-    zone_type: "Commercial",
+    style: "any",
+    zone_type: "any",
     tree: 1,
-    weather: "All"
+    weather: "any"
   });
   const [searchResults, setSearchResults] = useState([]);
   const [isSearched, setIsSearched] = useState(false);
@@ -82,7 +82,7 @@ export default function UserSearchMenu(props) {
       <div className="scroll-container">
         <div className="offcanvas-body small">
           <div className="search-description-container">
-            <p className="search-description">search the city zones</p>
+            <p className="search-description">search the city</p>
             <p className="search-explanation">find locations according to the following parameters</p>
           </div>
           <div className="clear-search-container">
