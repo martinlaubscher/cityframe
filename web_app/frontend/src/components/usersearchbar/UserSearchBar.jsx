@@ -116,14 +116,10 @@ function getCurrentTime() {
     day: "2-digit",
     month: "short",
   };
+
   const time = now.toLocaleTimeString("en-US", optionsTime);
   const date = now.toLocaleDateString("en-US", optionsDate);
-  
-  // Split the date string into day and month parts
   const [day, month] = date.split(" ");
   
-  return `${month}/${day}`;
+  return `${time} ${month}/${day}`;
 }
-
-console.log(getCurrentTime());
-
