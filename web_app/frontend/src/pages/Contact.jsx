@@ -3,22 +3,22 @@ export default function Contact() {
   return (
     <div className="contact-container">
       <p className="contact-info">
-        Get in touch with us with any feedback, comments or issues encountered while on the app.
+        get in touch with us with any feedback, comments or issues encountered while on the app.
       </p>
       <div className="contact-methods">
         <div className="general-support">
-          <h2>General</h2>
-          <p>Mojo Dojo Casa House</p>
+          <h2>general</h2>
+          <p>mojo dojo casa house</p>
           <p>or email us at team@cityfra.me</p>
         </div>
         <div className="support">
-          <h2>Support</h2>
-          <p>For questions or help using Cityframe,</p>
+          <h2>support</h2>
+          <p>For questions or help using CITYFRAME,</p>
           <p>contact help@cityfra.me</p>
         </div>
         <div className="press">
-          <h2>Press</h2>
-          <p>Send any press inquiries to</p>
+          <h2>business</h2>
+          <p>send any business inquiries to</p>
           <p>press@cityfra.me</p>
         </div>
       </div>

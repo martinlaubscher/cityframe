@@ -38,7 +38,7 @@ export default function Droplist ({results, searchOptions, hideList}){
 
               <div className="style list-param">
                 <div className="style-left">
-                  <p className="style-title">{searchOptions.style}</p>
+                  <p className="style-title">{results.rank.architecture}</p>
                 </div>
                 <div className="style-right">
                   <p className="level">
@@ -88,12 +88,12 @@ export default function Droplist ({results, searchOptions, hideList}){
                   src={getImageUrlSmallById(results.rank.id)}
                   alt={`Image`}
                 />
-                {console.log(
-                  "result.id:",
-                  results.rank.id,
-                  "url:",
-                  getImageUrlSmallById(results.rank.id)
-                )}
+                {/*{console.log(*/}
+                {/*  "result.id:",*/}
+                {/*  results.rank.id,*/}
+                {/*  "url:",*/}
+                {/*  getImageUrlSmallById(results.rank.id)*/}
+                {/*)}*/}
               </div>
 {/*
               <div className="more-info">

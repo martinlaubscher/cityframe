@@ -108,7 +108,7 @@ export default function Map({viewMode, zones, ...props}) {
 
   function capitaliseFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
+  }
 
   // useEffect(() => {
   //   setPrevBusynessLevel(busynessZonesObj);
@@ -160,7 +160,7 @@ export default function Map({viewMode, zones, ...props}) {
     // ======================homepage heatmap============================
     else {
       // if(props.busynessZones){
-      console.log(zoneData)
+      // console.log(zoneData)
       polygons = geojsonData.features.map((feature, idx) => {
         var path;
 
@@ -215,7 +215,7 @@ export default function Map({viewMode, zones, ...props}) {
                   </div>
                   <div className="popup-details">
                     <p>zone type:</p>
-                    <p className="popup-details-value">{capitaliseFirstLetter(zoneType)}</p>
+                    <p className="popup-details-value">{zoneType}</p>
                   </div>
                   <div className="popup-details">
                     <p>trees:</p>

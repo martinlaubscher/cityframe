@@ -190,6 +190,34 @@ class TaxiZones(models.Model):
         managed = False
         db_table = 'cityframe\".\"taxi_zones'
 
+class Zones(models.Model):
+    location_id = models.IntegerField(primary_key=True)
+    zone = models.CharField(max_length=100)
+    trees = models.IntegerField()
+    trees_scaled = models.IntegerField()
+    main_zone_style = models.CharField(max_length=100)
+    main_zone_style_value = models.IntegerField()
+    main_zone_type = models.CharField(max_length=100)
+    main_zone_type_value = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"zones'
+
+# class TaxiZones(models.Model):
+#     id = models.IntegerField(primary_key=True, db_column='location_id')
+#     zone = models.CharField(max_length=100)
+#     trees = models.IntegerField()
+#     trees_scaled = models.IntegerField()
+#     zone_style = models.CharField(max_length=64)
+#     zone_style_count = models.IntegerField()
+#     zone_type = models.CharField(max_length=64)
+#     zone_type_percent = models.IntegerField()
+#
+#     class Meta:
+#         managed = False
+#         db_table = 'cityframe\".\"zones'
+
 
 class Busyness(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -238,6 +266,7 @@ class Response(models.Model):
     busyness = models.IntegerField()
     trees = models.IntegerField()
     style = models.IntegerField()
+    architecture = models.CharField(max_length=64, null=True)
     zone_type = models.CharField(max_length=64, null=True)
     weather = models.JSONField()
     rank = models.IntegerField()

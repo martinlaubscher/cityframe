@@ -70,6 +70,10 @@ MIDDLEWARE = [
 # this is reasonable as currently only site admin may use the login functionality
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 28800
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 
 ROOT_URLCONF = 'web_app.urls'
 

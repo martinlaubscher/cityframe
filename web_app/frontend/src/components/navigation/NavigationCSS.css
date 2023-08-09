@@ -130,9 +130,9 @@ margin-bottom: 10px;
 
 
 .betaTag {
-    border: 2px solid white;
+    border: 1px solid grey;
     border-radius: 8px;
-    padding: 0px 2px;
+    padding: 0 5px;
     display: inline-block;
     margin-left: 10px;
 }
@@ -141,9 +141,9 @@ margin-bottom: 10px;
   width: 10%;
   max-width: 1.5em;
   height: 100%;
-  margin: 0em;
+  margin: 0;
   /* border-style: solid; */
-  border-width: 0em;
+  border-width: 0;
   /* border-color: white; */
 }
 
@@ -160,4 +160,5 @@ margin-bottom: 10px;
 
 .gem-result{
   margin-top: 20px;
+  font-weight: normal;
 }
