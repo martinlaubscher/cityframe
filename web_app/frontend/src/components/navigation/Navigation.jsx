@@ -126,7 +126,7 @@ export default function Navigation_offcanvas() {
                     <div className="result-info gem-result">
 
                         <div className="rank-zone-weathericon">
-                            <p className="zone">{Object.values(gemResults)[0].name}</p>
+                            <p className="zone">{Object.values(gemResults)[0].name.toLowerCase()}</p>
                         </div>
               <div className="tree result-param">
                 <div className="tree-left">
@@ -140,7 +140,7 @@ export default function Navigation_offcanvas() {
 
               <div className="style result-param">
                 <div className="style-left">
-                  <p className="style-title">{Object.values(gemResults)[0].main_style}</p>
+                  <p className="style-title">{Object.values(gemResults)[0].main_style.toLowerCase()}</p>
                   <p className="architecture">architecture</p>
                 </div>
                 <div className="style-right">
