@@ -26,11 +26,6 @@ export default function SearchResult({results, searchOptions}) {
     setIsMounted(true);
   }, []);
 
-  // useEffect(() => {
-  //   setActiveIndex(0);
-  //   carouselRef.current.scrollIntoView({behavior: 'smooth'});
-  // }, [results]);
-
   useEffect(() => {
     if (isMounted) {
       if (results.length === 0) {
@@ -43,6 +38,7 @@ export default function SearchResult({results, searchOptions}) {
   }, [results, isMounted]);
 
   useEffect(() => {
+    if (!isMounted || !carouselRef.current) return;
     const updateActiveIndex = (event) => {
       const newIndex = Array.from(carouselRef.current.children[1].children).indexOf(event.relatedTarget);
       setActiveIndex(newIndex);
@@ -52,7 +48,7 @@ export default function SearchResult({results, searchOptions}) {
     return () => {
       carouselRef.current.removeEventListener('slid.bs.carousel', updateActiveIndex);
     };
-  }, []);
+  }, [isMounted]);
 
   if (results.length === 0) {
     return (
@@ -62,6 +58,7 @@ export default function SearchResult({results, searchOptions}) {
       </div>
     );
   }
+
   return (
     <div id="carouselExampleIndicators" className="carousel slide" ref={carouselRef}>
       <div className="carousel-indicators">

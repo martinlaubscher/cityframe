@@ -98,7 +98,7 @@ export default function UserSearchMenu(props) {
             <TypeButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>
             <button type="button" className="btn search-button" id="search-button" onClick={onSearch}>
-              Search
+              search
             </button>
           </div>
         </div>
