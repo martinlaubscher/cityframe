@@ -558,8 +558,8 @@ class MainFormSubmissionView(APIView):
         # weather = request.data.get('weather', None)
         weather = request.data.get('weather', None)
 
-        # If user chooses 'All' option, set weather to None
-        if weather == 'all':
+        # If user chooses 'any' option, set weather to None
+        if weather == 'any':
             weather = None
 
         # Sanitise busyness and trees inputs
@@ -574,13 +574,13 @@ class MainFormSubmissionView(APIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
         # Sanitise style input
-        valid_styles = ['all', 'neo-georgian', 'greek revival', 'romanesque revival', 'neo-grec', 'renaissance revival',
+        valid_styles = ['any', 'neo-georgian', 'greek revival', 'romanesque revival', 'neo-grec', 'renaissance revival',
                         'beaux-arts', 'queen anne', 'italianate', 'federal', 'neo-renaissance']
         if style not in valid_styles:
             return RestResponse({'error': 'Invalid style.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Sanitise zone type input
-        valid_types = ['all', 'commercial', 'manufacturing', 'park', 'residential']
+        valid_types = ['any', 'commercial', 'manufacturing', 'park', 'residential']
         if zone_type not in valid_types:
             return RestResponse({'error': 'Invalid zone type.'}, status=status.HTTP_400_BAD_REQUEST)
 

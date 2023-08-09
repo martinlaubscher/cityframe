@@ -80,7 +80,7 @@ def get_uniform_column_indices(array):
 
 
 
-def generate_response(target_busyness, target_trees, target_dt, target_style='all', target_type='all', weather=None,
+def generate_response(target_busyness, target_trees, target_dt, target_style='any', target_type='any', weather=None,
                       mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
@@ -121,8 +121,8 @@ def generate_response(target_busyness, target_trees, target_dt, target_style='al
     if isinstance(records, Exception):
         return check_error_type(records)
 
-    # if the zone type is all and the architecture style is specified
-    if target_type == 'all' and target_style != 'all':
+    # if the zone type is any and the architecture style is specified
+    if target_type == 'any' and target_style != 'any':
         # Create empty array of the right shape
         alts = np.empty((len(records), 4), dtype=int)
         # Fill the array
@@ -134,8 +134,8 @@ def generate_response(target_busyness, target_trees, target_dt, target_style='al
         # define types of criteria (-1 for minimisation, 1 for maximisation)
         types = np.array([-1, -1, 1, -1])
 
-    # if the zone type is specified and the architecture style is all
-    elif target_type != 'all' and target_style == 'all':
+    # if the zone type is specified and the architecture style is any
+    elif target_type != 'any' and target_style == 'any':
         # Create empty array of the right shape
         alts = np.empty((len(records), 4), dtype=int)
         # Fill the array
@@ -147,8 +147,8 @@ def generate_response(target_busyness, target_trees, target_dt, target_style='al
         # define types of criteria (-1 for minimisation, 1 for maximisation)
         types = np.array([-1, -1, 1, -1])
 
-    # if neither the zone type nor the architecture style are specified (both are all)
-    elif target_type == 'all' and target_style == 'all':
+    # if neither the zone type nor the architecture style are specified (both are any)
+    elif target_type == 'any' and target_style == 'any':
         # Create empty array of the right shape
         alts = np.empty((len(records), 3), dtype=int)
         # Fill the array
@@ -210,11 +210,11 @@ def generate_response(target_busyness, target_trees, target_dt, target_style='al
             zone_occurrences[record['zone']] = zone_occurrences.get(record['zone'], 0) + 1
             key = f"{record['taxi_zone']}_{record['dt_iso']}"
             ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
-            if str.lower(target_type) == 'all':
+            if str.lower(target_type) == 'any':
                 zone_type = record['main_zone_type']
             else:
                 zone_type = f'{round(record["zone_type_value"])}% {record["zone_type"]}'
-            if str.lower(target_style) == 'all':
+            if str.lower(target_style) == 'any':
                 arch = record['main_zone_style']
                 style_value = record['main_zone_style_value']
             else:

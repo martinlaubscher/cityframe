@@ -33,11 +33,11 @@ def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5),
     """
 
     zone_type_filter = 'AND "cityframe"."zone_types"."zone_type" = "cityframe"."zones"."main_zone_type"'
-    if str.lower(zone_type) != 'all':
+    if str.lower(zone_type) != 'any':
         zone_type_filter = f'AND "cityframe"."zone_types"."zone_type" = \'{zone_type}\' AND "cityframe"."zone_types"."zone_type_value" > 0'
 
     zone_style_filter = 'AND "cityframe"."zone_styles"."zone_style" = "cityframe"."zones"."main_zone_style"'
-    if str.lower(style) != 'all':
+    if str.lower(style) != 'any':
         zone_style_filter = f'AND "cityframe"."zone_styles"."zone_style" = \'{style}\' AND "cityframe"."zone_styles"."zone_style_value" > 0'
 
     if weather is None:
