@@ -191,6 +191,21 @@ class TaxiZones(models.Model):
         db_table = 'cityframe\".\"taxi_zones'
 
 
+class Zones(models.Model):
+    location_id = models.IntegerField(primary_key=True)
+    zone = models.CharField(max_length=100)
+    trees = models.IntegerField()
+    trees_scaled = models.IntegerField()
+    main_zone_style = models.CharField(max_length=100)
+    main_zone_style_value = models.IntegerField()
+    main_zone_type = models.CharField(max_length=100)
+    main_zone_type_value = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'cityframe\".\"zones'
+
+
 class Busyness(models.Model):
     id = models.IntegerField(primary_key=True)
     taxi_zone = models.ForeignKey(TaxiZones, on_delete=models.CASCADE, db_column='taxi_zone')
@@ -238,6 +253,7 @@ class Response(models.Model):
     busyness = models.IntegerField()
     trees = models.IntegerField()
     style = models.IntegerField()
+    architecture = models.CharField(max_length=64, null=True)
     zone_type = models.CharField(max_length=64, null=True)
     weather = models.JSONField()
     rank = models.IntegerField()
@@ -259,3 +275,15 @@ class Zoning(models.Model):
     class Meta:
         managed = False
         db_table = 'cityframe\".\"zoning'
+
+
+class HiddenGem(models.Model):
+    zone_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    trees = models.IntegerField()
+    main_style_amount = models.IntegerField()
+    main_style = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'cityframe\".\"hidden_gems'

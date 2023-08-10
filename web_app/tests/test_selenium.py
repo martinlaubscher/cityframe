@@ -548,16 +548,16 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         """
 
         style_dict = {
-            1: 'neo-Georgian',
-            2: 'Greek Revival',
-            3: 'Romanesque Revival',
-            4: 'neo-Grec',
-            5: 'Renaissance Revival',
-            6: 'Beaux-Arts',
-            7: 'Queen Anne',
-            8: 'Italianate',
-            9: 'Federal',
-            10: 'neo-Renaissance'
+            1: 'neo-georgian',
+            2: 'greek eevival',
+            3: 'romanesque revival',
+            4: 'neo-grec',
+            5: 'renaissance revival',
+            6: 'beaux-arts',
+            7: 'queen anne',
+            8: 'italianate',
+            9: 'federal',
+            10: 'neo-renaissance'
         }
 
         self._navigate_to_site()
@@ -589,8 +589,8 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
             self.wait.until(EC.element_to_be_clickable((By.ID, 'search-button'))).click()
 
             # scroll the container to the bottom so the results are visible
-            scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
-            self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
+            # scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
+            # self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
 
             # wait one second to make sure results have had time to load
             time.sleep(1)
@@ -600,7 +600,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
                                'buildings': rf'^\d+\sbuilding[s]*$',
                                'busyness': r'^level:\s\d$',
                                'trees': r'^level:\s\d$',
-                               'zone_type': r'^\d+%\s\w+$'}
+                               'zone_type': r'^\d*%?\s?\w+$'}
 
             # go through all the results in the carousel
             for j in range(0, 10):
@@ -647,8 +647,9 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
         self.wait.until(EC.element_to_be_clickable((By.ID, 'search-button'))).click()
 
         # scroll the container to the bottom so the results are visible
-        scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
-        self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
+        # scroll_container = self.selenium.find_element(By.CSS_SELECTOR, '.scroll-container')
+        # self.selenium.execute_script("arguments[0].scrollTop = arguments[0].scrollHeight", scroll_container)
+        time.sleep(1)
 
         error_msg = self.selenium.find_element(By.CSS_SELECTOR, 'span.error-alert:nth-child(1)')
 
@@ -674,7 +675,7 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
 
         # get the selected values
         selections = self._get_selections(3)
-        checks = {'busyness': 'true', 'trees': 'true', 'style': 'Queen Anne', 'zone_type': 'Park', 'weather': 'Clouds'}
+        checks = {'busyness': 'true', 'trees': 'true', 'style': 'beaux-arts', 'zone_type': 'manufacturing', 'weather': 'clouds'}
         # check the selected values have been stored
         for key in selections.keys():
             self.assertEqual(selections.get(key), checks.get(key))
@@ -684,8 +685,8 @@ class IntegrationTests(StaticLiveServerTestCase, CommonSetup):
 
         # get the selected values
         selections = self._get_selections(1)
-        checks = {'busyness': 'true', 'trees': 'true', 'style': 'neo-Georgian', 'zone_type': 'Commercial',
-                  'weather': 'All'}
+        checks = {'busyness': 'true', 'trees': 'true', 'style': 'any', 'zone_type': 'any',
+                  'weather': 'any'}
         # check the values have been reset
         for key in selections.keys():
             self.assertEqual(selections.get(key), checks.get(key))

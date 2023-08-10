@@ -1,3 +1,10 @@
+import os
+import django
+
+# Set up Django
+os.environ['DJANGO_SETTINGS_MODULE'] = 'web_app.settings_dev'
+django.setup()
+
 from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.utils.timezone import is_aware
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc
@@ -7,7 +14,7 @@ from pymcdm.weights import critic_weights
 from pymcdm.methods import MAIRCA
 from pymcdm.helpers import rankdata
 import numpy as np
-from api_endpoints.get_results import django_get_results, psycopg_get_results
+from api_endpoints.get_results import psycopg_get_results
 
 
 def check_error_type(e):
@@ -61,8 +68,19 @@ def check_ny_dt(target_dt):
     else:
         return ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
 
+def get_uniform_column_indices(array):
+    """
+    Returns indices of columns in the criteria array that have uniform values.
 
-def generate_response(target_busyness, target_trees, target_style, target_type, target_dt, weather=None,
+    Args:
+        array: numpy array with the criteria to be checked for uniformity
+
+    """
+    return [i for i in range(array.shape[1]) if np.all(array[:, i] == array[0, i])]
+
+
+
+def generate_response(target_busyness, target_trees, target_dt, target_style='any', target_type='any', weather=None,
                       mcdm_method=MAIRCA,
                       mcdm_weights=critic_weights):
     """
@@ -84,25 +102,6 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
         FieldDoesNotExist: If the target_style is not a valid architectural style.
     """
 
-    # dictionary to translate the style names to django model variables
-    style_dict = {
-        'neo-Georgian': 'neo_georgian',
-        'Greek Revival': 'greek_revival',
-        'Romanesque Revival': 'romanesque_revival',
-        'neo-Grec': 'neo_grec',
-        'Renaissance Revival': 'renaissance_revival',
-        'Beaux-Arts': 'beaux_arts',
-        'Queen Anne': 'queen_anne',
-        'Italianate': 'italianate',
-        'Federal': 'federal',
-        'neo-Renaissance': 'neo_renaissance'
-    }
-
-    # checking if style is valid
-    if style_dict.get(target_style) is None:
-        raise FieldDoesNotExist(
-            f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
-
     # validate supplied time
     ny_dt = check_ny_dt(target_dt)
 
@@ -112,7 +111,6 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
     ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
 
-    # results = django_get_results(style_dict.get(target_style), weather, target_type, ny_dt)
     records = psycopg_get_results(target_style, weather, target_type, ny_dt)
 
     # if there are no records matching the query, return an empty dictionary
@@ -123,19 +121,66 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
     if isinstance(records, Exception):
         return check_error_type(records)
 
-    # Create empty array of the right shape
-    alts = np.empty((len(records), 5), dtype=int)
+    # if the zone type is any and the architecture style is specified
+    if target_type == 'any' and target_style != 'any':
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 4), dtype=int)
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = record['zone_style_value']
+            alts[i, 3] = abs((ny_dt - record['dt_iso']).total_seconds())
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, 1, -1])
 
-    # Fill the array
-    for i, record in enumerate(records):
-        alts[i, 0] = abs(target_busyness - record['bucket'])
-        alts[i, 1] = abs(target_trees - record['trees_scaled'])
-        alts[i, 2] = record[target_style]
-        alts[i, 3] = record[target_type]
-        alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
+    # if the zone type is specified and the architecture style is any
+    elif target_type != 'any' and target_style == 'any':
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 4), dtype=int)
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = record['zone_type_value']
+            alts[i, 3] = abs((ny_dt - record['dt_iso']).total_seconds())
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, 1, -1])
 
-    # define types of criteria (-1 for minimisation, 1 for maximisation)
-    types = np.array([-1, -1, 1, 1, -1])
+    # if neither the zone type nor the architecture style are specified (both are any)
+    elif target_type == 'any' and target_style == 'any':
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 3), dtype=int)
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = abs((ny_dt - record['dt_iso']).total_seconds())
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, -1])
+
+    # if both the architecture style and zone type are specified
+    else:
+        # Create empty array of the right shape
+        alts = np.empty((len(records), 5), dtype=int)
+
+        # Fill the array
+        for i, record in enumerate(records):
+            alts[i, 0] = abs(target_busyness - record['bucket'])
+            alts[i, 1] = abs(target_trees - record['trees_scaled'])
+            alts[i, 2] = record['zone_style_value']
+            alts[i, 3] = record['zone_type_value']
+            alts[i, 4] = abs((ny_dt - record['dt_iso']).total_seconds())
+
+        # define types of criteria (-1 for minimisation, 1 for maximisation)
+        types = np.array([-1, -1, 1, 1, -1])
+
+    uniform_cols = get_uniform_column_indices(alts)
+
+    if uniform_cols:
+        print(f"Warning: Removing {len(uniform_cols)} criteria due to uniform values.")
+        alts = np.delete(alts, uniform_cols, axis=1)
+        types = np.delete(types, uniform_cols)
 
     # set weights for criteria (default is entropy_weights)
     weights = mcdm_weights(alts)
@@ -165,14 +210,27 @@ def generate_response(target_busyness, target_trees, target_style, target_type, 
             zone_occurrences[record['zone']] = zone_occurrences.get(record['zone'], 0) + 1
             key = f"{record['taxi_zone']}_{record['dt_iso']}"
             ny_dt_iso = record['dt_iso'].astimezone(ny_tz)
+            if str.lower(target_type) == 'any':
+                zone_type = record['main_zone_type']
+            else:
+                zone_type = f'{round(record["zone_type_value"])}% {record["zone_type"]}'
+            if str.lower(target_style) == 'any':
+                arch = record['main_zone_style']
+                style_value = record['main_zone_style_value']
+            else:
+                arch = record['zone_style']
+                style_value = record['zone_style_value']
+            if style_value == 0:
+                arch = "historical buildings"
             results[key] = {
                 'id': str(record['taxi_zone']),
                 'zone': record['zone'],
                 'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
                 'busyness': record['bucket'],
                 'trees': record['trees_scaled'],
-                'style': record[target_style],
-                'zone_type': f'{round(record[target_type])}% {target_type}',
+                'style': style_value,
+                'architecture': arch,
+                'zone_type': zone_type,
                 'rank': rank,
                 'weather': {
                     'temp': record['temp'],
@@ -210,3 +268,5 @@ def current_busyness():
     # print(f'busyness dict: {busyness_dict}')
 
     return busyness_dict
+
+# print(generate_response(3, 3, '2023-08-10 15:00',target_style='federal'))

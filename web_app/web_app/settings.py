@@ -23,7 +23,6 @@ from pathlib import Path
 from whitenoise import WhiteNoise
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -70,13 +69,16 @@ MIDDLEWARE = [
 # this is reasonable as currently only site admin may use the login functionality
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 28800
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 ROOT_URLCONF = 'web_app.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist')],
+        'DIRS': [os.path.join(BASE_DIR, 'staticfiles')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -150,7 +152,7 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'), os.path.join(BASE_DIR, 'frontend', 'public')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist'), os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
 
 STORAGES = {
     'staticfiles': {

@@ -130,7 +130,6 @@ margin-bottom: 10px;
 
 
 .betaTag {
-    color: grey;
     border: 1px solid grey;
     border-radius: 8px;
     padding: 0 5px;
@@ -161,4 +160,5 @@ margin-bottom: 10px;
 
 .gem-result{
   margin-top: 20px;
+  font-weight: normal;
 }

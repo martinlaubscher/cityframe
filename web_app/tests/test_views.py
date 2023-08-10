@@ -1,5 +1,5 @@
 import re
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.db import connections
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -293,6 +293,7 @@ class EndpointTests(TestCase):
         self.assertTrue(datetime_pattern.match(response.data['golden_hour']))
         self.assertTrue(datetime_pattern.match(response.data['sunset']))
 
+    @tag('main_form')
     def test_main_form_submission(self):
         """This is a unit test case for the api/submit-main POST request endpoint. It retrieves the URL using the
         reverse() function based on the url pattern name (see urls.py), and supplies valid POST requests data.
@@ -305,7 +306,7 @@ class EndpointTests(TestCase):
             "time": "2023-08-12 06:00",
             "style": "Federal",
             "zone_type": "Commercial",
-            "weather": "All"
+            "weather": None
         }
 
         url = reverse('main-form-submission')

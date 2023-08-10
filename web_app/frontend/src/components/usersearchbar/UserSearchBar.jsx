@@ -14,7 +14,7 @@ export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChang
 
 
   useEffect(() => {
-    console.log("Zone change!")
+    // console.log("Zone change!")
     if (Object.keys(zones).length !== 0) {
       // check if zones is not an empty object
       const filteredZones = filterBusyness(busynessLevel, zones);
@@ -55,7 +55,7 @@ export default function UserSearchBar({toggleViewMode, viewMode, onBusynessChang
         </div>
         <div className="label-container">
           <label htmlFor="busyness-slider" className="form-label" id="busyness-slider-label">
-            busyness in Manhattan
+            busyness in manhattan
           </label>
         </div>
         <div className="busyness-level">
@@ -114,9 +114,12 @@ function getCurrentTime() {
   const optionsDate = {
     timeZone: "America/New_York",
     day: "2-digit",
-    month: "2-digit",
+    month: "short",
   };
+
   const time = now.toLocaleTimeString("en-US", optionsTime);
   const date = now.toLocaleDateString("en-US", optionsDate);
-  return `${time} ${date}`;
+  const [day, month] = date.split(" ");
+  
+  return `${time} ${month}/${day}`;
 }

@@ -16,10 +16,10 @@ export default function UserSearchMenu(props) {
   const [searchOptions, setSearchOptions] = useState({
     datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
     busyness: 1,
-    style: "neo-Georgian",
-    zone_type: "Commercial",
+    style: "any",
+    zone_type: "any",
     tree: 1,
-    weather: "All"
+    weather: "any"
   });
   const [searchResults, setSearchResults] = useState([]);
   const [isSearched, setIsSearched] = useState(false);
@@ -46,14 +46,14 @@ export default function UserSearchMenu(props) {
     setSearchOptions({
       datetime: moment().tz("America/New_York").format("YYYY-MM-DD HH:mm"),
       busyness: 1,
-      style: "neo-Georgian",
-      zone_type: "Commercial",
+      style: "any",
+      zone_type: "any",
       tree: 1,
-      weather: "All"
+      weather: "any"
     });
     setSearchResults([]);
     setIsSearched(false);
-    console.log('search cleared')
+    // console.log('search cleared')
     setClear(true); // set clear flag
   };
 
@@ -83,7 +83,7 @@ export default function UserSearchMenu(props) {
         <div className="offcanvas-body small">
           <div className="search-description-clear">
           <div className="search-description-container">
-            <p className="search-description">Search the city zones</p>
+            <p className="search-description">search the city</p>
             <p className="search-explanation">find locations according to the following parameters</p>
           </div>
           <div className="clear-search-container">
@@ -98,7 +98,7 @@ export default function UserSearchMenu(props) {
             <TypeButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>
             <button type="button" className="btn search-button" id="search-button" onClick={onSearch}>
-              Search
+              search
             </button>
           </div>
         </div>

@@ -196,7 +196,7 @@ class WeatherHourlyUpdate(ApiUpdate):
             data['snow_1h'] = 0
         data['clouds_all'] = data['clouds']['all']
         data['weather_id'] = data['weather'][0]['id']
-        data['weather_main'] = data['weather'][0]['main']
+        data['weather_main'] = str.lower(data['weather'][0]['main'])
         data['weather_description'] = data['weather'][0]['description']
         data['weather_icon'] = data['weather'][0]['icon']
         return data

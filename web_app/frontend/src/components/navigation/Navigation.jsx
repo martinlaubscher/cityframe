@@ -59,6 +59,7 @@ export default function Navigation_offcanvas() {
 
   // const zoneID = gemResults[0].zone_id
   const gemColour = colours.find(colour => colour.location_id == zoneIDs[0]);
+
   return (
     <div className="head">
     <div className="nav-container">
@@ -119,13 +120,13 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span >hidden gem <a style={{fontSize: "16px", color: "grey"}} className="betaTag">beta</a></span>
+            <span >hidden gem  <a style={{fontSize: "16px", color: "grey"}} className="betaTag">beta</a></span>
             <span >the most rarely found location</span>
             {selectedNavItem === '/mostuniqueareas' && (
                     <div className="result-info gem-result">
 
                         <div className="rank-zone-weathericon">
-                            <p className="zone">{Object.values(gemResults)[0].name}</p>
+                            <p className="zone">{Object.values(gemResults)[0].name.toLowerCase()}</p>
                         </div>
               <div className="tree result-param">
                 <div className="tree-left">
@@ -139,7 +140,7 @@ export default function Navigation_offcanvas() {
 
               <div className="style result-param">
                 <div className="style-left">
-                  <p className="style-title">{Object.values(gemResults)[0].main_style}</p>
+                  <p className="style-title">{Object.values(gemResults)[0].main_style.toLowerCase()}</p>
                   <p className="architecture">architecture</p>
                 </div>
                 <div className="style-right">
@@ -155,7 +156,7 @@ export default function Navigation_offcanvas() {
 
                 {/*  below works*/}
                 <div className="color-pallete-right nav-pallete">
-                  {console.log("WE ARE THE CRYSTAL GEMS", gemColour.colors)}
+                  {/*{console.log("WE ARE THE CRYSTAL GEMS", gemColour.colors)}*/}
                   {gemColour && gemColour.colors.map((hex, index) => (
                     <div
                         key={index}
@@ -202,7 +203,7 @@ export default function Navigation_offcanvas() {
               }
             }}
           >
-            <span>about this web app</span>
+            <span>about this app</span>
             <span>user help information</span>
           </NavLink>
         </li>

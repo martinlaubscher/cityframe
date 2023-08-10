@@ -12,7 +12,7 @@ const TimeButton = ({onChange, clear}) => {
     if (moment.isMoment(newDateTime)) {
       setDatetime(newDateTime);
       onChange("datetime", newDateTime.format("YYYY-MM-DD HH:mm"));
-      console.log("handleDateTimeChange newDateTime:", newDateTime.format("YYYY-MM-DD HH:mm"));
+      // console.log("handleDateTimeChange newDateTime:", newDateTime.format("YYYY-MM-DD HH:mm"));
     }
   };
 
@@ -35,9 +35,9 @@ const TimeButton = ({onChange, clear}) => {
     <div>
       <div className="option-container">
         <div className="label-explanation-container">
-          <div className="option-label">Time</div>
+          <div className="option-label">time</div>
           <div className="option-explanation">
-            {/*fill in if needed*/}
+            preferred day and time
           </div>
         </div>
         <div id="time-selection">
