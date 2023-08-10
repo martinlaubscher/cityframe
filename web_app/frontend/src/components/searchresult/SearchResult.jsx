@@ -219,6 +219,11 @@ export default function SearchResult({results, searchOptions}) {
   );
 }
 
+async function fetchCsrfToken() {
+  const response = await axios.get('/api/get-csrf-token/');
+  return response.data.csrfToken;
+}
+
 export async function handleSearch(searchOptions) {
   try {
     // Log the response data to the console
@@ -252,8 +257,15 @@ export async function handleSearch(searchOptions) {
         ? {weather: searchOptions.weather}
         : {}),
     };
-    const response = await axios.post("/api/submit-main", data);
-    console.log("submit-main", response);
+
+    const csrfToken = await fetchCsrfToken();
+
+    const response = await axios.post("/api/submit-main", data, {
+      headers: {'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      }
+    });
+    // console.log("submit-main", response);
     if (
       response.data &&
       typeof response.data === "object" &&

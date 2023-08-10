@@ -22,7 +22,7 @@ from core.views import front_page
 from django.views.generic.base import RedirectView
 from api_endpoints.views import FutureWeatherAPIView, CurrentWeatherAPIView, CurrentSuntimesAPIView, \
     SuntimesAPIView, CurrentManhattanTimeAPIView, MainFormSubmissionView, GoldenHourAPIView, \
-    CurrentManhattanBusyness, TaxiZoneDataView, HiddenGemsDataView  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
+    CurrentManhattanBusyness, TaxiZoneDataView, HiddenGemsDataView, GetCSRFToken  # UpdatedSuntimesAPIView, MainFormSubmissionTestView
 from rest_framework import routers
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.views import get_schema_view
@@ -91,6 +91,8 @@ urlpatterns = [
     # login path
     path('accounts/login/', LoginView.as_view(template_name='admin/login.html'), name='login'),
     path('accounts/logout/', logout_then_login, name='logout'),
+
+    path('api/get-csrf-token/', GetCSRFToken.as_view(), name="get-csrf-token"),
 
     re_path(r'^(?!api).*$', RedirectView.as_view(url='/'), name='fallback')
     ]
