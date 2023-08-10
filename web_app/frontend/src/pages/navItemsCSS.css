@@ -24,6 +24,15 @@
     height: calc(100vh - 60px);
 }
 
+.mojo {
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+}
+.mojo:active {
+    color: hotpink;
+}
+
 /* Additional styles for the how-to-use section */
 .how-to-use {
     margin-bottom: 2rem;  /* Additional margin */
@@ -37,8 +46,8 @@
 }
 
 .subtitle {
-    font-size: 20px;
-    margin-bottom: 0rem;
+    font-size: 17px;
+    margin-bottom: 0;
 }
 
 /* Paragraph styles */
@@ -54,10 +63,16 @@ p {
     align-items: flex-start;
   }
   
+  .contact-container a:not(.mojo){
+      text-decoration: none;
+      color: #8f9ba6;
+      padding: 5px;
+
+  }
   .contact-info {
     color: white;
     font-size: 14px;
-    margin:0px;
+    margin: 0;
   }
   
   .contact-methods {
