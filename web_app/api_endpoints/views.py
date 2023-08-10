@@ -646,4 +646,4 @@ class MainFormSubmissionView(APIView):
 class GetCSRFToken(APIView):
     def get(self, request):
         token = request.COOKIES.get('csrftoken')
-        return Response({"csrfToken": token})
+        return RestResponse({"csrfToken": token})
