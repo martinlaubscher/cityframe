@@ -3,7 +3,7 @@ export default function AboutThisWeb() {
     <div className="about-this-web-container">
       <div className="scrollable-content">
         <div className="section">
-          <span className="title">about</span>
+          <span className="title">about.</span>
           <p>
             CITYFRAME helps you find the perfect frame for your shot. whether
             you're a professional filmmaker or an amateur photographer, use
@@ -13,13 +13,20 @@ export default function AboutThisWeb() {
         </div>
 
         <div className="section">
-          <span className="title">how to use</span>
+          <span className="title">how to use.</span>
 
           <div className="subsection">
             <p className="subtitle">explore busyness</p>
             <p>
               use the slider on the homepage to see current busyness levels in
               manhattan city zones.
+            </p>
+            <br></br>
+          </div>
+          <div className="subsection">
+            <p className="subtitle">hidden gems</p>
+            <p>
+              find the rarest location of the week for a unique result from the main menu.
             </p>
             <br></br>
           </div>
