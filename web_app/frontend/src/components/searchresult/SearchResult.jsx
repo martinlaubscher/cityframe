@@ -68,8 +68,8 @@ export default function SearchResult({results, searchOptions}) {
             type="button"
             data-bs-target="#carouselExampleIndicators"
             data-bs-slide-to={index}
-            className={index === 0 ? "active" : ""}
-            aria-current={index === 0 ? "true" : "false"}
+            className={index === activeIndex ? "active" : ""}
+            aria-current={index === activeIndex ? "true" : "false"}
             aria-label={`Slide ${index + 1}`}
           />
         ))}
@@ -261,7 +261,8 @@ export async function handleSearch(searchOptions) {
     const csrfToken = await fetchCsrfToken();
 
     const response = await axios.post("/api/submit-main", data, {
-      headers: {'Content-Type': 'application/json',
+      headers: {
+        'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken
       }
     });
