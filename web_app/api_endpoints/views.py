@@ -9,6 +9,8 @@ sys.path.append(cityframe_path)
 from drf_yasg import openapi
 from django.db.models import Case, CharField, Value, When, F, Count
 from django.db.models.functions import Greatest
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -639,3 +641,9 @@ class MainFormSubmissionView(APIView):
 
         print(results)  # for debugging, remove later
         return RestResponse(results)
+
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class GetCSRFToken(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('csrftoken')
+        return RestResponse({"csrfToken": token})
