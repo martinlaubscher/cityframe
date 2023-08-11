@@ -40,8 +40,10 @@ def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5),
     if str.lower(style) != 'any':
         zone_style_filter = f'AND "cityframe"."zone_styles"."zone_style" = \'{style}\' AND "cityframe"."zone_styles"."zone_style_value" > 0'
 
+    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0, microsecond=0)
+
     if weather is None:
-        time_from = user_time - timedelta(hours=12)
+        time_from = max((user_time - timedelta(hours=12)), ny_dt)
         time_to = user_time + timedelta(hours=12)
 
         sql = f'''
@@ -60,7 +62,7 @@ def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5),
                 INNER JOIN "cityframe"."zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."zones"."location_id")
                 LEFT OUTER JOIN "cityframe"."zone_types" ON ("cityframe"."zones"."location_id" = "cityframe"."zone_types"."location_id")
                 LEFT OUTER JOIN "cityframe"."zone_styles" ON ("cityframe"."zones"."location_id" = "cityframe"."zone_styles"."location_id")
-                WHERE ("cityframe"."weather_fc"."weather_main" = '{weather}' {zone_style_filter} {zone_type_filter});'''
+                WHERE ("cityframe"."Results"."dt_iso" >= '{ny_dt}'::timestamptz AND "cityframe"."weather_fc"."weather_main" = '{weather}' {zone_style_filter} {zone_type_filter});'''
 
     # Create a new transaction
     with pool.connection() as conn:

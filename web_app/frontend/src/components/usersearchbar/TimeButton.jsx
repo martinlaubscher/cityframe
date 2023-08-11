@@ -47,7 +47,7 @@ const TimeButton = ({onChange, clear}) => {
             onChange={handleDateTimeChange}
             closeOnSelect
             timeFormat="HH:00"
-            dateFormat="DD/MM/YYYY"
+            dateFormat="YYYY-MM-DD"
             isValidDate={isValidDate}
             inputProps={{readOnly: true}}
           />
