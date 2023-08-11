@@ -92,8 +92,8 @@ export default function UserSearchMenu(props) {
           </div>
           <div className="button-container">
             <TimeButton onChange={handleOptionsChange} clear={clear}/>
-            <TreeButton onChange={handleOptionsChange} clear={clear}/>
             <BusynessButton onChange={handleOptionsChange} clear={clear}/>
+            <TreeButton onChange={handleOptionsChange} clear={clear}/>
             <StyleButton onChange={handleOptionsChange} clear={clear}/>
             <TypeButton onChange={handleOptionsChange} clear={clear}/>
             <WeatherButton onChange={handleOptionsChange} clear={clear}/>

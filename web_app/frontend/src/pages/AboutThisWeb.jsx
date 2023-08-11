@@ -34,7 +34,7 @@ export default function AboutThisWeb() {
           <div className="subsection">
             <p className="subtitle">search in city zones</p>
             <p>
-              select search input parameters and get results of the top ten zones
+              in the search menu at the bottom of the screen, select search input parameters and get results of the top ten zones
               in the city which best match your input returned.
             </p>
             <br></br>

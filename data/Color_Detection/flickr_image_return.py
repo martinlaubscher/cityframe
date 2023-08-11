@@ -68,9 +68,13 @@ def get_images_for_taxi_zones():
         lat = split[1]
         image_url_list = get_flickr_image(api_key, lat, lng)
         if image_url_list is None:
-            image_url_list = ["https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg", "https://i1.sndcdn.com/artworks-CyTzk0PMsjHFfr7D-S8wWcw-t500x500.jpg"]
+            image_url_list = ["https://images.unsplash.com/photo-1575775424127-28bc80754cf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=0", "https://images.unsplash.com/photo-1575775424127-28bc80754cf5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=0"]
         gdf.at[index, 'image_url'] = image_url_list[0]
         gdf.at[index, 'image_url_small'] = image_url_list[1]
+
+    condition = (gdf['zone'] == 'Central Park')
+    gdf.loc[condition, 'image_url'] = 'https://i1.sndcdn.com/artworks-EC5k5lHzgHPLsyzW-Uxz2Qg-t500x500.jpg'
+    gdf.loc[condition, 'image_url_small'] = 'https://i1.sndcdn.com/artworks-EC5k5lHzgHPLsyzW-Uxz2Qg-t500x500.jpg'
 
     gdf.to_file("../GeoJSON/zones_with_images.geojson", driver='GeoJSON')
 
