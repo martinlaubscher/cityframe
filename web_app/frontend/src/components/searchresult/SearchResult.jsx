@@ -93,6 +93,40 @@ export default function SearchResult({results, searchOptions}) {
                   />
                 </div>
               </div>
+              <div className="datetime result-param">
+                <div className="datetime-left">
+                  <p className="datetime-title">date/time</p>
+                </div>
+                {goldenHourStatus[index] ? (
+                    <div className="datetime-right-time-golden-blue-hour">
+                      <div className="datetime-icon-container">
+                        <picture>
+                          <source
+                              className="logo-image"
+                              srcSet={goldenIcon_avif}
+                              type="image/avif"
+                              style={{height: "25px"}}
+                          />
+                          <img
+                              src={goldenIcon}
+                              alt="golden icon"
+                              style={{height: "25px", width: "auto"}}
+                          />
+                        </picture>
+                      </div>
+                      <div className="datetime-text-container">
+                        <p className="result-date-time">{result.dt_iso}</p>
+                        <p className="golden-blue-hour">
+                          this is golden/blue hour
+                        </p>
+                      </div>
+                    </div>
+                ) : (
+                    <div className="datetime-right-only-time">
+                      <p>{result.dt_iso}</p>
+                    </div>
+                )}
+              </div>
               <div className="busyness result-param">
                 <div className="busyness-left">
                   <p className="busyness-title">busyness</p>
@@ -147,40 +181,7 @@ export default function SearchResult({results, searchOptions}) {
                   ))}
                 </div>
               </div>
-              <div className="datetime result-param">
-                <div className="datetime-left">
-                  <p className="datetime-title">date/time</p>
-                </div>
-                {goldenHourStatus[index] ? (
-                  <div className="datetime-right-time-golden-blue-hour">
-                    <div className="datetime-icon-container">
-                      <picture>
-                        <source
-                          className="logo-image"
-                          srcSet={goldenIcon_avif}
-                          type="image/avif"
-                          style={{height: "25px"}}
-                        />
-                        <img
-                          src={goldenIcon}
-                          alt="golden icon"
-                          style={{height: "25px", width: "auto"}}
-                        />
-                      </picture>
-                    </div>
-                    <div className="datetime-text-container">
-                      <p className="result-date-time">{result.dt_iso}</p>
-                      <p className="golden-blue-hour">
-                        this is golden/blue hour
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="datetime-right-only-time">
-                    <p>{result.dt_iso}</p>
-                  </div>
-                )}
-              </div>
+
               <div className="pictures">
                 <img
                   src={getImageUrlSmallById(result.id)}
