@@ -1,10 +1,15 @@
-import CFlogo from '../../assets/CFlogo.png';
-import './LogoCSS.css';
+import CFlogo from "../../assets/SWcityframe.png";
+import CFlogo_avif from "../../assets/SWcityframe.avif";
+
+import "./LogoCSS.css";
 
 export function Logo() {
   return (
     <div className="logo-container">
-      <img className="logo-image" src={CFlogo} alt="CFlogo" />
+      <picture>
+        <source className="logo-image" srcSet={CFlogo_avif} type="image/avif" />
+        <img className="logo-image" src={CFlogo} alt="CFlogo" />
+      </picture>
     </div>
   );
 }

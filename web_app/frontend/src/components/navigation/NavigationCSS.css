@@ -1,60 +1,164 @@
-.nav-container {
+.head{
+  position: relative;
+  top: 0;
+  width: 100vw;
+  height: 12vh;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding: 10px;
-  position: fixed;
-  z-index: 2;
-  right: 3%;
+  align-items: center;
+  margin: 0;
+  font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
 }
 
+/* Nav container */
+.nav-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background-color: #232323;
+  z-index: 1050;
+  padding: 2vh;
+}
 
+/* Hamburger menu */
+.hamburger-menu{
+  position: relative;
+  height: 80%;
+  width: 80%;
+}
 
+/* Navigation column */
 .navigation-column {
   display: flex;
   flex-direction: column;
 }
 
+/* Menu container */
 .menu-container {
   display: flex;
   flex-direction: column;
 }
 
+/* Menu header */
 .menu-header {
   cursor: pointer;
 }
 
+/* Menu button */
 .menu-button {
-  width: 40px !important;
-  height: 40px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(15%, 8vh);
+
+  height: 100%;
+  padding: 0 !important;
   background-color: transparent !important;
   border: 0 !important;
 }
 
+.nav{
+  margin-left: 20px;
+}
+
+/* Nav item - font settings */
+.nav-item{
+margin-bottom: 10px;
+}
 .nav-item a {
-  color: white; 
+  color: white;
   text-decoration: none; /* removes underline */
-  font-weight: bold; /* makes font bold */
   font-size: 1.2em; /* makes font bigger, adjust as necessary */
   font-family: "ABCSocial Medium", "Helvetica Neue", "Helvetica", "Arial", sans-serif !important;
 }
 
+/* Nav item - hover state */
 .nav-item a:hover {
-  color: grey; /* link color changes to grey on hover */
+  font-weight: bold; 
 }
 
+/* Nav item - active state */
 .nav-item a.active-link {
-  color: #efefef3f; /* link color changes to purple when active */
+  font-weight: bold;
 }
 
+/* Nav item - span font sizes */
+.nav-item span:nth-child(1) {
+  font-size: 18px; /* Bigger font size for the first span */
+  
+}
+.nav-item span:nth-child(2) {
+  font-size: 11px; /* Smaller font size for the second span */
+}
+
+/* Nav item - span display */
+.nav-item span {
+  display: block;
+}
+
+/* Offcanvas header */
 .offcanvas-header{
-  background-color: black!important;
+  background-color: #353535  !important;
+  color: white;
 }
 
-.offcanvas-body{
-  background-color: black!important;
+.nav-offcanvas{
+  padding-top: 10vh;
 }
 .btn-close {
   filter: invert(1);
+}
+
+/* Offcanvas top */
+#offcanvasTop{
+  padding-top: 12vh;
+  position: fixed;
+  height: 35vh !important;
+}
+
+
+/* Offcanvas body content alignment */
+.offcanvas-body-top {
+  text-align: left; /* Aligns the content to the left horizontally */
+  vertical-align: top; /* Aligns the content to the top vertically */
+  background-color: #353535!important;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+
+
+.betaTag {
+    border: 1px solid grey;
+    border-radius: 8px;
+    padding: 0 5px;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.hex-div{
+  width: 10%;
+  max-width: 1.5em;
+  height: 100%;
+  margin: 0;
+  /* border-style: solid; */
+  border-width: 0;
+  /* border-color: white; */
+}
+
+.color-pallete-right{
+  display: flex;
+  justify-content: right;
+  width: 100%;
+  max-height: 1.5em;
+  min-height: 0.5em;
+}
+.nav-pallete{
+  height: calc(10vw - 14.2px);
+}
+
+.gem-result{
+  margin-top: 20px;
+  font-weight: normal;
 }

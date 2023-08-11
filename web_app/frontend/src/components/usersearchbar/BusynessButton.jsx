@@ -1,16 +1,31 @@
 import "./UserSearchMenuCSS.css";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 
-const BusynessButton = ({ onChange }) => {
+const BusynessButton = ({onChange, clear}) => {
   const handleOptionChange = (event) => {
+    setSelectedValue(event.target.value);
     onChange("busyness", Number(event.target.value.slice(-1)));
   };
+
+  const [selectedValue, setSelectedValue] = useState("option1");
+
+  // watch for the clear flag and reset the state
+  useEffect(() => {
+    if (clear) {
+      setSelectedValue("option1");
+    }
+  }, [clear, onChange]);
 
   return (
     <div>
       <div className="option-container">
-        <div className="option-label">Buyness</div>
-        <div className="option-list">
+        <div className="label-explanation-container">
+          <div className="option-label">busyness</div>
+          <div className="option-explanation">
+            level of busyness
+          </div>
+        </div>
+        <div className="option-list  radio-list" id="busyness-selection">
           <div className="form-check form-check-inline">
             <input
               className="form-check-input"
@@ -18,6 +33,7 @@ const BusynessButton = ({ onChange }) => {
               name="busynessRadioOptions"
               id="inlineRadio1"
               value="option1"
+              checked={selectedValue === "option1"}
               onChange={handleOptionChange}
             />
             <label className="form-check-label" htmlFor="inlineRadio1">
@@ -31,6 +47,7 @@ const BusynessButton = ({ onChange }) => {
               name="busynessRadioOptions"
               id="inlineRadio2"
               value="option2"
+              checked={selectedValue === "option2"}
               onChange={handleOptionChange}
             />
             <label className="form-check-label" htmlFor="inlineRadio2">
@@ -44,6 +61,7 @@ const BusynessButton = ({ onChange }) => {
               name="busynessRadioOptions"
               id="inlineRadio3"
               value="option3"
+              checked={selectedValue === "option3"}
               onChange={handleOptionChange}
             />
             <label className="form-check-label" htmlFor="inlineRadio3">
@@ -57,6 +75,7 @@ const BusynessButton = ({ onChange }) => {
               name="busynessRadioOptions"
               id="inlineRadio4"
               value="option4"
+              checked={selectedValue === "option4"}
               onChange={handleOptionChange}
             />
             <label className="form-check-label" htmlFor="inlineRadio4">
@@ -70,6 +89,7 @@ const BusynessButton = ({ onChange }) => {
               name="busynessRadioOptions"
               id="inlineRadio5"
               value="option5"
+              checked={selectedValue === "option5"}
               onChange={handleOptionChange}
             />
             <label className="form-check-label" htmlFor="inlineRadio5">

@@ -1,85 +1,160 @@
 /* SearchResultCSS.css */
+
+p {
+  margin: 0 !important;
+}
+
+.error-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color:white;
+}
+
+.error-alert {
+  font-size: 24px; 
+  margin-bottom:30px
+}
+
 .result-container {
   overflow: visible; 
-  background-color: black;
-}
-.overlay-info {
-  display: flex;
-  flex-direction: column; 
-  justify-content: center; 
-  align-items: center;  
-  position: absolute;
-  top: 0;
-  width: 100%;
-  padding: 5px;
-  color: white;
-  font-family: 'Pixel', monospace;
+  background-color: #232323;
 }
 
-.info-zone-style-buyness-tree {
+.result-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
-
-.info-zone-style, .info-busyness-tree {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-
-/* .overlay-info {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  padding: 5px;
+  height: calc(90vh - 75px);
   color: white;
-  font-family: 'Pixel', monospace;
+  font-family: "Arial", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+
 }
 
-.info-zone-style {
-  display: flex;
+
+.rank-zone-weathericon {
+  display: flex; 
   justify-content: space-between; 
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%; 
-} */
-
-.info-zone-style p:first-child {
-  /* margin-left: 10px; 
-  font-size: 20px; */
+  margin-bottom: 1rem;
 }
 
-.info-zone-style p:last-child {
-  /* margin-right: auto; 
-  font-size: 20px; */
-}
-
-
-/* .info-busyness-tree {
+.rank-zone{
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.info-busyness-tree p {
-  margin: 0;
-  font-size: 16px;
-} */
-
-.info-time {
-  color: orange;
-  font-size: 15px;
+  justify-content: left;
+  align-items: center;
   font-weight: bold;
 }
 
+.rank {
+  text-align:center;
+  font-size: 40px;
+  margin-right: 25px !important;
+  margin-bottom: 0;
+}
+
+.zone {
+  text-align:center; 
+  font-size: 22px;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+.weathericon{
+  display: flex;
+  align-items: center;
+  margin-left: 25px;
+  margin-bottom: 1rem;
+}
+
+.result-param {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5em;
+  align-items: center;
+}
+
+/* title and description */
+.busyness-left, .tree-left, .style-left, .datetime-left, .color-pallete-left{
+  font-size: 15px;
+  margin-right: 20px;
+}
+
+
+/* title*/
+.busyness-title, .tree-title, .style-title, .type-title, .datetime-title, .colors-title {
+  font-size: 18px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  font-weight: bold;
+}
+/* description  */
+.level-of-busyness, .level-of-trees, .architecture, .type-desc, .colors-desc {
+  font-size: 12px;
+  margin-bottom: 10px;
+  margin-top: -10px;
+}
+
+
+/* result details */
+.busyness-right, .tree-right, .style-right, .type-right, .datetime-right-only-time, .color-pallete-right {
+  font-size: 16px;
+  margin-top: 3px;
+}
+
+.result-date-time{
+  font-size: 15px;
+  margin-bottom: -1px;
+
+}
+.golden-blue-hour{
+  font-size: 12px;
+
+}
+
+
+.pictures{
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 0; /*I don't know why it works but it does*/
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.datetime-right-time-golden-blue-hour {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+.golden-blue-hour-container {
+  display: flex;
+  align-items: center;
+}
+
+.goldenicon {
+  margin-right: 10px; /* space between the icon and the text*/
+}
+.datetime-icon-container {
+  display: flex;
+  /* flex-direction: row-reverse;*/ 
+  align-items: center;
+}
+
+.datetime-text-container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically center the text */
+  margin-left: 10px; /* space between the text and the icon */
+}
+
+
 .carousel-inner {
   display: flex;
-  height: 50vh; 
+  height: 90vh;  
+  /* notice, when result list finished need to be adjusted */
 }
 
 .carousel-item {
@@ -89,14 +164,14 @@
   align-items: center;
   height: 300px; 
   width: 500px; 
-  border: 15px solid black; 
+  border: 15px solid #232323; 
   margin-top: 10px; 
   background-position: center; 
   background-size: cover;
 }
 
 .carousel-item img {
-  object-fit: cover; 
+  object-fit: contain; 
   height: 100%; 
   width: 100%; 
 }
@@ -115,3 +190,28 @@
   padding: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
+
+.color-pallete-right {
+  display: flex;
+  justify-content: right;
+  width:100%;
+  max-height: 1.5em;
+  min-height: 0.5em;
+}
+
+.search-pallete{
+  height: calc(10vw - 10.333px);
+}
+
+.hexdiv{
+  width: 10%;
+  max-width: 1.5em;
+  height: 100%;
+  margin: 0em;
+  /* border-style: solid; */
+  border-width: 0em;
+  /* border-color: white; */
+}
+
+
+

@@ -9,7 +9,7 @@ building_path = os.path.join(current_path, "..", "GeoJSON", "Building_points.geo
 sys.path.append(cityframe_path)
 
 from sqlalchemy import inspect, create_engine, URL, Table, MetaData, Column, Integer, BigInteger, String, Float, \
-    DateTime
+    DateTime, Index, ForeignKey
 from sqlalchemy.schema import CreateSchema
 import geopandas as gpd
 from credentials import pg_conn
@@ -75,6 +75,7 @@ class DatabaseTable(Table):
     """
 
     tables = []
+    meta = MetaData()
 
     def __init__(self, name, metadata, *args, **kw):
         """
@@ -118,7 +119,7 @@ if __name__ == '__main__':
 
     # initialise database tables to be added
     DatabaseTable(
-        'weather_fc', MetaData(),
+        'weather_fc', DatabaseTable.meta,
         Column('dt', BigInteger, primary_key=True),
         Column('dt_iso', DateTime(timezone=True), unique=True),
         Column('temp', Float),
@@ -143,7 +144,7 @@ if __name__ == '__main__':
     )
 
     DatabaseTable(
-        'weather_current', MetaData(),
+        'weather_current', DatabaseTable.meta,
         Column('dt', BigInteger, primary_key=True),
         Column('dt_iso', DateTime),
         Column('temp', Float),
@@ -167,27 +168,57 @@ if __name__ == '__main__':
         schema='cityframe'
     )
 
-    # initialising taxi_zones table
-    taxi_zones = DatabaseTable(
-        'taxi_zones', MetaData(),
-        # Column('id', Integer, autoincrement=True, primary_key=True),
+    # # initialising taxi_zones table
+    # taxi_zones = DatabaseTable(
+    #     'taxi_zones', DatabaseTable.meta,
+    #     # Column('id', Integer, autoincrement=True, primary_key=True),
+    #     Column('location_id', Integer, primary_key=True),
+    #     Column('zone', String),
+    #     Column('trees', Integer),
+    #     Column('trees_scaled', Integer),
+    #     # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
+    #     schema='cityframe'
+    # )
+    #
+    # # getting architecture styles
+    # building_points = gpd.read_file(building_path)
+    # zone_polygons = gpd.read_file(taxi_path)
+    # building_feature_filter = 'Style_Prim'
+    # building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
+    #
+    # # looping through styles to add corresponding columns to taxi_zones table
+    # for i in building_counts_in_zones.keys():
+    #     taxi_zones.append_column(Column(i, Integer))
+
+    zones = DatabaseTable(
+        'zones', DatabaseTable.meta,
         Column('location_id', Integer, primary_key=True),
         Column('zone', String),
         Column('trees', Integer),
         Column('trees_scaled', Integer),
-        # Column('geometry', Geometry(geometry_type='MULTIPOLYGON', srid=4326)),
+        Column('main_zone_style', String),
+        Column('main_zone_style_value', Integer),
+        Column('main_zone_type', String),
+        Column('main_zone_type_value', Float),
+        schema='cityframe'
+
+    )
+
+    zone_styles = DatabaseTable(
+        'zone_styles', DatabaseTable.meta,
+        Column('location_id', Integer, primary_key=True),
+        Column('zone_style', String, primary_key=True),
+        Column('zone_style_value', Integer),
         schema='cityframe'
     )
 
-    # getting architecture styles
-    building_points = gpd.read_file(building_path)
-    zone_polygons = gpd.read_file(taxi_path)
-    building_feature_filter = 'Style_Prim'
-    building_counts_in_zones = map_points_to_zones(building_points, zone_polygons, building_feature_filter)
-
-    # looping through styles to add corresponding columns to taxi_zones table
-    for i in building_counts_in_zones.keys():
-        taxi_zones.append_column(Column(i, Integer))
+    zone_types = DatabaseTable(
+        'zone_types', DatabaseTable.meta,
+        Column('location_id', Integer, primary_key=True),
+        Column('zone_type', String, primary_key=True),
+        Column('zone_type_value', Float),
+        schema='cityframe'
+    )
 
     # creating all schemas initialised previously - if they don't exist yet
     Schema.create_all()

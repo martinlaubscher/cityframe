@@ -1,26 +1,65 @@
 .map-container {
-  background-color: azure;
-  position: relative;
-  width: 100%;
-  height: 300px; /* Set a fixed height for the map container */
+    position: relative;
+    width: 100%;
+    height: 300px; /* Set a fixed height for the map container */
 }
 
 .map-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
-.Map--div{
-  background-color: pink;
-  width: 100%;
+.Map--div {
+    position: fixed;
+    top: 12%;
+    height: 73%;
+    width: 100%;
 }
 
 .leaflet-container {
-  width: 100%;
-  height: 100vh;
-  z-index: 1;
+    width: 100%;
+    height: 100%;
 }
+
+.leaflet-popup-content-wrapper {
+    background-color: #1b1b1b;
+    color: white;
+}
+
+.leaflet-popup-tip {
+    background-color: #1b1b1b;
+}
+
+.leaflet-popup-content {
+    width: auto !important;
+}
+
+.leaflet-popup-content p {
+    margin: 0 !important;
+    white-space: nowrap;
+}
+
+.popup-title {
+    font-size: 2.5vh;
+    margin: 1px !important;
+}
+
+.popup-level {
+    font-size: 2vh;
+    margin: 1px !important;
+}
+
+.popup-details {
+    font-size: 1.5vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.popup-details-value {
+    padding-left: 10px;
+}
+

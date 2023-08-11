@@ -1,0 +1,102 @@
+/* Common styles for about and contact sections */
+.about-this-web-container {
+    color:white;
+    background-color: #353535;
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+}
+
+
+.contact-container {
+    color:white;
+    background-color: #353535;
+    position: relative;
+    width: 100%;
+    padding: 1rem;
+    bottom: 0;
+    overflow-y: auto;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+}
+
+.mojo {
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+}
+.mojo:active {
+    color: hotpink;
+}
+
+/* Additional styles for the how-to-use section */
+.how-to-use {
+    margin-bottom: 2rem;  /* Additional margin */
+}
+
+/* Title and subtitle styles */
+.title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    font-size: 17px;
+    margin-bottom: 0;
+}
+
+/* Paragraph styles */
+p {
+    font-size: 16px;
+    margin-bottom: 1rem;
+}
+
+.contact-container {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .contact-container a:not(.mojo){
+      text-decoration: none;
+      color: #8f9ba6;
+      padding: 5px;
+
+  }
+  .contact-info {
+    color: white;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+  
+  .general-support,
+  .support,
+  .press {
+    width: 100%; /* Adjust the width as needed */
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    color: #ffffff; 
+    font-size: 18px; 
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 14px;
+    margin: 0;
+  }
+  

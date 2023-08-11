@@ -34,7 +34,7 @@ def update_weather():
         'wind_deg': data['wind']['deg'],
         'clouds_all': data['clouds']['all'],
         'weather_id': data['weather'][0]['id'],
-        'weather_main': data['weather'][0]['main'],
+        'weather_main': str.lower(data['weather'][0]['main']),
         'weather_description': data['weather'][0]['description'],
         'weather_icon': data['weather'][0]['icon'],
         'timezone': data['timezone']
@@ -100,4 +100,5 @@ def update_weather():
     conn.close()
 
 
-update_weather()
+if __name__ == '__main__':
+    update_weather()

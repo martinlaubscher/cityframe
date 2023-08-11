@@ -36,11 +36,9 @@ SECRET_KEY = django_key
 # this is now set in the environment specific settings files
 # DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'cityfra.me']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'cityfra.me', 'www.cityfra.me', 'csi6220-3-vm2.ucd.ie']
 
 # Application definition
-# INSTALLED_APPS and MIDDLEWARE set in environment specific settings files
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -67,12 +65,20 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# the below set session cookies to expire at browser close, and after 8 hours
+# this is reasonable as currently only site admin may use the login functionality
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 28800
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 ROOT_URLCONF = 'web_app.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'dist')],
+        'DIRS': [os.path.join(BASE_DIR, 'staticfiles')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -146,13 +152,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'assets/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist', 'assets'), os.path.join(BASE_DIR, 'frontend', 'public')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'dist'), os.path.join(BASE_DIR, 'frontend', 'dist', 'assets')]
 
 STORAGES = {
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
     },
 }
+
+WHITENOISE_MAX_AGE = None
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

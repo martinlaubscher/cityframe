@@ -11,6 +11,7 @@ from sqlalchemy.dialects.postgresql import insert
 import requests
 import json
 from datetime import datetime
+from dateutil import tz
 from credentials import pg_conn, openweather_key
 
 
@@ -41,7 +42,7 @@ class ApiUpdate:
             **pg_conn
         )
 
-        self.engine = create_engine(pg_url, echo=True)
+        self.engine = create_engine(pg_url)
         self.table = Table(table_name, MetaData(), autoload_with=self.engine, schema=schema_name)
         self.url = url
         self.params = params
@@ -174,7 +175,7 @@ class WeatherHourlyUpdate(ApiUpdate):
             data(dict): dictionary containing the prepared data for a specific hour of the forecast
         """
 
-        data['dt_iso'] = datetime.fromtimestamp(data['dt'])
+        data['dt_iso'] = datetime.utcfromtimestamp(data['dt']).replace(tzinfo=tz.UTC)
         data['temp'] = data['main']['temp']
         data['feels_like'] = data['main']['feels_like']
         data['temp_min'] = data['main']['temp_min']
@@ -195,7 +196,7 @@ class WeatherHourlyUpdate(ApiUpdate):
             data['snow_1h'] = 0
         data['clouds_all'] = data['clouds']['all']
         data['weather_id'] = data['weather'][0]['id']
-        data['weather_main'] = data['weather'][0]['main']
+        data['weather_main'] = str.lower(data['weather'][0]['main'])
         data['weather_description'] = data['weather'][0]['description']
         data['weather_icon'] = data['weather'][0]['icon']
         return data
@@ -248,7 +249,7 @@ class WeatherDailyUpdate(ApiUpdate):
 
         # loop over each date
         for weather_info in data["list"]:
-            dt = datetime.utcfromtimestamp(weather_info["dt"])
+            dt = datetime.utcfromtimestamp(weather_info["dt"]).replace(tzinfo=tz.UTC)
 
             # loop over each hourly slot
             for time_period, hours in time_slots.items():
@@ -294,7 +295,7 @@ class WeatherDailyUpdate(ApiUpdate):
             data(dict): dictionary containing the prepared data for a specific hour of the forecast
         """
 
-        data['dt_iso'] = datetime.fromtimestamp(data['dt'])
+        data['dt_iso'] = datetime.utcfromtimestamp(data['dt']).replace(tzinfo=tz.UTC)
         data['dt_txt'] = data['dt']
         data['feels_like'] = data['feels_like']
         data['visibility'] = 10000

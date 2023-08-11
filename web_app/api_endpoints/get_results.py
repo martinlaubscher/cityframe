@@ -1,187 +1,145 @@
 import os
-import django
+import sys
+from datetime import timedelta
 
-# Setup Django
-os.environ['DJANGO_SETTINGS_MODULE'] = 'web_app.settings_dev'
-django.setup()
+current_path = os.path.dirname(os.path.abspath(__file__))
+cityframe_path = os.path.dirname(os.path.dirname(current_path))
 
-from django.db.models import F
-from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
-from django.utils.timezone import is_aware
+sys.path.append(cityframe_path)
+
+from psycopg.rows import dict_row
+from django.apps import apps
 from api_endpoints.models import TaxiZones, Busyness, WeatherFc
 from dateutil import tz
-from datetime import datetime
-from itertools import islice
+from datetime import datetime, timedelta
+
+pool = apps.get_app_config('api_endpoints').pool
 
 
-def check_error_type(e):
+def psycopg_get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
     """
-    Checks the type of the raised exception and returns a corresponding message.
-
-    This function takes as input an exception object, checks if it is an instance of
-    Django's ObjectDoesNotExist or FieldDoesNotExist exceptions, and returns a string
-    message indicating the type of exception caught. If the exception is neither
-    ObjectDoesNotExist nor FieldDoesNotExist, it returns a message indicating that an
-    unknown exception has been caught.
+    Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time. Uses psycopg.
 
     Args:
-        e (Exception): The exception object to be checked.
+        style (str): Architectural style. It should match with the architectural style fields in the TaxiZones table.
+        weather (str or None): The desired weather (main category). If not None, it should match one of the present values in the WeatherFc table.
+        zone_type (str): The desired zone type. should match with one of the types in the zoning table.
+        tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range. Optional, defaults to (1, 5).
+        busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range. Optional, defaults to (1, 5).
+        user_time (datetime): The desired time as a timezone-aware datetime object. Optional, defaults to the current time in New York timezone.
 
     Returns:
-        str: A string message indicating the type of the caught exception.
-
+        list: A list of dictionaries (one dictonary per record) of the records matching the query.
     """
 
-    if isinstance(e, ObjectDoesNotExist):
-        return f"Caught an ObjectDoesNotExist exception.\n{e}"
-    elif isinstance(e, FieldDoesNotExist):
-        return f"Caught a FieldDoesNotExist exception.\n{e}"
+    zone_type_filter = 'AND "cityframe"."zone_types"."zone_type" = "cityframe"."zones"."main_zone_type"'
+    if str.lower(zone_type) != 'any':
+        zone_type_filter = f'AND "cityframe"."zone_types"."zone_type" = \'{zone_type}\' AND "cityframe"."zone_types"."zone_type_value" > 0'
+
+    zone_style_filter = 'AND "cityframe"."zone_styles"."zone_style" = "cityframe"."zones"."main_zone_style"'
+    if str.lower(style) != 'any':
+        zone_style_filter = f'AND "cityframe"."zone_styles"."zone_style" = \'{style}\' AND "cityframe"."zone_styles"."zone_style_value" > 0'
+
+    ny_dt = datetime.now(tz=tz.gettz('America/New_York')).replace(minute=0, second=0, microsecond=0)
+
+    if weather is None:
+        time_from = max((user_time - timedelta(hours=12)), ny_dt)
+        time_to = user_time + timedelta(hours=12)
+
+        sql = f'''
+                SELECT "cityframe"."Results"."taxi_zone", "cityframe"."zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."zones"."trees_scaled", "cityframe"."zones"."main_zone_style", "cityframe"."zones"."main_zone_style_value", "cityframe"."zones"."main_zone_type", "cityframe"."zone_styles"."zone_style", "cityframe"."zone_styles"."zone_style_value", "cityframe"."zone_types"."zone_type", "cityframe"."zone_types"."zone_type_value", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
+                FROM "cityframe"."Results"
+                INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
+                INNER JOIN "cityframe"."zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."zones"."location_id")
+                LEFT OUTER JOIN "cityframe"."zone_types" ON ("cityframe"."zones"."location_id" = "cityframe"."zone_types"."location_id")
+                LEFT OUTER JOIN "cityframe"."zone_styles" ON ("cityframe"."zones"."location_id" = "cityframe"."zone_styles"."location_id")
+                WHERE ("cityframe"."Results"."dt_iso" BETWEEN '{time_from}'::timestamptz AND '{time_to}'::timestamptz {zone_style_filter} {zone_type_filter});'''
     else:
-        return f"Caught an unknown exception.\n{e}"
+        sql = f'''
+                SELECT "cityframe"."Results"."taxi_zone", "cityframe"."zones"."zone", "cityframe"."Results"."dt_iso", "cityframe"."Results"."bucket", "cityframe"."zones"."trees_scaled", "cityframe"."zones"."main_zone_style", "cityframe"."zones"."main_zone_style_value", "cityframe"."zones"."main_zone_type", "cityframe"."zone_styles"."zone_style", "cityframe"."zone_styles"."zone_style_value", "cityframe"."zone_types"."zone_type", "cityframe"."zone_types"."zone_type_value", "cityframe"."weather_fc"."temp", "cityframe"."weather_fc"."weather_main", "cityframe"."weather_fc"."weather_icon"
+                FROM "cityframe"."Results"
+                INNER JOIN "cityframe"."weather_fc" ON ("cityframe"."Results"."dt_iso" = "cityframe"."weather_fc"."dt_iso")
+                INNER JOIN "cityframe"."zones" ON ("cityframe"."Results"."taxi_zone" = "cityframe"."zones"."location_id")
+                LEFT OUTER JOIN "cityframe"."zone_types" ON ("cityframe"."zones"."location_id" = "cityframe"."zone_types"."location_id")
+                LEFT OUTER JOIN "cityframe"."zone_styles" ON ("cityframe"."zones"."location_id" = "cityframe"."zone_styles"."location_id")
+                WHERE ("cityframe"."Results"."dt_iso" >= '{ny_dt}'::timestamptz AND "cityframe"."weather_fc"."weather_main" = '{weather}' {zone_style_filter} {zone_type_filter});'''
+
+    # Create a new transaction
+    with pool.connection() as conn:
+
+        # Create a new cursor to execute the SQL statement
+        with conn.cursor(row_factory=dict_row) as cur:
+            # Execute SQL statement
+            cur.execute(sql)
+
+            # Fetch the results as dictionaries
+            records = cur.fetchall()
+
+    return records
 
 
-def get_results(style, tree_range, busyness_range, user_time):
+def django_get_results(style, weather, zone_type, user_time, tree_range=(1, 5), busyness_range=(1, 5)):
     """
-    Fetches records associated with the architectural style and busyness range at a specific time.
+    Fetches records associated with the given architectural style, weather, tree range, busyness range, and user time. Uses Django's ORM.
 
     Args:
-        style (str): Architectural style. It should match with the architectural style fields in the taxi_zones table.
-        busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range.
-        tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range.
-        user_time (str | datetime): The desired time in "YYYY-MM-DD HH:MM" format or as a datetime object.
+        style (str): Architectural style. It should match with the architectural style fields in the TaxiZones table.
+        weather (str or None): The desired weather (main category). If not None, it should match one of the present values in the WeatherFc table.
+        zone_type (str): The desired zone type. should match with one of the types in the zoning table.
+        tree_range (tuple): A tuple of two integers indicating the lower and upper bounds of the tree range. Optional, defaults to (1, 5).
+        busyness_range (tuple): A tuple of two integers indicating the lower and upper bounds of the busyness range. Optional, defaults to (1, 5).
+        user_time (datetime): The desired time as a timezone-aware datetime object. Optional, defaults to the current time in New York timezone.
 
     Returns:
-        dict: A dictionary containing information about each taxi zone including zone details, busyness level,
-        number of trees, architectural style count, and weather information.
+        dict: A dictionary containing information about each TaxiZone including zone details, busyness level, number of trees, architectural style count, and weather information.
     """
 
-    # Get TaxiZones IDs having at least one building in the desired style and within the desired trees_scaled range
-    top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}, trees_scaled__range=tree_range).order_by(
-        F(style).desc()).values_list('id', flat=True)
+    # Get TaxiZones IDs having at least one building in the desired style
+    top_zones_ids = TaxiZones.objects.filter(**{style + '__gt': 0}).values_list('id', flat=True)
 
-    # Get all Busyness records within the given busyness range and associated with the top zones
-    records = Busyness.objects.filter(bucket__range=busyness_range, taxi_zone__in=top_zones_ids,
-                                      dt_iso__dt_iso=user_time)
+    if weather is None:
+        # define the timespan in which to look for results
+        time_from = user_time - timedelta(hours=12)
+        time_to = user_time + timedelta(hours=12)
+        records = Busyness.objects.select_related('taxi_zone').filter(
+            taxi_zone__in=top_zones_ids,
+            dt_iso__dt_iso__range=(time_from, time_to)).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
+                                                               'bucket', 'taxi_zone__trees_scaled',
+                                                               f'taxi_zone__{style}',
+                                                               f'taxi_zone__zoning__{zone_type}',
+                                                               'dt_iso__temp', 'dt_iso__weather_main',
+                                                               'dt_iso__weather_icon')
+    else:
+        records = Busyness.objects.select_related('taxi_zone').filter(
+            taxi_zone__in=top_zones_ids,
+            dt_iso__weather_main=weather).values('id', 'taxi_zone_id', 'taxi_zone__zone', 'dt_iso_id',
+                                                 'bucket', 'taxi_zone__trees_scaled',
+                                                 f'taxi_zone__{style}',
+                                                 f'taxi_zone__zoning__{zone_type}',
+                                                 'dt_iso__temp', 'dt_iso__weather_main',
+                                                 'dt_iso__weather_icon')
+
+    records = tuple(records)
 
     results = {}
-
-    # Iterate over the records
+    ny_tz = tz.gettz('America/New_York')
     for record in records:
-        # Get the associated TaxiZone
-        taxi_zone = TaxiZones.objects.get(id=record.taxi_zone.id)
-
-        # If this zone id is not in results yet, add a new dictionary with zone's details
-        try:
-            if record.taxi_zone.id not in results:
-                results[record.taxi_zone.id] = {
-                    'zone': record.taxi_zone.zone,
-                    'dt_iso': record.dt_iso.dt_iso.astimezone(tz.gettz('America/New_York')).strftime(
-                        '%Y-%m-%d %H:%M'),
-                    'busyness': record.bucket,
-                    'trees': taxi_zone.trees_scaled,
-                    'style': getattr(taxi_zone, style),
-                    'weather': {
-                        'temp': record.dt_iso.temp,
-                        'weather_description': record.dt_iso.weather_description,
-                        'weather_icon': record.dt_iso.weather_icon
-                    }
-                }
-        except ObjectDoesNotExist as e:
-            return e
+        key = f"{record['taxi_zone_id']}_{record['dt_iso_id']}"
+        ny_dt_iso = record['dt_iso_id'].astimezone(ny_tz)
+        results[key] = {
+            'id': str(record['taxi_zone_id']),
+            'zone': record['taxi_zone__zone'],
+            'dt_iso': ny_dt_iso.strftime('%Y-%m-%d %H:%M'),
+            'dt_iso_tz': ny_dt_iso,
+            'busyness': record['bucket'],
+            'trees': record['taxi_zone__trees_scaled'],
+            'style': record[f'taxi_zone__{style}'],
+            'zone_type': record[f'taxi_zone__zoning__{zone_type}'],
+            'weather': {
+                'temp': record['dt_iso__temp'],
+                'weather_description': record['dt_iso__weather_main'],
+                'weather_icon': record['dt_iso__weather_icon']
+            }
+        }
 
     return results
-
-
-def generate_response(target_busyness, target_trees, target_style, target_dt):
-    """
-    Generates a dictionary containing top 10 results based on the target busyness, style, and date-time.
-
-    Args:
-        target_busyness (int): The desired level of busyness.
-        target_trees (int): The desired level of trees.
-        target_style (str): The desired architectural style. It should match with one of the architectural styles in the taxi_zones table.
-        target_dt (str | datetime): The desired date and time in "YYYY-MM-DD HH:MM" format or a datetime object.
-
-    Returns:
-        dict: A dictionary containing the top 10 results sorted according to the difference from the target busyness
-        level and the count of the target style. The dictionary includes details of each zone such as the zone name,
-        level and thdeltae count of the target style. The dictionary includes details of each zone such as the zone name,
-        date and time, busyness level, number of trees, count of the target architectural style, and weather information.
-    """
-
-    results = {}
-
-    # dictionary to translate the style names to django model variables
-    style_dict = {
-        'neo-Georgian': 'neo_georgian',
-        'Greek Revival': 'greek_revival',
-        'Romanesque Revival': 'romanesque_revival',
-        'neo-Grec': 'neo_grec',
-        'Renaissance Revival': 'renaissance_revival',
-        'Beaux-Arts': 'beaux_arts',
-        'Queen Anne': 'queen_anne',
-        'Italianate': 'italianate',
-        'Federal': 'federal',
-        'neo-Renaissance': 'neo_renaissance'
-    }
-
-    lower_busy = higher_busy = target_busyness
-    lower_trees = higher_trees = target_trees
-
-    # checking if style is valid
-    if style_dict.get(target_style) is None:
-        raise FieldDoesNotExist(
-            f"The style '{target_style}' is invalid. It should be one of these: {tuple(style_dict.keys())}")
-
-    # creating a datetime object from the string received by the post request.
-    # if the input is neither a correctly formatted string nor a datetime object, raise an error
-    if isinstance(target_dt, str):
-        ny_dt = datetime.strptime(target_dt, "%Y-%m-%d %H:%M").replace(minute=0)
-    elif isinstance(target_dt, datetime):
-        ny_dt = target_dt.replace(minute=0, second=0, microsecond=0)
-    else:
-        raise ValueError("Invalid date input. Expected a string or datetime object.")
-
-    # setting timezone to ny. if the supplied value/object is tz aware, convert it. if it is naive, assume it's ny time.
-    if is_aware(ny_dt):
-        ny_dt = ny_dt.astimezone(tz.gettz('America/New_York'))
-    else:
-        ny_dt = ny_dt.replace(tzinfo=tz.gettz('America/New_York'))
-
-    # if the time supplied is earlier than the earliest available time, take that one
-    # if the time supplied is later than the latest available time, take that one
-    earliest_dt_iso = WeatherFc.objects.earliest('dt_iso').dt_iso
-    latest_dt_iso = WeatherFc.objects.latest('dt_iso').dt_iso
-    ny_dt = max(min(ny_dt, latest_dt_iso), earliest_dt_iso)
-
-    # search for results - expand parameters until at least ten have been found
-    while len(results) < 10 and ((lower_trees > 0 or higher_trees < 6) or (lower_busy > 0 or higher_busy < 6)):
-        results = get_results(style_dict.get(target_style), (lower_trees, higher_trees),
-                              (lower_busy, higher_busy),
-                              ny_dt)
-        # check for errors
-        if isinstance(results, Exception):
-            return check_error_type(results)
-        lower_trees -= 1
-        higher_trees += 1
-        lower_busy -= 1
-        higher_busy += 1
-
-    # calculate the difference to the desired busyness and tree level
-    for key, value in results.items():
-        value['total_diff'] = abs(target_busyness - value['busyness']) + abs(target_trees - value['trees'])
-
-    # sort the dictionary first according to the difference to the desired busyness level, then to the count
-    sorted_dict = dict(
-        sorted(results.items(), key=lambda item: (item[1]['total_diff'], -item[1]['style'])))
-
-    i = 1
-    # Remove the temporary 'busyness_diff' from the dictionaries and add the rank
-    for value in sorted_dict.values():
-        del value['total_diff']
-        value['rank'] = i
-        i += 1
-
-    sliced_dict = dict(islice(sorted_dict.items(), 10))
-
-    return sliced_dict
